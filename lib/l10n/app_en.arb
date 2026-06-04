@@ -1,0 +1,240 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Hobby Lab",
+
+  "navHome": "Home",
+  "navMessages": "Messages",
+  "navSaved": "Saved",
+  "navAlerts": "Alerts",
+  "navProfile": "Profile",
+
+  "btnLogIn": "Log In",
+  "btnSignUp": "Sign Up",
+  "btnContinue": "Continue",
+  "btnGetStarted": "Get Started",
+  "btnBookNow": "Book Now",
+  "btnContact": "Contact",
+  "btnSaveChanges": "Save Changes",
+  "btnSeeAll": "See All",
+  "btnLogOut": "Log Out",
+  "btnEditProfile": "Edit Profile",
+  "btnSkip": "Skip",
+  "btnLetsConnect": "Let's Connect",
+
+  "searchHint": "Search activities, camps, classes...",
+  "searchConversations": "Search conversations...",
+  "recentSearches": "RECENT SEARCHES",
+  "popularSearches": "POPULAR SEARCHES",
+  "trendingCategories": "TRENDING CATEGORIES",
+  "noResultsFor": "No results for \"{query}\"",
+  "@noResultsFor": {
+    "placeholders": {
+      "query": { "type": "String" }
+    }
+  },
+
+  "tagline": "Discover. Learn. Grow.",
+
+  "onboarding1Title": "Find the Best Activities",
+  "onboarding1Subtitle": "Discover hundreds of classes, camps and workshops for your children nearby",
+  "onboarding2Title": "Easy Booking",
+  "onboarding2Subtitle": "Book your favourite activities in a few taps and manage all schedules in one place",
+  "onboarding3Title": "Stay Connected",
+  "onboarding3Subtitle": "Get updates, reminders and communicate with organizers directly in the app",
+
+  "chooseLanguage": "Choose\nLanguage",
+  "languageSubtitle": "Select your preferred language to continue",
+
+  "loginTitle": "Log into your\naccount",
+  "welcomeBack": "Welcome Back",
+  "loginSubtitle": "Sign in to continue your journey",
+  "emailHint": "Email address",
+  "passwordHint": "Password",
+  "rememberMe": "Remember me",
+  "forgotPassword": "Forgot Password?",
+  "orContinueWith": "Or continue with",
+  "dontHaveAccount": "Don't have an account?",
+
+  "createAccount": "Create Account",
+  "registerSubtitle": "Join Hobby Lab and discover amazing activities",
+  "fullNameHint": "Full name",
+  "confirmPasswordHint": "Confirm password",
+  "alreadyHaveAccount": "Already have an account?",
+  "agreeToTerms": "I agree to the ",
+  "termsOfService": "Terms of Service",
+
+  "yourLocation": "Your location",
+  "popularNearYou": "Popular Near You",
+  "thisWeekend": "This Weekend",
+  "categories": "Categories",
+
+  "profile": "Profile",
+  "upcomingBookings": "Upcoming Bookings",
+  "generalSettings": "General Settings",
+  "accountSettings": "Account Settings",
+  "notifications": "Notifications",
+  "paymentMethods": "Payment Methods",
+  "language": "Language",
+  "security": "Security",
+  "joinAsProvider": "Join as a service provider",
+  "joinAsProviderSubtitle": "List your classes and reach more families",
+
+  "messages": "Messages",
+  "noMessagesYet": "No Messages Yet",
+  "noMessagesSubtitle": "You can contact an organizer, your conversations will appear here",
+
+  "saved": "Saved",
+  "noSavedActivities": "No Saved Activities",
+  "noSavedSubtitle": "Start exploring and save activities you're interested in for your children",
+
+  "editProfile": "Edit Profile",
+  "mainInformation": "Main information",
+  "phoneHint": "Phone Number",
+  "gender": "Gender",
+  "age": "Age",
+
+  "forgotPasswordTitle": "Forgot Password",
+  "forgotPasswordContent": "Please contact support at support@hobbylab.com to reset your password.",
+  "btnOk": "OK",
+  "continueWithGoogle": "Continue with Google",
+  "continueWithApple": "Continue with Apple",
+  "continueWithFacebook": "Continue with Facebook",
+  "continueWithGmail": "Continue with Gmail",
+  "orDivider": "or",
+  "registerHeading": "Create your\naccount",
+  "registerFamiliesSubtitle": "Join thousands of families discovering activities.",
+  "byAgreeingTerms": "By continuing, you agree to our ",
+  "andConjunction": " and ",
+  "privacyPolicy": "Privacy Policy",
+  "errorFillAllFields": "Please fill in all fields",
+  "errorInvalidCredentials": "Invalid email or password",
+
+  "changeLocation": "Change Location",
+  "enterCityName": "Enter city name",
+  "btnCancel": "Cancel",
+  "btnSave": "Save",
+  "noActivitiesYet": "No activities yet",
+  "checkBackSoonActivities": "Check back soon for new activities",
+  "detectingLocation": "Detecting...",
+  "clearFilter": "Clear filter",
+  "noCategoryActivitiesYet": "No {category} activities yet",
+  "@noCategoryActivitiesYet": {
+    "placeholders": {
+      "category": { "type": "String" }
+    }
+  },
+  "checkBackSoonCategories": "Check back soon or explore other categories",
+  "activitiesSection": "Activities",
+  "eventsSection": "Events",
+
+  "tryDifferentKeywords": "Try different keywords or browse categories",
+  "resultsFound": "results found",
+  "allChip": "All",
+  "searchActivitiesHint": "Search activities...",
+  "noActivitiesFound": "No activities found",
+  "tryDifferentFilters": "Try different keywords or filters",
+  "countResults": "{count} results",
+  "@countResults": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "settingsTitle": "Settings",
+  "sectionAccount": "ACCOUNT",
+  "changePassword": "Change Password",
+  "sectionNotifications": "NOTIFICATIONS",
+  "pushNotifications": "Push Notifications",
+  "classReminders": "Class Reminders",
+  "promotionsOffers": "Promotions & Offers",
+  "newActivitiesNearby": "New Activities Nearby",
+  "sectionApp": "APP",
+  "sectionSupport": "SUPPORT",
+  "helpCenter": "Help Center",
+  "contactUs": "Contact Us",
+  "sectionDangerZone": "DANGER ZONE",
+  "deleteAccount": "Delete Account",
+  "deleteAccountDesc": "Permanently remove your account and all data",
+  "deleteAccountConfirm": "Are you sure you want to permanently delete your account? This action cannot be undone.",
+  "btnDelete": "Delete",
+
+  "goToOrgDashboard": "Go to Organization Dashboard",
+  "manageClassesEvents": "Manage your classes, events and groups",
+  "profileSavedSuccess": "Profile saved successfully",
+  "profileSaveFailed": "Failed to save. Please try again.",
+
+  "noNotifications": "No Notifications",
+  "allCaughtUp": "You're all caught up!",
+
+  "savedToList": "Saved to your list!",
+  "removedFromSaved": "Removed from saved",
+  "openStatus": "Open",
+  "organizationLabel": "Organization",
+  "btnView": "View",
+  "actionShare": "Share",
+  "actionWebsite": "Website",
+  "actionDirections": "Directions",
+  "aboutSection": "About",
+  "noDescriptionAvailable": "No description available",
+  "showMore": "Show more",
+  "showLess": "Show less",
+  "ageInfoSection": "Age & Info",
+  "ageRange": "Age Range",
+  "groupSize": "Group Size",
+  "groupsSection": "Groups",
+  "noGroupsAvailable": "No groups available yet",
+  "scheduleSection": "Schedule",
+  "noScheduleAvailable": "No schedule available yet",
+  "reviewsSection": "Reviews",
+  "reviewsLabel": "reviews",
+  "noReviewsYet": "No reviews yet — be the first!",
+  "writeReview": "Write a Review",
+  "pricingFrom": "from",
+  "pricingPerMonth": "/month",
+  "addressNotAvailable": "Address not available",
+  "shareActivityMessage": "Check out \"{name}\" on HobbyLab!",
+  "@shareActivityMessage": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "shareActivityDefault": "Check out this activity on HobbyLab!",
+
+  "organizationsNearYou": "Organizations Near You",
+  "noOrgsYet": "No organizations yet",
+  "checkBackSoonOrgs": "Check back soon for organizations in your area",
+
+  "tabOrganizations": "Organizations",
+  "searchCity": "Search City",
+  "searchCityHint": "Start typing a city name...",
+  "noCitySuggestions": "No cities found",
+
+  "showNationwide": "Show nationwide",
+  "showNationwideHint": "If checked, this event will be visible to users in all cities",
+
+  "fieldRequired": "Required",
+  "errorFillRequired": "Please fill in all required fields",
+  "errorRatingRequired": "Please select a star rating",
+
+  "fieldTelegram": "Telegram",
+  "fieldYouTube": "YouTube",
+  "fieldTikTok": "TikTok",
+  "fieldWhatsApp": "WhatsApp",
+
+  "photosSection": "Photos",
+  "addPhoto": "Add Photo",
+  "photoLimitReached": "Maximum 10 photos",
+
+  "savedOrganizations": "Saved Organizations",
+  "savedClasses": "Saved Classes",
+  "savedEvents": "Saved Events",
+
+  "currentPasswordHint": "Current Password",
+  "newPasswordHint": "New Password",
+  "confirmNewPasswordHint": "Confirm New Password",
+  "errorPasswordTooShort": "Password must be at least 6 characters",
+  "errorPasswordsDoNotMatch": "Passwords do not match",
+  "errorCurrentPasswordWrong": "Current password is incorrect",
+  "passwordChangedSuccess": "Password changed successfully"
+}

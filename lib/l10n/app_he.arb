@@ -1,0 +1,240 @@
+{
+  "@@locale": "he",
+
+  "appTitle": "Hobby Lab",
+
+  "navHome": "בית",
+  "navMessages": "הודעות",
+  "navSaved": "שמור",
+  "navAlerts": "התראות",
+  "navProfile": "פרופיל",
+
+  "btnLogIn": "התחבר",
+  "btnSignUp": "הרשמה",
+  "btnContinue": "המשך",
+  "btnGetStarted": "בואו נתחיל",
+  "btnBookNow": "הזמן עכשיו",
+  "btnContact": "צור קשר",
+  "btnSaveChanges": "שמור שינויים",
+  "btnSeeAll": "ראה הכל",
+  "btnLogOut": "התנתק",
+  "btnEditProfile": "ערוך פרופיל",
+  "btnSkip": "דלג",
+  "btnLetsConnect": "בואו נתחיל",
+
+  "searchHint": "חפש פעילויות, קייטנות, שיעורים...",
+  "searchConversations": "חפש שיחות...",
+  "recentSearches": "חיפושים אחרונים",
+  "popularSearches": "חיפושים פופולריים",
+  "trendingCategories": "קטגוריות פופולריות",
+  "noResultsFor": "לא נמצאו תוצאות עבור \"{query}\"",
+  "@noResultsFor": {
+    "placeholders": {
+      "query": { "type": "String" }
+    }
+  },
+
+  "tagline": "גלה. למד. צמח.",
+
+  "onboarding1Title": "גלה את הפעילויות הטובות ביותר",
+  "onboarding1Subtitle": "גלה מאות שיעורים, קייטנות וסדנאות לילדיך הקרובים אליך",
+  "onboarding2Title": "הזמנה קלה",
+  "onboarding2Subtitle": "הזמן את הפעילויות האהובות עליך בכמה הקשות ונהל את כל לוחות הזמנים שלך במקום אחד",
+  "onboarding3Title": "הישאר מחובר",
+  "onboarding3Subtitle": "קבל עדכונים, תזכורות ותקשר עם מארגנים ישירות דרך האפליקציה",
+
+  "chooseLanguage": "בחר\nשפה",
+  "languageSubtitle": "בחר את השפה המועדפת עליך להמשיך",
+
+  "loginTitle": "כניסה לחשבון",
+  "welcomeBack": "ברוך שובך",
+  "loginSubtitle": "התחבר להמשיך את המסע שלך",
+  "emailHint": "כתובת אימייל",
+  "passwordHint": "סיסמה",
+  "rememberMe": "זכור אותי",
+  "forgotPassword": "שכחת סיסמה?",
+  "orContinueWith": "או המשך עם",
+  "dontHaveAccount": "אין לך חשבון?",
+
+  "createAccount": "צור חשבון",
+  "registerSubtitle": "הצטרף ל-Hobby Lab וגלה פעילויות מדהימות",
+  "fullNameHint": "שם מלא",
+  "confirmPasswordHint": "אשר סיסמה",
+  "alreadyHaveAccount": "כבר יש לך חשבון?",
+  "agreeToTerms": "אני מסכים ל",
+  "termsOfService": "תנאי השירות",
+
+  "yourLocation": "המיקום שלך",
+  "popularNearYou": "פופולרי ליד",
+  "thisWeekend": "סוף שבוע זה",
+  "categories": "קטגוריות",
+
+  "profile": "פרופיל",
+  "upcomingBookings": "הזמנות קרובות",
+  "generalSettings": "הגדרות כלליות",
+  "accountSettings": "הגדרות חשבון",
+  "notifications": "התראות",
+  "paymentMethods": "אמצעי תשלום",
+  "language": "שפה",
+  "security": "אבטחה",
+  "joinAsProvider": "הצטרף כספק שירות",
+  "joinAsProviderSubtitle": "רשום את השיעורים שלך והגע לעוד משפחות",
+
+  "messages": "הודעות",
+  "noMessagesYet": "אין הודעות עדיין",
+  "noMessagesSubtitle": "תוכל ליצור קשר עם מארגן, השיחות שלך יופיעו כאן",
+
+  "saved": "שמור",
+  "noSavedActivities": "אין פעילויות שמורות",
+  "noSavedSubtitle": "התחל לגלות ושמור פעילויות שמעניינות אותך לילדיך",
+
+  "editProfile": "ערוך פרופיל",
+  "mainInformation": "מידע עיקרי",
+  "phoneHint": "מספר טלפון",
+  "gender": "מין",
+  "age": "גיל",
+
+  "forgotPasswordTitle": "שכחת סיסמה",
+  "forgotPasswordContent": "אנא צור קשר עם התמיכה בכתובת support@hobbylab.com לאיפוס הסיסמה.",
+  "btnOk": "אישור",
+  "continueWithGoogle": "המשך עם Google",
+  "continueWithApple": "המשך עם Apple",
+  "continueWithFacebook": "המשך עם Facebook",
+  "continueWithGmail": "המשך עם Gmail",
+  "orDivider": "או",
+  "registerHeading": "צור\nחשבון",
+  "registerFamiliesSubtitle": "הצטרף לאלפי משפחות המגלות פעילויות.",
+  "byAgreeingTerms": "בהמשך, אתה מסכים ל",
+  "andConjunction": " ו",
+  "privacyPolicy": "מדיניות הפרטיות",
+  "errorFillAllFields": "אנא מלא את כל השדות",
+  "errorInvalidCredentials": "אימייל או סיסמה שגויים",
+
+  "changeLocation": "שנה מיקום",
+  "enterCityName": "הזן שם עיר",
+  "btnCancel": "ביטול",
+  "btnSave": "שמור",
+  "noActivitiesYet": "אין פעילויות עדיין",
+  "checkBackSoonActivities": "בדוק שוב בקרוב לפעילויות חדשות",
+  "detectingLocation": "מאתר...",
+  "clearFilter": "נקה מסנן",
+  "noCategoryActivitiesYet": "אין פעילויות {category} עדיין",
+  "@noCategoryActivitiesYet": {
+    "placeholders": {
+      "category": { "type": "String" }
+    }
+  },
+  "checkBackSoonCategories": "בדוק שוב בקרוב או חקור קטגוריות אחרות",
+  "activitiesSection": "פעילויות",
+  "eventsSection": "אירועים",
+
+  "tryDifferentKeywords": "נסה מילות מפתח אחרות או עיין בקטגוריות",
+  "resultsFound": "תוצאות נמצאו",
+  "allChip": "הכל",
+  "searchActivitiesHint": "חפש פעילויות...",
+  "noActivitiesFound": "לא נמצאו פעילויות",
+  "tryDifferentFilters": "נסה מילות מפתח אחרות או מסננים",
+  "countResults": "{count} תוצאות",
+  "@countResults": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "settingsTitle": "הגדרות",
+  "sectionAccount": "חשבון",
+  "changePassword": "שנה סיסמה",
+  "sectionNotifications": "התראות",
+  "pushNotifications": "התראות דחיפה",
+  "classReminders": "תזכורות לשיעורים",
+  "promotionsOffers": "מבצעים והצעות",
+  "newActivitiesNearby": "פעילויות חדשות בקרבת מקום",
+  "sectionApp": "אפליקציה",
+  "sectionSupport": "תמיכה",
+  "helpCenter": "מרכז עזרה",
+  "contactUs": "צור קשר",
+  "sectionDangerZone": "אזור סכנה",
+  "deleteAccount": "מחק חשבון",
+  "deleteAccountDesc": "הסר לצמיתות את חשבונך וכל הנתונים",
+  "deleteAccountConfirm": "האם אתה בטוח שברצונך למחוק לצמיתות את חשבונך? לא ניתן לבטל פעולה זו.",
+  "btnDelete": "מחק",
+
+  "goToOrgDashboard": "עבור ללוח המחוונים של הארגון",
+  "manageClassesEvents": "נהל את השיעורים, האירועים והקבוצות שלך",
+  "profileSavedSuccess": "הפרופיל נשמר בהצלחה",
+  "profileSaveFailed": "שמירה נכשלה. נסה שוב.",
+
+  "noNotifications": "אין התראות",
+  "allCaughtUp": "אתה מעודכן בהכל!",
+
+  "savedToList": "נשמר ברשימה שלך!",
+  "removedFromSaved": "הוסר מהשמורים",
+  "openStatus": "פתוח",
+  "organizationLabel": "ארגון",
+  "btnView": "הצג",
+  "actionShare": "שתף",
+  "actionWebsite": "אתר אינטרנט",
+  "actionDirections": "הנחיות",
+  "aboutSection": "אודות",
+  "noDescriptionAvailable": "אין תיאור זמין",
+  "showMore": "הצג עוד",
+  "showLess": "הצג פחות",
+  "ageInfoSection": "גיל ומידע",
+  "ageRange": "טווח גילאים",
+  "groupSize": "גודל קבוצה",
+  "groupsSection": "קבוצות",
+  "noGroupsAvailable": "אין קבוצות זמינות עדיין",
+  "scheduleSection": "לוח זמנים",
+  "noScheduleAvailable": "אין לוח זמנים זמין עדיין",
+  "reviewsSection": "ביקורות",
+  "reviewsLabel": "ביקורות",
+  "noReviewsYet": "אין ביקורות עדיין — היה הראשון!",
+  "writeReview": "כתוב ביקורת",
+  "pricingFrom": "מ-",
+  "pricingPerMonth": "/חודש",
+  "addressNotAvailable": "הכתובת אינה זמינה",
+  "shareActivityMessage": "בדוק את \"{name}\" ב-HobbyLab!",
+  "@shareActivityMessage": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "shareActivityDefault": "בדוק את הפעילות הזו ב-HobbyLab!",
+
+  "organizationsNearYou": "ארגונים ליד",
+  "noOrgsYet": "אין ארגונים עדיין",
+  "checkBackSoonOrgs": "בדוק שוב בקרוב לארגונים באזורך",
+
+  "tabOrganizations": "ארגונים",
+  "searchCity": "חיפוש עיר",
+  "searchCityHint": "התחל להקליד שם עיר...",
+  "noCitySuggestions": "לא נמצאו ערים",
+
+  "showNationwide": "הצג ארצי",
+  "showNationwideHint": "אם מסומן, האירוע יוצג למשתמשים בכל הערים",
+
+  "fieldRequired": "שדה חובה",
+  "errorFillRequired": "אנא מלא את כל השדות החובה",
+  "errorRatingRequired": "אנא בחר דירוג",
+
+  "fieldTelegram": "טלגרם",
+  "fieldYouTube": "יוטיוב",
+  "fieldTikTok": "טיקטוק",
+  "fieldWhatsApp": "וואטסאפ",
+
+  "photosSection": "תמונות",
+  "addPhoto": "הוסף תמונה",
+  "photoLimitReached": "מקסימום 10 תמונות",
+
+  "savedOrganizations": "ארגונים שמורים",
+  "savedClasses": "שיעורים שמורים",
+  "savedEvents": "אירועים שמורים",
+
+  "currentPasswordHint": "סיסמה נוכחית",
+  "newPasswordHint": "סיסמה חדשה",
+  "confirmNewPasswordHint": "אשר סיסמה חדשה",
+  "errorPasswordTooShort": "הסיסמה חייבת להכיל לפחות 6 תווים",
+  "errorPasswordsDoNotMatch": "הסיסמאות אינן תואמות",
+  "errorCurrentPasswordWrong": "הסיסמה הנוכחית שגויה",
+  "passwordChangedSuccess": "הסיסמה שונתה בהצלחה"
+}

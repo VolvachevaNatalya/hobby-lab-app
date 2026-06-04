@@ -1,0 +1,240 @@
+{
+  "@@locale": "ru",
+
+  "appTitle": "Hobby Lab",
+
+  "navHome": "Главная",
+  "navMessages": "Сообщения",
+  "navSaved": "Сохранённое",
+  "navAlerts": "Уведомления",
+  "navProfile": "Профиль",
+
+  "btnLogIn": "Войти",
+  "btnSignUp": "Зарегистрироваться",
+  "btnContinue": "Продолжить",
+  "btnGetStarted": "Начать",
+  "btnBookNow": "Записаться",
+  "btnContact": "Написать",
+  "btnSaveChanges": "Сохранить",
+  "btnSeeAll": "Все",
+  "btnLogOut": "Выйти",
+  "btnEditProfile": "Редактировать",
+  "btnSkip": "Пропустить",
+  "btnLetsConnect": "Начать",
+
+  "searchHint": "Поиск кружков, лагерей, курсов...",
+  "searchConversations": "Поиск переписок...",
+  "recentSearches": "НЕДАВНИЕ ПОИСКИ",
+  "popularSearches": "ПОПУЛЯРНЫЕ ЗАПРОСЫ",
+  "trendingCategories": "ПОПУЛЯРНЫЕ КАТЕГОРИИ",
+  "noResultsFor": "Ничего не найдено по запросу \"{query}\"",
+  "@noResultsFor": {
+    "placeholders": {
+      "query": { "type": "String" }
+    }
+  },
+
+  "tagline": "Открывай. Учись. Расти.",
+
+  "onboarding1Title": "Найдите лучшие занятия",
+  "onboarding1Subtitle": "Откройте для себя сотни кружков, лагерей и мастер-классов для ваших детей рядом с вами",
+  "onboarding2Title": "Удобная запись",
+  "onboarding2Subtitle": "Записывайтесь на любимые занятия в несколько касаний и управляйте расписанием в одном месте",
+  "onboarding3Title": "Оставайтесь на связи",
+  "onboarding3Subtitle": "Получайте обновления, напоминания и общайтесь с организаторами прямо в приложении",
+
+  "chooseLanguage": "Выбор\nязыка",
+  "languageSubtitle": "Выберите предпочитаемый язык для продолжения",
+
+  "loginTitle": "Войти в аккаунт",
+  "welcomeBack": "Добро пожаловать",
+  "loginSubtitle": "Войдите, чтобы продолжить",
+  "emailHint": "Электронная почта",
+  "passwordHint": "Пароль",
+  "rememberMe": "Запомнить меня",
+  "forgotPassword": "Забыли пароль?",
+  "orContinueWith": "Или войти через",
+  "dontHaveAccount": "Нет аккаунта?",
+
+  "createAccount": "Создать аккаунт",
+  "registerSubtitle": "Присоединитесь к Hobby Lab и откройте для себя удивительные занятия",
+  "fullNameHint": "Полное имя",
+  "confirmPasswordHint": "Подтвердите пароль",
+  "alreadyHaveAccount": "Уже есть аккаунт?",
+  "agreeToTerms": "Я соглашаюсь с ",
+  "termsOfService": "Условиями использования",
+
+  "yourLocation": "Ваше местоположение",
+  "popularNearYou": "Популярное рядом",
+  "thisWeekend": "На эти выходные",
+  "categories": "Категории",
+
+  "profile": "Профиль",
+  "upcomingBookings": "Предстоящие записи",
+  "generalSettings": "Настройки",
+  "accountSettings": "Настройки аккаунта",
+  "notifications": "Уведомления",
+  "paymentMethods": "Способы оплаты",
+  "language": "Язык",
+  "security": "Безопасность",
+  "joinAsProvider": "Стать организатором",
+  "joinAsProviderSubtitle": "Публикуйте занятия и привлекайте больше семей",
+
+  "messages": "Сообщения",
+  "noMessagesYet": "Нет сообщений",
+  "noMessagesSubtitle": "Вы можете написать организатору, ваши переписки появятся здесь",
+
+  "saved": "Сохранённое",
+  "noSavedActivities": "Нет сохранённых занятий",
+  "noSavedSubtitle": "Исследуйте и сохраняйте занятия, которые вас интересуют для ваших детей",
+
+  "editProfile": "Редактировать профиль",
+  "mainInformation": "Основная информация",
+  "phoneHint": "Номер телефона",
+  "gender": "Пол",
+  "age": "Возраст",
+
+  "forgotPasswordTitle": "Забыли пароль",
+  "forgotPasswordContent": "Для сброса пароля обратитесь в поддержку: support@hobbylab.com",
+  "btnOk": "ОК",
+  "continueWithGoogle": "Войти через Google",
+  "continueWithApple": "Войти через Apple",
+  "continueWithFacebook": "Войти через Facebook",
+  "continueWithGmail": "Войти через Gmail",
+  "orDivider": "или",
+  "registerHeading": "Создайте\nаккаунт",
+  "registerFamiliesSubtitle": "Присоединитесь к тысячам семей, открывающих новые занятия.",
+  "byAgreeingTerms": "Продолжая, вы соглашаетесь с нашими ",
+  "andConjunction": " и ",
+  "privacyPolicy": "Политикой конфиденциальности",
+  "errorFillAllFields": "Заполните все поля",
+  "errorInvalidCredentials": "Неверный email или пароль",
+
+  "changeLocation": "Изменить город",
+  "enterCityName": "Введите название города",
+  "btnCancel": "Отмена",
+  "btnSave": "Сохранить",
+  "noActivitiesYet": "Нет занятий",
+  "checkBackSoonActivities": "Загляните позже — скоро появятся новые занятия",
+  "detectingLocation": "Определение...",
+  "clearFilter": "Сбросить фильтр",
+  "noCategoryActivitiesYet": "Нет занятий в категории {category}",
+  "@noCategoryActivitiesYet": {
+    "placeholders": {
+      "category": { "type": "String" }
+    }
+  },
+  "checkBackSoonCategories": "Загляните позже или изучите другие категории",
+  "activitiesSection": "Занятия",
+  "eventsSection": "События",
+
+  "tryDifferentKeywords": "Попробуйте другие ключевые слова или просматривайте категории",
+  "resultsFound": "найдено",
+  "allChip": "Все",
+  "searchActivitiesHint": "Поиск занятий...",
+  "noActivitiesFound": "Занятия не найдены",
+  "tryDifferentFilters": "Попробуйте другие ключевые слова или фильтры",
+  "countResults": "{count} результатов",
+  "@countResults": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "settingsTitle": "Настройки",
+  "sectionAccount": "АККАУНТ",
+  "changePassword": "Изменить пароль",
+  "sectionNotifications": "УВЕДОМЛЕНИЯ",
+  "pushNotifications": "Push-уведомления",
+  "classReminders": "Напоминания о занятиях",
+  "promotionsOffers": "Акции и предложения",
+  "newActivitiesNearby": "Новые занятия рядом",
+  "sectionApp": "ПРИЛОЖЕНИЕ",
+  "sectionSupport": "ПОДДЕРЖКА",
+  "helpCenter": "Центр помощи",
+  "contactUs": "Связаться с нами",
+  "sectionDangerZone": "ОПАСНАЯ ЗОНА",
+  "deleteAccount": "Удалить аккаунт",
+  "deleteAccountDesc": "Безвозвратно удалить аккаунт и все данные",
+  "deleteAccountConfirm": "Вы уверены, что хотите безвозвратно удалить аккаунт? Это действие нельзя отменить.",
+  "btnDelete": "Удалить",
+
+  "goToOrgDashboard": "Перейти к панели организации",
+  "manageClassesEvents": "Управляйте занятиями, событиями и группами",
+  "profileSavedSuccess": "Профиль успешно сохранён",
+  "profileSaveFailed": "Не удалось сохранить. Попробуйте ещё раз.",
+
+  "noNotifications": "Нет уведомлений",
+  "allCaughtUp": "Вы всё прочли!",
+
+  "savedToList": "Добавлено в список!",
+  "removedFromSaved": "Удалено из сохранённых",
+  "openStatus": "Открыто",
+  "organizationLabel": "Организация",
+  "btnView": "Смотреть",
+  "actionShare": "Поделиться",
+  "actionWebsite": "Сайт",
+  "actionDirections": "Маршрут",
+  "aboutSection": "О занятии",
+  "noDescriptionAvailable": "Описание недоступно",
+  "showMore": "Показать больше",
+  "showLess": "Показать меньше",
+  "ageInfoSection": "Возраст и инфо",
+  "ageRange": "Возрастной диапазон",
+  "groupSize": "Размер группы",
+  "groupsSection": "Группы",
+  "noGroupsAvailable": "Группы пока не добавлены",
+  "scheduleSection": "Расписание",
+  "noScheduleAvailable": "Расписание пока не добавлено",
+  "reviewsSection": "Отзывы",
+  "reviewsLabel": "отзывов",
+  "noReviewsYet": "Пока нет отзывов — будьте первым!",
+  "writeReview": "Написать отзыв",
+  "pricingFrom": "от",
+  "pricingPerMonth": "/мес",
+  "addressNotAvailable": "Адрес не указан",
+  "shareActivityMessage": "Посмотрите \"{name}\" в HobbyLab!",
+  "@shareActivityMessage": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "shareActivityDefault": "Посмотрите это занятие в HobbyLab!",
+
+  "organizationsNearYou": "Организации рядом",
+  "noOrgsYet": "Нет организаций",
+  "checkBackSoonOrgs": "Загляните позже — скоро появятся организации рядом",
+
+  "tabOrganizations": "Организации",
+  "searchCity": "Поиск города",
+  "searchCityHint": "Начните вводить название города...",
+  "noCitySuggestions": "Города не найдены",
+
+  "showNationwide": "Показать по всей стране",
+  "showNationwideHint": "Если отмечено, мероприятие будет видно пользователям во всех городах",
+
+  "fieldRequired": "Обязательно",
+  "errorFillRequired": "Заполните все обязательные поля",
+  "errorRatingRequired": "Пожалуйста, выберите оценку",
+
+  "fieldTelegram": "Telegram",
+  "fieldYouTube": "YouTube",
+  "fieldTikTok": "TikTok",
+  "fieldWhatsApp": "WhatsApp",
+
+  "photosSection": "Фотографии",
+  "addPhoto": "Добавить фото",
+  "photoLimitReached": "Максимум 10 фотографий",
+
+  "savedOrganizations": "Сохранённые организации",
+  "savedClasses": "Сохранённые занятия",
+  "savedEvents": "Сохранённые события",
+
+  "currentPasswordHint": "Текущий пароль",
+  "newPasswordHint": "Новый пароль",
+  "confirmNewPasswordHint": "Подтвердите новый пароль",
+  "errorPasswordTooShort": "Пароль должен содержать не менее 6 символов",
+  "errorPasswordsDoNotMatch": "Пароли не совпадают",
+  "errorCurrentPasswordWrong": "Текущий пароль неверен",
+  "passwordChangedSuccess": "Пароль успешно изменён"
+}
