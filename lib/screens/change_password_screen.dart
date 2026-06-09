@@ -115,7 +115,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        behavior: HitTestBehavior.translucent,
+        child: SafeArea(
         child: Column(
           children: [
             _buildHeader(context, l),
@@ -161,6 +164,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

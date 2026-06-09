@@ -1144,7 +1144,7 @@ class _GroupTile extends StatelessWidget {
   final List<Map<String, dynamic>> schedules;
   const _GroupTile({required this.group, required this.schedules});
 
-  static const _days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  static const _days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   String _fmtTime(String? t) {
     if (t == null || t.isEmpty) return '';
@@ -1238,7 +1238,7 @@ class _ScheduleSection extends StatelessWidget {
   final List<Map<String, dynamic>> schedules;
   const _ScheduleSection({required this.groups, required this.schedules});
 
-  static const _days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  static const _days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   String _fmt(String? t) {
     if (t == null || t.isEmpty) return '';

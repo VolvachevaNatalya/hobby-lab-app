@@ -318,6 +318,12 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                       _buildOrgInfo(),
                       const SizedBox(height: 20),
                       _buildActionRow(context),
+                      if (_orgData?['trial_lesson_available'] == true) ...[
+                        const SizedBox(height: 28),
+                        Container(height: 1, color: AppColors.divider),
+                        const SizedBox(height: 24),
+                        _buildTrialSection(),
+                      ],
                       if (_photos.isNotEmpty) ...[
                         const SizedBox(height: 28),
                         Container(height: 1, color: AppColors.divider),
@@ -710,6 +716,84 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                 ),
               );
             },
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── Trial Lesson ─────────────────────────────────────────────────────────────
+
+  Widget _buildTrialSection() {
+    final price = _orgData?['trial_lesson_price'];
+    final comment = _orgData?['trial_lesson_comment'] as String?;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _SectionHeader(title: 'Trial Lesson'),
+        const SizedBox(height: 12),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.purple.withValues(alpha: 0.07),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.purple.withValues(alpha: 0.18)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 34,
+                    height: 34,
+                    decoration: BoxDecoration(
+                      gradient: AppColors.brandGradient,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.school_rounded, color: Colors.white, size: 18),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Trial lesson available',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+              if (price != null) ...[
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    const Icon(Icons.attach_money_rounded, size: 16, color: AppColors.textMuted),
+                    const SizedBox(width: 4),
+                    Text(
+                      '₪${price is double ? price.toStringAsFixed(price.truncateToDouble() == price ? 0 : 2) : price}',
+                      style: GoogleFonts.poppins(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.purple,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+              if (comment != null && comment.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  comment,
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
       ],

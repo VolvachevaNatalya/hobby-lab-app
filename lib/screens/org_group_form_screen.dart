@@ -148,7 +148,7 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
     final group = OrgGroup(
       name: _nameCtrl.text.trim(),
       minAge: int.tryParse(_minAgeCtrl.text) ?? 0,
-      maxAge: int.tryParse(_maxAgeCtrl.text) ?? 18,
+      maxAge: int.tryParse(_maxAgeCtrl.text) ?? 120,
       capacity: int.tryParse(_capacityCtrl.text) ?? 15,
       price: double.tryParse(_priceCtrl.text) ?? 0,
       schedule: _schedule,
@@ -161,7 +161,10 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        behavior: HitTestBehavior.translucent,
+        child: SafeArea(
         child: Column(
           children: [
             _buildHeader(),
@@ -227,6 +230,7 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

@@ -222,6 +222,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
       initialDate: _date ?? DateTime.now().add(const Duration(days: 7)),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 730)),
+      locale: const Locale('en'),
       builder: (ctx, child) =>
           Theme(data: darkPickerTheme(ctx), child: child!),
     );
@@ -319,7 +320,10 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        behavior: HitTestBehavior.translucent,
+        child: SafeArea(
         child: Column(
           children: [
             _buildHeader(),
@@ -430,6 +434,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

@@ -76,6 +76,9 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
   late final TextEditingController _youtubeCtrl;
   late final TextEditingController _tiktokCtrl;
   late final TextEditingController _whatsappCtrl;
+  late final TextEditingController _trialPriceCtrl;
+  late final TextEditingController _trialCommentCtrl;
+  bool _trialAvailable = false;
 
   String? _logoPath;
   String? _bannerPath;
@@ -108,6 +111,8 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
     _youtubeCtrl = TextEditingController();
     _tiktokCtrl = TextEditingController();
     _whatsappCtrl = TextEditingController();
+    _trialPriceCtrl = TextEditingController();
+    _trialCommentCtrl = TextEditingController();
     _nameCtrl.addListener(_onFieldChanged);
     _loadOrgData();
   }
@@ -135,6 +140,10 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
       _whatsappCtrl.text  = org['whatsapp_url'] as String? ?? '';
       _logoUrl = org['logo_url'] as String?;
       _bannerUrl = org['banner_url'] as String?;
+      _trialAvailable = org['trial_lesson_available'] as bool? ?? false;
+      final rawPrice = org['trial_lesson_price'];
+      _trialPriceCtrl.text = rawPrice != null ? '$rawPrice' : '';
+      _trialCommentCtrl.text = org['trial_lesson_comment'] as String? ?? '';
     } catch (_) {
       // keep constructor-provided initial values if load fails
     } finally {
@@ -215,6 +224,8 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
     _youtubeCtrl.dispose();
     _tiktokCtrl.dispose();
     _whatsappCtrl.dispose();
+    _trialPriceCtrl.dispose();
+    _trialCommentCtrl.dispose();
     super.dispose();
   }
 
@@ -265,6 +276,13 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
         whatsappUrl:  _whatsappCtrl.text.trim().isNotEmpty ? _whatsappCtrl.text.trim() : null,
         logoUrl: _logoPath ?? (_logoUrl?.isNotEmpty == true ? _logoUrl : null),
         bannerUrl: _bannerPath ?? (_bannerUrl?.isNotEmpty == true ? _bannerUrl : null),
+        trialLessonAvailable: _trialAvailable,
+        trialLessonPrice: _trialAvailable && _trialPriceCtrl.text.trim().isNotEmpty
+            ? double.tryParse(_trialPriceCtrl.text.trim())
+            : null,
+        trialLessonComment: _trialAvailable && _trialCommentCtrl.text.trim().isNotEmpty
+            ? _trialCommentCtrl.text.trim()
+            : null,
       );
       if (!mounted) return;
       _showSnack('Changes saved successfully', const Color(0xFF059669));
@@ -293,7 +311,10 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        behavior: HitTestBehavior.translucent,
+        child: SafeArea(
         child: Column(
           children: [
             _buildHeader(),
@@ -372,6 +393,19 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
                           ),
                           fieldHint: '+972...'),
                       const SizedBox(height: 24),
+                      _sectionLabel(l10n.trialLesson),
+                      const SizedBox(height: 12),
+                      _buildTrialToggle(l10n),
+                      if (_trialAvailable) ...[
+                        const SizedBox(height: 16),
+                        _field(l10n.trialLessonPrice, _trialPriceCtrl,
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            prefixIcon: Icons.attach_money_rounded,
+                            fieldHint: '0.00'),
+                        const SizedBox(height: 16),
+                        _field(l10n.trialLessonComment, _trialCommentCtrl, maxLines: 3),
+                      ],
+                      const SizedBox(height: 24),
                       _sectionLabel('Media'),
                       const SizedBox(height: 12),
                       _imagePicker(
@@ -397,6 +431,7 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
               ),
           ],
         ),
+      ),
       ),
     );
   }
@@ -433,6 +468,45 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTrialToggle(dynamic l10n) {
+    return GestureDetector(
+      onTap: () => setState(() => _trialAvailable = !_trialAvailable),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: _trialAvailable
+              ? AppColors.purple.withValues(alpha: 0.07)
+              : AppColors.surfaceElevated,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: _trialAvailable ? AppColors.purple.withValues(alpha: 0.3) : AppColors.divider,
+          ),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.school_rounded, size: 20, color: AppColors.textMuted),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                '${l10n.trialLesson} available',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+            Switch(
+              value: _trialAvailable,
+              onChanged: (v) => setState(() => _trialAvailable = v),
+              activeColor: AppColors.purple,
+            ),
+          ],
+        ),
       ),
     );
   }

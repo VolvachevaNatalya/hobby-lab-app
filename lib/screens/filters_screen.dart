@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../services/api_service.dart';
 
-const _days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const _days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 class FiltersScreen extends StatefulWidget {
   const FiltersScreen({super.key});
@@ -13,7 +13,7 @@ class FiltersScreen extends StatefulWidget {
 }
 
 class _FiltersScreenState extends State<FiltersScreen> {
-  RangeValues _age = const RangeValues(3, 18);
+  RangeValues _age = const RangeValues(3, 120);
   RangeValues _price = const RangeValues(0, 500);
   double _distance = 10;
   final Set<String> _selectedCats = {};
@@ -42,7 +42,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
   }
 
   void _reset() => setState(() {
-        _age = const RangeValues(3, 18);
+        _age = const RangeValues(3, 120);
         _price = const RangeValues(0, 500);
         _distance = 10;
         _selectedCats.clear();
@@ -50,7 +50,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
       });
 
   int get _activeCount =>
-      (_age != const RangeValues(3, 18) ? 1 : 0) +
+      (_age != const RangeValues(3, 120) ? 1 : 0) +
       (_price != const RangeValues(0, 500) ? 1 : 0) +
       (_distance != 10 ? 1 : 0) +
       _selectedCats.length +
@@ -81,8 +81,8 @@ class _FiltersScreenState extends State<FiltersScreen> {
                     _buildRangeSlider(
                       values: _age,
                       min: 3,
-                      max: 18,
-                      divisions: 15,
+                      max: 120,
+                      divisions: 117,
                       onChanged: (v) => setState(() => _age = v),
                     ),
                     const SizedBox(height: 24),

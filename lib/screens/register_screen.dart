@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_text_field.dart';
 import '../widgets/gradient_button.dart';
-import '../widgets/social_login_button.dart';
 import '../services/api_service.dart';
 import 'main_shell.dart';
 
@@ -88,7 +88,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
     return Scaffold(
-      body: Container(
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        behavior: HitTestBehavior.translucent,
+        child: Container(
         decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
         child: SafeArea(
           child: SingleChildScrollView(
@@ -199,33 +202,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 28),
                 const _OrDivider(),
                 const SizedBox(height: 20),
-                SocialLoginButton(
-                  icon: const BrandLetterIcon(
-                      letter: 'G', color: Color(0xFF4285F4)),
-                  label: l10n.continueWithGoogle,
-                  onTap: () {},
-                ),
-                const SizedBox(height: 12),
-                SocialLoginButton(
-                  icon: const Icon(Icons.apple, color: Colors.white, size: 22),
-                  label: l10n.continueWithApple,
-                  onTap: () {},
-                ),
-                const SizedBox(height: 12),
-                SocialLoginButton(
-                  icon: const BrandLetterIcon(
-                      letter: 'f',
-                      color: Color(0xFF1877F2),
-                      fontSize: 20),
-                  label: l10n.continueWithFacebook,
-                  onTap: () {},
-                ),
-                const SizedBox(height: 12),
-                SocialLoginButton(
-                  icon: const BrandLetterIcon(
-                      letter: 'M', color: Color(0xFFEA4335)),
-                  label: l10n.continueWithGmail,
-                  onTap: () {},
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _SocialIconButton(
+                      icon: const FaIcon(FontAwesomeIcons.google,
+                          color: Color(0xFF4285F4), size: 24),
+                      onTap: () {},
+                    ),
+                    const SizedBox(width: 20),
+                    _SocialIconButton(
+                      icon: const FaIcon(FontAwesomeIcons.apple,
+                          color: Colors.white, size: 24),
+                      onTap: () {},
+                    ),
+                    const SizedBox(width: 20),
+                    _SocialIconButton(
+                      icon: const FaIcon(FontAwesomeIcons.facebook,
+                          color: Color(0xFF1877F2), size: 24),
+                      onTap: () {},
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 28),
                 _TermsText(onLogin: _goToLogin),
@@ -234,6 +231,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
         ),
+      ),
       ),
     );
   }
@@ -284,6 +282,30 @@ class _OrDivider extends StatelessWidget {
         ),
         const Expanded(child: Divider(color: AppColors.divider, thickness: 1)),
       ],
+    );
+  }
+}
+
+class _SocialIconButton extends StatelessWidget {
+  final Widget icon;
+  final VoidCallback onTap;
+
+  const _SocialIconButton({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: AppColors.surfaceElevated,
+          border: Border.all(color: AppColors.divider, width: 1),
+        ),
+        child: Center(child: icon),
+      ),
     );
   }
 }

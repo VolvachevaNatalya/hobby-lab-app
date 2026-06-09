@@ -12,7 +12,6 @@ import 'profile_screen.dart';
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
 
-  // Use a ValueNotifier so any screen can switch tabs without a GlobalKey.
   static final tabNotifier = ValueNotifier<int>(0);
 
   static void switchTab(int index) => tabNotifier.value = index;
@@ -67,11 +66,26 @@ class _MainShellState extends State<MainShell> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final navItems = [
-      _NavItem(icon: Icons.home_rounded, outlinedIcon: Icons.home_outlined, label: l10n.navHome),
-      _NavItem(icon: Icons.chat_bubble_rounded, outlinedIcon: Icons.chat_bubble_outline_rounded, label: l10n.navMessages),
-      _NavItem(icon: Icons.bookmark_rounded, outlinedIcon: Icons.bookmark_outline_rounded, label: l10n.navSaved),
-      _NavItem(icon: Icons.notifications_rounded, outlinedIcon: Icons.notifications_outlined, label: l10n.navAlerts),
-      _NavItem(icon: Icons.person_rounded, outlinedIcon: Icons.person_outline_rounded, label: l10n.navProfile),
+      _NavItem(
+          icon: Icons.home_rounded,
+          outlinedIcon: Icons.home_outlined,
+          label: l10n.navHome),
+      _NavItem(
+          icon: Icons.chat_bubble_rounded,
+          outlinedIcon: Icons.chat_bubble_outline_rounded,
+          label: l10n.navMessages),
+      _NavItem(
+          icon: Icons.bookmark_rounded,
+          outlinedIcon: Icons.bookmark_outline_rounded,
+          label: l10n.navSaved),
+      _NavItem(
+          icon: Icons.notifications_rounded,
+          outlinedIcon: Icons.notifications_outlined,
+          label: l10n.navAlerts),
+      _NavItem(
+          icon: Icons.person_rounded,
+          outlinedIcon: Icons.person_outline_rounded,
+          label: l10n.navProfile),
     ];
 
     return Scaffold(
@@ -156,7 +170,8 @@ class _BottomNav extends StatelessWidget {
                           isActive
                               ? ShaderMask(
                                   shaderCallback: (bounds) =>
-                                      AppColors.brandGradient.createShader(bounds),
+                                      AppColors.brandGradient
+                                          .createShader(bounds),
                                   child: Icon(item.icon,
                                       size: 24, color: Colors.white),
                                 )
@@ -192,12 +207,10 @@ class _BottomNav extends StatelessWidget {
                         item.label,
                         style: GoogleFonts.poppins(
                           fontSize: 10,
-                          fontWeight: isActive
-                              ? FontWeight.w600
-                              : FontWeight.w400,
-                          color: isActive
-                              ? AppColors.purple
-                              : AppColors.textMuted,
+                          fontWeight:
+                              isActive ? FontWeight.w600 : FontWeight.w400,
+                          color:
+                              isActive ? AppColors.purple : AppColors.textMuted,
                         ),
                       ),
                     ],

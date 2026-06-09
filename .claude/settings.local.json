@@ -53,7 +53,9 @@
       "Bash(sed -n '460,510p' /home/natalya/hobby_lab/lib/screens/organization_registration_screen.dart)",
       "Bash(sed -n '125,160p' /home/natalya/hobby_lab/lib/screens/edit_organization_screen.dart)",
       "Bash(.venv/bin/python3 -c ' *)",
-      "Bash(grep -v \"^$\")"
+      "Bash(grep -v \"^$\")",
+      "Bash(flutter --version)",
+      "Bash(grep -n \"GestureDetector\\\\|body:\\\\|^      \\),$\" /home/natalya/hobby_lab/lib/screens/register_screen.dart)"
     ]
   }
 }

@@ -146,10 +146,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
         ),
       ),
     );
-    if (mounted) {
-      _tab = 1;
-      _loadData();
-    }
+    if (mounted) _loadData();
   }
 
   Future<void> _goEditClass(OrgClass cls) async {
@@ -188,10 +185,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
         ),
       ),
     );
-    if (mounted) {
-      _tab = 2;
-      _loadData();
-    }
+    if (mounted) _loadData();
   }
 
   Future<void> _goEditEvent(OrgEvent event) async {

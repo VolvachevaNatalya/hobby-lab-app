@@ -57,7 +57,7 @@ class _OrganizationRegistrationScreenState
   List<String> _categories = [];
   bool _loadingCategories = true;
 
-  static const _days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  static const _days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   late final Map<String, _DaySchedule> _schedule;
 
@@ -68,7 +68,7 @@ class _OrganizationRegistrationScreenState
     _schedule = {
       for (var i = 0; i < _days.length; i++)
         _days[i]: _DaySchedule(
-          enabled: i < 5,
+          enabled: i >= 1 && i <= 5,
           open: const TimeOfDay(hour: 9, minute: 0),
           close: const TimeOfDay(hour: 18, minute: 0),
         ),
@@ -320,8 +320,12 @@ class _OrganizationRegistrationScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        behavior: HitTestBehavior.translucent,
+        child: SafeArea(
         child: _buildForm(),
+      ),
       ),
     );
   }

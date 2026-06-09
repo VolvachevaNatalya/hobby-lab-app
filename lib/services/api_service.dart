@@ -789,6 +789,9 @@ class ApiService {
     String? whatsappUrl,
     String? logoUrl,
     String? bannerUrl,
+    bool? trialLessonAvailable,
+    double? trialLessonPrice,
+    String? trialLessonComment,
   }) async {
     final headers = await _authHeaders();
     final body = <String, dynamic>{};
@@ -807,6 +810,9 @@ class ApiService {
     if (whatsappUrl != null) body['whatsapp_url'] = whatsappUrl;
     if (logoUrl != null) body['logo_url'] = logoUrl;
     if (bannerUrl != null) body['banner_url'] = bannerUrl;
+    if (trialLessonAvailable != null) body['trial_lesson_available'] = trialLessonAvailable;
+    if (trialLessonPrice != null) body['trial_lesson_price'] = trialLessonPrice;
+    if (trialLessonComment != null) body['trial_lesson_comment'] = trialLessonComment;
     final response = await http.put(
       Uri.parse('$_baseUrl/organizations/$id'),
       headers: headers,

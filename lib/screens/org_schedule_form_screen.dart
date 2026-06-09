@@ -4,7 +4,7 @@ import '../theme/app_theme.dart';
 import '../models/org_models.dart';
 import '../services/api_service.dart';
 
-const _kDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const _kDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 class _Slot {
   String day;
@@ -12,7 +12,7 @@ class _Slot {
   TimeOfDay end;
 
   _Slot({
-    this.day = 'Mon',
+    this.day = 'Sun',
     this.start = const TimeOfDay(hour: 9, minute: 0),
     this.end = const TimeOfDay(hour: 10, minute: 0),
   });
@@ -111,7 +111,10 @@ class _OrgScheduleFormScreenState extends State<OrgScheduleFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        behavior: HitTestBehavior.translucent,
+        child: SafeArea(
         child: Column(
           children: [
             _buildHeader(),
@@ -140,6 +143,7 @@ class _OrgScheduleFormScreenState extends State<OrgScheduleFormScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }
