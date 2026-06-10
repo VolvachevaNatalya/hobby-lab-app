@@ -60,6 +60,7 @@ class OrgEvent {
   int maxAge;
   int capacity;
   double price;
+  String? priceComment;
   bool isNationwide;
 
   OrgEvent({
@@ -74,6 +75,7 @@ class OrgEvent {
     this.maxAge = 99,
     this.capacity = 20,
     this.price = 0,
+    this.priceComment,
     this.isNationwide = false,
   });
 }

@@ -1227,6 +1227,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Password changed successfully'**
   String get passwordChangedSuccess;
+
+  /// No description provided for @trialLesson.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial Lesson'**
+  String get trialLesson;
+
+  /// No description provided for @trialLessonPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial Lesson Price'**
+  String get trialLessonPrice;
+
+  /// No description provided for @trialLessonComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment'**
+  String get trialLessonComment;
+
+  /// No description provided for @eventPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get eventPrice;
+
+  /// No description provided for @eventFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get eventFree;
+
+  /// No description provided for @eventPriceComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Price Comment'**
+  String get eventPriceComment;
 }
 
 class _AppLocalizationsDelegate

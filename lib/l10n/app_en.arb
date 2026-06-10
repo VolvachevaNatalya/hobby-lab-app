@@ -236,5 +236,11 @@
   "errorPasswordTooShort": "Password must be at least 6 characters",
   "errorPasswordsDoNotMatch": "Passwords do not match",
   "errorCurrentPasswordWrong": "Current password is incorrect",
-  "passwordChangedSuccess": "Password changed successfully"
+  "passwordChangedSuccess": "Password changed successfully",
+  "trialLesson": "Trial Lesson",
+  "trialLessonPrice": "Trial Lesson Price",
+  "trialLessonComment": "Comment",
+  "eventPrice": "Price",
+  "eventFree": "Free",
+  "eventPriceComment": "Price Comment"
 }

@@ -769,8 +769,6 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    const Icon(Icons.attach_money_rounded, size: 16, color: AppColors.textMuted),
-                    const SizedBox(width: 4),
                     Text(
                       '₪${price is double ? price.toStringAsFixed(price.truncateToDouble() == price ? 0 : 2) : price}',
                       style: GoogleFonts.poppins(

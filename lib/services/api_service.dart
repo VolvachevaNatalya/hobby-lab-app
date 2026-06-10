@@ -713,6 +713,44 @@ class ApiService {
     }
   }
 
+  static Future<Map<String, dynamic>> updateEvent(
+    int eventId, {
+    String? title,
+    String? description,
+    String? startDatetime,
+    int? categoryId,
+    int? minAge,
+    int? maxAge,
+    int? capacity,
+    String? address,
+    bool? isNationwide,
+    double? price,
+    String? priceComment,
+  }) async {
+    final headers = await _authHeaders();
+    final body = <String, dynamic>{};
+    if (title != null) body['title'] = title;
+    if (description != null) body['description'] = description;
+    if (startDatetime != null) body['start_datetime'] = startDatetime;
+    if (categoryId != null) body['category_id'] = categoryId;
+    if (minAge != null) body['min_age'] = minAge;
+    if (maxAge != null) body['max_age'] = maxAge;
+    if (capacity != null) body['capacity'] = capacity;
+    if (address != null) body['address'] = address;
+    if (isNationwide != null) body['is_nationwide'] = isNationwide;
+    if (price != null) body['price'] = price;
+    if (priceComment != null) body['price_comment'] = priceComment;
+    final response = await http.put(
+      Uri.parse('$_baseUrl/events/$eventId'),
+      headers: headers,
+      body: jsonEncode(body),
+    );
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    }
+    throw Exception('Failed to update event');
+  }
+
   static Future<void> deleteEvent(int eventId) async {
     final response = await http.delete(
       Uri.parse('$_baseUrl/events/$eventId'),
@@ -896,6 +934,8 @@ class ApiService {
     int? capacity,
     String? address,
     bool isNationwide = false,
+    double? price,
+    String? priceComment,
   }) async {
     final headers = await _authHeaders();
     final body = <String, dynamic>{
@@ -910,6 +950,8 @@ class ApiService {
     if (maxAge != null && maxAge < 99) body['max_age'] = maxAge;
     if (capacity != null) body['capacity'] = capacity;
     if (address != null && address.isNotEmpty) body['address'] = address;
+    if (price != null) body['price'] = price;
+    if (priceComment != null && priceComment.isNotEmpty) body['price_comment'] = priceComment;
     final response = await http.post(
       Uri.parse('$_baseUrl/events/'),
       headers: headers,

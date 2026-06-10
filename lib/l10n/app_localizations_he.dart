@@ -586,4 +586,22 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get passwordChangedSuccess => 'הסיסמה שונתה בהצלחה';
+
+  @override
+  String get trialLesson => 'שיעור ניסיון';
+
+  @override
+  String get trialLessonPrice => 'מחיר שיעור ניסיון';
+
+  @override
+  String get trialLessonComment => 'הערה';
+
+  @override
+  String get eventPrice => 'מחיר';
+
+  @override
+  String get eventFree => 'חינם';
+
+  @override
+  String get eventPriceComment => 'הערה למחיר';
 }

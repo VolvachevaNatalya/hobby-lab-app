@@ -594,4 +594,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordChangedSuccess => 'Password changed successfully';
+
+  @override
+  String get trialLesson => 'Trial Lesson';
+
+  @override
+  String get trialLessonPrice => 'Trial Lesson Price';
+
+  @override
+  String get trialLessonComment => 'Comment';
+
+  @override
+  String get eventPrice => 'Price';
+
+  @override
+  String get eventFree => 'Free';
+
+  @override
+  String get eventPriceComment => 'Price Comment';
 }

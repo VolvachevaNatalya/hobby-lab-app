@@ -236,5 +236,11 @@
   "errorPasswordTooShort": "Пароль должен содержать не менее 6 символов",
   "errorPasswordsDoNotMatch": "Пароли не совпадают",
   "errorCurrentPasswordWrong": "Текущий пароль неверен",
-  "passwordChangedSuccess": "Пароль успешно изменён"
+  "passwordChangedSuccess": "Пароль успешно изменён",
+  "trialLesson": "Пробный урок",
+  "trialLessonPrice": "Цена пробного урока",
+  "trialLessonComment": "Комментарий",
+  "eventPrice": "Цена",
+  "eventFree": "Бесплатно",
+  "eventPriceComment": "Комментарий к цене"
 }

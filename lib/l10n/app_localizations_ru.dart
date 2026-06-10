@@ -597,4 +597,22 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get passwordChangedSuccess => 'Пароль успешно изменён';
+
+  @override
+  String get trialLesson => 'Пробный урок';
+
+  @override
+  String get trialLessonPrice => 'Цена пробного урока';
+
+  @override
+  String get trialLessonComment => 'Комментарий';
+
+  @override
+  String get eventPrice => 'Цена';
+
+  @override
+  String get eventFree => 'Бесплатно';
+
+  @override
+  String get eventPriceComment => 'Комментарий к цене';
 }

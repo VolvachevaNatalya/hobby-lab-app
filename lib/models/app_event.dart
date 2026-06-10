@@ -14,6 +14,8 @@ class AppEvent {
   final int? capacity;
   final double? distanceKm;
   final bool isNationwide;
+  final double? price;
+  final String? priceComment;
 
   const AppEvent({
     required this.id,
@@ -31,6 +33,8 @@ class AppEvent {
     this.capacity,
     this.distanceKm,
     this.isNationwide = false,
+    this.price,
+    this.priceComment,
   });
 
   factory AppEvent.fromJson(Map<String, dynamic> json) {
@@ -50,6 +54,8 @@ class AppEvent {
       capacity: json['capacity'] as int?,
       distanceKm: (json['distance_km'] as num?)?.toDouble(),
       isNationwide: json['is_nationwide'] as bool? ?? false,
+      price: (json['price'] as num?)?.toDouble(),
+      priceComment: json['price_comment']?.toString(),
     );
   }
 }

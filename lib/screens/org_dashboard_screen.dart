@@ -115,7 +115,8 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
           minAge: (json['min_age'] ?? 0) as int,
           maxAge: (json['max_age'] ?? 99) as int,
           capacity: (json['capacity'] ?? 0) as int,
-          price: 0,
+          price: (json['price'] as num?)?.toDouble() ?? 0,
+          priceComment: json['price_comment']?.toString(),
           isNationwide: json['is_nationwide'] as bool? ?? false,
         );
       }).toList();
@@ -774,53 +775,53 @@ class _ClassPreviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = catColorStart(cls.category);
     final ce = catColorEnd(cls.category);
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceElevated,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 46,
-            height: 46,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [cs, ce],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight),
-              borderRadius: BorderRadius.circular(12),
+    return GestureDetector(
+      onTap: onManage,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.surfaceElevated,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.divider),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [cs, ce],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(catIcon(cls.category),
+                  color: Colors.white, size: 22),
             ),
-            child: Icon(catIcon(cls.category),
-                color: Colors.white, size: 22),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  cls.name,
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    cls.name,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
-                ),
-                Text(
-                  '${cls.category} · ${cls.groups.length} group${cls.groups.length != 1 ? 's' : ''}',
-                  style: GoogleFonts.poppins(
-                      fontSize: 11, color: AppColors.textMuted),
-                ),
-              ],
+                  Text(
+                    '${cls.category} · ${cls.groups.length} group${cls.groups.length != 1 ? 's' : ''}',
+                    style: GoogleFonts.poppins(
+                        fontSize: 11, color: AppColors.textMuted),
+                  ),
+                ],
+              ),
             ),
-          ),
-          GestureDetector(
-            onTap: onManage,
-            child: Container(
+            Container(
               padding:
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
@@ -838,8 +839,8 @@ class _ClassPreviewCard extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -854,53 +855,53 @@ class _EventPreviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = catColorStart(event.category);
     final ce = catColorEnd(event.category);
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceElevated,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 46,
-            height: 46,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [cs, ce],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight),
-              borderRadius: BorderRadius.circular(12),
+    return GestureDetector(
+      onTap: onManage,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.surfaceElevated,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.divider),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [cs, ce],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(catIcon(event.category),
+                  color: Colors.white, size: 22),
             ),
-            child: Icon(catIcon(event.category),
-                color: Colors.white, size: 22),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  event.name,
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    event.name,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
-                ),
-                Text(
-                  '${fmtDate(event.date)} · ${event.price == 0 ? 'Free' : '₪${event.price.toStringAsFixed(0)}'}',
-                  style: GoogleFonts.poppins(
-                      fontSize: 11, color: AppColors.textMuted),
-                ),
-              ],
+                  Text(
+                    '${fmtDate(event.date)} · ${event.price == 0 ? 'Free' : '₪${event.price.toStringAsFixed(0)}'}',
+                    style: GoogleFonts.poppins(
+                        fontSize: 11, color: AppColors.textMuted),
+                  ),
+                ],
+              ),
             ),
-          ),
-          GestureDetector(
-            onTap: onManage,
-            child: Container(
+            Container(
               padding:
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
@@ -918,8 +919,8 @@ class _EventPreviewCard extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

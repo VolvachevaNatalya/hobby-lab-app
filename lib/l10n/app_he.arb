@@ -236,5 +236,11 @@
   "errorPasswordTooShort": "הסיסמה חייבת להכיל לפחות 6 תווים",
   "errorPasswordsDoNotMatch": "הסיסמאות אינן תואמות",
   "errorCurrentPasswordWrong": "הסיסמה הנוכחית שגויה",
-  "passwordChangedSuccess": "הסיסמה שונתה בהצלחה"
+  "passwordChangedSuccess": "הסיסמה שונתה בהצלחה",
+  "trialLesson": "שיעור ניסיון",
+  "trialLessonPrice": "מחיר שיעור ניסיון",
+  "trialLessonComment": "הערה",
+  "eventPrice": "מחיר",
+  "eventFree": "חינם",
+  "eventPriceComment": "הערה למחיר"
 }

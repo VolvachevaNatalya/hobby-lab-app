@@ -25,6 +25,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
   final _maxAgeCtrl = TextEditingController();
   final _capacityCtrl = TextEditingController();
   final _priceCtrl = TextEditingController();
+  final _priceCommentCtrl = TextEditingController();
 
   // Keys for scrolling to first error
   final _detailsCardKey = GlobalKey();
@@ -55,6 +56,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
       _maxAgeCtrl.text = e.maxAge < 99 ? '${e.maxAge}' : '';
       _capacityCtrl.text = e.capacity.toString();
       _priceCtrl.text = e.price > 0 ? e.price.toStringAsFixed(0) : '';
+      _priceCommentCtrl.text = e.priceComment ?? '';
       _category = e.category;
       _date = e.date;
       _time = e.time;
@@ -91,6 +93,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
     _maxAgeCtrl.dispose();
     _capacityCtrl.dispose();
     _priceCtrl.dispose();
+    _priceCommentCtrl.dispose();
     super.dispose();
   }
 
@@ -258,20 +261,49 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
       return;
     }
 
-    // Edit mode: return updated event to parent
+    // Edit mode: persist to API then return updated event to parent
     if (_isEdit) {
+      setState(() => _saving = true);
+      final eventTime = _time ?? const TimeOfDay(hour: 10, minute: 0);
+      final startDt = DateTime(
+        _date!.year, _date!.month, _date!.day,
+        eventTime.hour, eventTime.minute,
+      );
+      final parsedPrice = double.tryParse(_priceCtrl.text.trim());
+      final commentText = _priceCommentCtrl.text.trim();
+      final id = int.tryParse(widget.event!.id);
+      if (id != null) {
+        try {
+          await ApiService.updateEvent(
+            id,
+            title: _nameCtrl.text.trim(),
+            description: _descCtrl.text.trim().isNotEmpty ? _descCtrl.text.trim() : null,
+            startDatetime: startDt.toIso8601String(),
+            minAge: int.tryParse(_minAgeCtrl.text),
+            maxAge: int.tryParse(_maxAgeCtrl.text),
+            capacity: int.tryParse(_capacityCtrl.text),
+            address: _locationCtrl.text.trim().isNotEmpty ? _locationCtrl.text.trim() : null,
+            isNationwide: _isNationwide,
+            price: parsedPrice,
+            priceComment: commentText.isNotEmpty ? commentText : null,
+          );
+        } catch (_) {}
+      }
+      if (!mounted) return;
+      setState(() => _saving = false);
       final event = OrgEvent(
         id: widget.event!.id,
         name: _nameCtrl.text.trim(),
         category: _category,
         description: _descCtrl.text.trim(),
         date: _date!,
-        time: _time ?? const TimeOfDay(hour: 10, minute: 0),
+        time: eventTime,
         location: _locationCtrl.text.trim(),
         minAge: int.tryParse(_minAgeCtrl.text) ?? 0,
         maxAge: int.tryParse(_maxAgeCtrl.text) ?? 99,
         capacity: int.tryParse(_capacityCtrl.text) ?? 20,
-        price: double.tryParse(_priceCtrl.text) ?? 0,
+        price: parsedPrice ?? 0,
+        priceComment: commentText.isNotEmpty ? commentText : null,
         isNationwide: _isNationwide,
       );
       Navigator.of(context).pop(event);
@@ -302,6 +334,10 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
             ? _locationCtrl.text.trim()
             : null,
         isNationwide: _isNationwide,
+        price: double.tryParse(_priceCtrl.text.trim()),
+        priceComment: _priceCommentCtrl.text.trim().isNotEmpty
+            ? _priceCommentCtrl.text.trim()
+            : null,
       );
       if (!mounted) return;
       _showSnack('Event created successfully', const Color(0xFF059669));
@@ -420,8 +456,14 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                         ctrl: _priceCtrl,
                         hint: 'Price (₪) — leave blank if free',
                         icon: Icons.payments_rounded,
-                        type: TextInputType.number,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        type: const TextInputType.numberWithOptions(decimal: true),
+                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))],
+                      ),
+                      _divider(),
+                      _inlineField(
+                        ctrl: _priceCommentCtrl,
+                        hint: 'Price comment (optional)',
+                        icon: Icons.comment_rounded,
                         action: TextInputAction.done,
                       ),
                     ]),
