@@ -1582,7 +1582,7 @@ class _Chip extends StatelessWidget {
 // ─── Social icon button ───────────────────────────────────────────────────────
 
 class _SocialIcon extends StatelessWidget {
-  final FaIconData icon
+  final FaIconData icon;
   final Color color;
   final List<Color> gradientColors;
   final VoidCallback onTap;
