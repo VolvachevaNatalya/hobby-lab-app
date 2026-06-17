@@ -46,3 +46,7 @@ app.*.map.json
 
 # Local config overrides (may contain API keys)
 lib/config/app_config.local.dart
+
+# Android signing
+android/key.properties
+*.jks
