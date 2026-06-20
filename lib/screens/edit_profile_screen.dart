@@ -23,6 +23,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String? _selectedAvatarPath;
   bool _loading = true;
   bool _saving = false;
+  bool _avatarUploading = false;
+  bool _avatarUploadFailed = false;
   bool _submitted = false;
   final _picker = ImagePicker();
 
@@ -64,7 +66,38 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Future<void> _pickAvatar() async {
     final xfile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
     if (xfile == null || !mounted) return;
-    setState(() => _selectedAvatarPath = xfile.path);
+    // Show local preview immediately
+    setState(() {
+      _selectedAvatarPath = xfile.path;
+      _avatarUploading = true;
+      _avatarUploadFailed = false;
+    });
+    try {
+      final url = await ApiService.uploadFile(xfile.path);
+      if (!mounted) return;
+      setState(() {
+        _existingAvatarUrl = url;
+        _selectedAvatarPath = null;
+        _avatarUploadFailed = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _selectedAvatarPath = null;
+        _avatarUploadFailed = true;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Failed to upload image: $e',
+            style: GoogleFonts.poppins(fontSize: 13, color: Colors.white)),
+        backgroundColor: const Color(0xFFEF4444),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        margin: const EdgeInsets.all(16),
+        duration: const Duration(seconds: 5),
+      ));
+    } finally {
+      if (mounted) setState(() => _avatarUploading = false);
+    }
   }
 
   String _initials(String name) {
@@ -186,7 +219,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         alignment: Alignment.center,
         children: [
           GestureDetector(
-            onTap: _pickAvatar,
+            onTap: _avatarUploading ? null : _pickAvatar,
             child: Container(
               width: 96,
               height: 96,
@@ -204,27 +237,45 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
             ),
           ),
-          Positioned(
-            right: 0,
-            bottom: 0,
-            child: GestureDetector(
-              onTap: _pickAvatar,
-              child: Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: AppColors.brandGradient,
-                  border: Border.all(color: AppColors.background, width: 2),
-                ),
-                child: const Icon(
-                  Icons.camera_alt_rounded,
-                  size: 15,
-                  color: Colors.white,
+          if (_avatarUploading)
+            Container(
+              width: 96,
+              height: 96,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.black.withValues(alpha: 0.4),
+              ),
+              child: const Center(
+                child: SizedBox(
+                  width: 28,
+                  height: 28,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2.5, color: Colors.white),
                 ),
               ),
             ),
-          ),
+          if (!_avatarUploading)
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: GestureDetector(
+                onTap: _pickAvatar,
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: AppColors.brandGradient,
+                    border: Border.all(color: AppColors.background, width: 2),
+                  ),
+                  child: const Icon(
+                    Icons.camera_alt_rounded,
+                    size: 15,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -266,6 +317,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Future<void> _save(BuildContext context) async {
     if (_saving) return;
+    if (_avatarUploading) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Please wait for image upload to finish',
+            style: GoogleFonts.poppins(fontSize: 13, color: Colors.white)),
+        backgroundColor: AppColors.purple,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        margin: const EdgeInsets.all(16),
+      ));
+      return;
+    }
+    if (_avatarUploadFailed) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Image upload failed — please try again or remove the photo',
+            style: GoogleFonts.poppins(fontSize: 13, color: Colors.white)),
+        backgroundColor: const Color(0xFFEF4444),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        margin: const EdgeInsets.all(16),
+      ));
+      return;
+    }
     if (_nameController.text.trim().isEmpty) {
       setState(() => _submitted = true);
       return;
@@ -280,7 +353,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         phone: _phoneController.text.trim().isNotEmpty
             ? _phoneController.text.trim()
             : null,
-        avatarUrl: _selectedAvatarPath ?? _existingAvatarUrl,
+        avatarUrl: _existingAvatarUrl,
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

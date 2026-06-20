@@ -289,7 +289,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
             onDelete: _deleteEvent,
           ),
           const _MessagesTab(),
-          _ProfileTab(orgName: _orgName, initials: _initials, orgId: _orgId),
+          _ProfileTab(orgName: _orgName, initials: _initials, orgId: _orgId, onEditComplete: _loadData),
         ],
       ),
       bottomNavigationBar: _buildBottomNav(),
@@ -1518,11 +1518,13 @@ class _ProfileTab extends StatefulWidget {
   final String orgName;
   final String initials;
   final String orgId;
+  final VoidCallback? onEditComplete;
 
   const _ProfileTab({
     required this.orgName,
     required this.initials,
     required this.orgId,
+    this.onEditComplete,
   });
 
   @override
@@ -1530,13 +1532,13 @@ class _ProfileTab extends StatefulWidget {
 }
 
 class _ProfileTabState extends State<_ProfileTab> {
-  void _navigateEditProfile() {
+  Future<void> _navigateEditProfile() async {
     final orgIdInt = int.tryParse(widget.orgId);
     if (orgIdInt == null) {
       _showComingSoon('Edit Profile');
       return;
     }
-    Navigator.of(context).push(
+    await Navigator.of(context).push(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 300),
         pageBuilder: (_, _, _) => EditOrganizationScreen(
@@ -1552,6 +1554,7 @@ class _ProfileTabState extends State<_ProfileTab> {
         ),
       ),
     );
+    widget.onEditComplete?.call();
   }
 
   void _navigateChangePassword() {

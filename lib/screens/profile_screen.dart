@@ -56,6 +56,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<void> _navigateToEditProfile(BuildContext context) async {
+    await Navigator.of(context).push(PageRouteBuilder(
+      pageBuilder: (ctx, anim, secAnim) => const EditProfileScreen(),
+      transitionsBuilder: (ctx, anim, secAnim, child) => SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(1, 0),
+          end: Offset.zero,
+        ).animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
+        child: child,
+      ),
+      transitionDuration: const Duration(milliseconds: 300),
+    ));
+    _loadProfile();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +87,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 24),
-                      _UserInfoCard(profile: _profile),
+                      _UserInfoCard(
+                        profile: _profile,
+                        onEditTap: () => _navigateToEditProfile(context),
+                      ),
                       const SizedBox(height: 16),
                       if (_loadingOrg)
                         const Padding(
@@ -201,7 +219,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 class _UserInfoCard extends StatelessWidget {
   final UserProfile? profile;
-  const _UserInfoCard({this.profile});
+  final VoidCallback? onEditTap;
+  const _UserInfoCard({this.profile, this.onEditTap});
+
+  Widget _avatarWidget(String initials) {
+    final avatarUrl = profile?.avatarUrl;
+    if (avatarUrl != null && avatarUrl.isNotEmpty) {
+      return ClipOval(
+        child: Image.network(
+          avatarUrl,
+          width: 88,
+          height: 88,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _initialsCircle(initials),
+        ),
+      );
+    }
+    return _initialsCircle(initials);
+  }
+
+  Widget _initialsCircle(String initials) {
+    return Container(
+      width: 88,
+      height: 88,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          colors: [AppColors.purple, AppColors.pink],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Center(
+        child: Text(
+          initials,
+          style: GoogleFonts.poppins(
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -222,28 +282,7 @@ class _UserInfoCard extends StatelessWidget {
           Stack(
             alignment: Alignment.center,
             children: [
-              Container(
-                width: 88,
-                height: 88,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: const LinearGradient(
-                    colors: [AppColors.purple, AppColors.pink],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Center(
-                  child: Text(
-                    displayInitials,
-                    style: GoogleFonts.poppins(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
+              _avatarWidget(displayInitials),
               Positioned(
                 right: 0,
                 bottom: 0,
@@ -283,22 +322,7 @@ class _UserInfoCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           GestureDetector(
-            onTap: () => Navigator.of(context).push(PageRouteBuilder(
-              pageBuilder: (ctx, anim, secAnim) =>
-                  const EditProfileScreen(),
-              transitionsBuilder: (ctx, anim, secAnim, child) =>
-                  SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1, 0),
-                  end: Offset.zero,
-                ).animate(CurvedAnimation(
-                  parent: anim,
-                  curve: Curves.easeOutCubic,
-                )),
-                child: child,
-              ),
-              transitionDuration: const Duration(milliseconds: 300),
-            )),
+            onTap: onEditTap,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
               decoration: BoxDecoration(

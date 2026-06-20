@@ -391,12 +391,26 @@ class _OrgCard extends StatelessWidget {
                     gradient: LinearGradient(colors: [g.$1, g.$2], begin: Alignment.topLeft, end: Alignment.bottomRight),
                     borderRadius: BorderRadius.circular(11),
                   ),
-                  child: Center(
-                    child: Text(
-                      org.name.isNotEmpty ? org.name[0].toUpperCase() : '?',
-                      style: GoogleFonts.poppins(fontSize: 19, fontWeight: FontWeight.w700, color: Colors.white),
-                    ),
-                  ),
+                  child: org.logoUrl != null && org.logoUrl!.isNotEmpty
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(11),
+                          child: Image.network(
+                            org.logoUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Center(
+                              child: Text(
+                                org.name.isNotEmpty ? org.name[0].toUpperCase() : '?',
+                                style: GoogleFonts.poppins(fontSize: 19, fontWeight: FontWeight.w700, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        )
+                      : Center(
+                          child: Text(
+                            org.name.isNotEmpty ? org.name[0].toUpperCase() : '?',
+                            style: GoogleFonts.poppins(fontSize: 19, fontWeight: FontWeight.w700, color: Colors.white),
+                          ),
+                        ),
                 ),
                 const SizedBox(width: 9),
                 Expanded(

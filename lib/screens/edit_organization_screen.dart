@@ -84,6 +84,8 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
   String? _bannerPath;
   String? _logoUrl;
   String? _bannerUrl;
+  bool _logoUploading = false;
+  bool _bannerUploading = false;
 
   List<OrgPhoto> _photos = [];
   bool _photosLoading = false;
@@ -177,8 +179,8 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
     if (xfile == null || !mounted) return;
     setState(() => _photosLoading = true);
     try {
-      final photo = await ApiService.addOrgPhoto(
-          widget.orgId.toString(), xfile.path);
+      final url = await ApiService.uploadFile(xfile.path);
+      final photo = await ApiService.addOrgPhoto(widget.orgId.toString(), url);
       if (mounted) setState(() => _photos = [..._photos, photo]);
     } catch (_) {
       if (mounted) {
@@ -232,13 +234,43 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
   Future<void> _pickImage(bool isLogo) async {
     final xfile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
     if (xfile == null || !mounted) return;
+    // Show local preview immediately while uploading
     setState(() {
       if (isLogo) {
         _logoPath = xfile.path;
+        _logoUploading = true;
       } else {
         _bannerPath = xfile.path;
+        _bannerUploading = true;
       }
     });
+    try {
+      final url = await ApiService.uploadFile(xfile.path);
+      if (!mounted) return;
+      setState(() {
+        if (isLogo) {
+          _logoUrl = url;
+          _logoPath = null;
+        } else {
+          _bannerUrl = url;
+          _bannerPath = null;
+        }
+      });
+    } catch (_) {
+      if (!mounted) return;
+      _showSnack('Failed to upload image', const Color(0xFFEF4444));
+      setState(() {
+        if (isLogo) _logoPath = null;
+        else _bannerPath = null;
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          if (isLogo) _logoUploading = false;
+          else _bannerUploading = false;
+        });
+      }
+    }
   }
 
   Future<void> _save() async {
@@ -274,8 +306,8 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
         youtubeUrl:   _withSocialPrefix(_youtubeCtrl.text,   'youtube.com/'),
         tiktokUrl:    _withSocialPrefix(_tiktokCtrl.text,    'tiktok.com/@'),
         whatsappUrl:  _whatsappCtrl.text.trim().isNotEmpty ? _whatsappCtrl.text.trim() : null,
-        logoUrl: _logoPath ?? (_logoUrl?.isNotEmpty == true ? _logoUrl : null),
-        bannerUrl: _bannerPath ?? (_bannerUrl?.isNotEmpty == true ? _bannerUrl : null),
+        logoUrl: _logoUrl?.isNotEmpty == true ? _logoUrl : null,
+        bannerUrl: _bannerUrl?.isNotEmpty == true ? _bannerUrl : null,
         trialLessonAvailable: _trialAvailable,
         trialLessonPrice: _trialAvailable && _trialPriceCtrl.text.trim().isNotEmpty
             ? double.tryParse(_trialPriceCtrl.text.trim())
@@ -413,6 +445,7 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
                         imagePath: _logoPath,
                         existingUrl: _logoUrl,
                         onPick: () => _pickImage(true),
+                        isUploading: _logoUploading,
                       ),
                       const SizedBox(height: 16),
                       _imagePicker(
@@ -420,6 +453,7 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
                         imagePath: _bannerPath,
                         existingUrl: _bannerUrl,
                         onPick: () => _pickImage(false),
+                        isUploading: _bannerUploading,
                       ),
                       const SizedBox(height: 24),
                       _buildPhotosSection(context),
@@ -528,6 +562,7 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
     required String? imagePath,
     required String? existingUrl,
     required VoidCallback onPick,
+    bool isUploading = false,
   }) {
     final hasLocal = imagePath != null;
     final hasRemote = existingUrl != null && existingUrl.isNotEmpty;
@@ -545,7 +580,7 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
         ),
         const SizedBox(height: 6),
         GestureDetector(
-          onTap: onPick,
+          onTap: isUploading ? null : onPick,
           child: Container(
             height: 80,
             decoration: BoxDecoration(
@@ -582,30 +617,25 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        hasLocal ? 'Image selected' : 'Choose from gallery',
+                        isUploading
+                            ? 'Uploading...'
+                            : (hasLocal || hasRemote)
+                                ? (hasLocal ? 'Image selected' : 'Tap to replace')
+                                : 'Choose from gallery',
                         style: GoogleFonts.poppins(
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
-                          color: hasLocal
+                          color: (hasLocal || hasRemote)
                               ? AppColors.textPrimary
                               : AppColors.textSecondary,
                         ),
                       ),
-                      if (hasLocal) ...[
+                      if (!isUploading && hasLocal) ...[
                         const SizedBox(height: 2),
                         Text(
                           imagePath.split('/').last,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.poppins(
-                            fontSize: 11,
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                      ] else if (hasRemote) ...[
-                        const SizedBox(height: 2),
-                        Text(
-                          'Tap to replace',
                           style: GoogleFonts.poppins(
                             fontSize: 11,
                             color: AppColors.textMuted,
@@ -617,19 +647,26 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 14),
-                  child: Container(
-                    width: 34,
-                    height: 34,
-                    decoration: BoxDecoration(
-                      gradient: AppColors.brandGradient,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(
-                      Icons.add_photo_alternate_rounded,
-                      size: 18,
-                      color: Colors.white,
-                    ),
-                  ),
+                  child: isUploading
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: AppColors.purple),
+                        )
+                      : Container(
+                          width: 34,
+                          height: 34,
+                          decoration: BoxDecoration(
+                            gradient: AppColors.brandGradient,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.add_photo_alternate_rounded,
+                            size: 18,
+                            color: Colors.white,
+                          ),
+                        ),
                 ),
               ],
             ),

@@ -387,52 +387,68 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
   // ── Cover + avatar ───────────────────────────────────────────────────────────
 
   Widget _buildCover() {
+    final bannerUrl = _orgData?['banner_url'] as String?;
+    final logoUrl = _orgData?['logo_url'] as String?;
+    final hasBanner = bannerUrl != null && bannerUrl.isNotEmpty;
+    final hasLogo = logoUrl != null && logoUrl.isNotEmpty;
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        Container(
+        SizedBox(
           height: 200,
           width: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [widget.colorStart, widget.colorEnd],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
           child: Stack(
+            fit: StackFit.expand,
             children: [
-              Positioned(
-                right: -60,
-                top: -60,
-                child: Container(
-                  width: 220,
-                  height: 220,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.07),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [widget.colorStart, widget.colorEnd],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
                 ),
               ),
-              Positioned(
-                left: -40,
-                bottom: -40,
-                child: Container(
-                  width: 170,
-                  height: 170,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.06),
+              if (hasBanner)
+                Image.network(
+                  bannerUrl!,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                )
+              else ...[
+                Positioned(
+                  right: -60,
+                  top: -60,
+                  child: Container(
+                    width: 220,
+                    height: 220,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.07),
+                    ),
                   ),
                 ),
-              ),
-              Center(
-                child: Icon(
-                  Icons.business_rounded,
-                  size: 72,
-                  color: Colors.white.withValues(alpha: 0.12),
+                Positioned(
+                  left: -40,
+                  bottom: -40,
+                  child: Container(
+                    width: 170,
+                    height: 170,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.06),
+                    ),
+                  ),
                 ),
-              ),
+                Center(
+                  child: Icon(
+                    Icons.business_rounded,
+                    size: 72,
+                    color: Colors.white.withValues(alpha: 0.12),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
@@ -460,16 +476,33 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                   ),
                 ],
               ),
-              child: Center(
-                child: Text(
-                  _initials.isNotEmpty ? _initials : '?',
-                  style: GoogleFonts.poppins(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+              child: hasLogo
+                  ? ClipOval(
+                      child: Image.network(
+                        logoUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Center(
+                          child: Text(
+                            _initials.isNotEmpty ? _initials : '?',
+                            style: GoogleFonts.poppins(
+                              fontSize: 26,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : Center(
+                      child: Text(
+                        _initials.isNotEmpty ? _initials : '?',
+                        style: GoogleFonts.poppins(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
             ),
           ),
         ),

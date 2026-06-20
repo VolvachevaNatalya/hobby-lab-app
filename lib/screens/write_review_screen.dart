@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../services/api_service.dart';
@@ -25,14 +26,45 @@ class WriteReviewScreen extends StatefulWidget {
 class _WriteReviewScreenState extends State<WriteReviewScreen> {
   int _selectedStars = 0;
   final _textController = TextEditingController();
+  final _picker = ImagePicker();
+  final List<String> _photoUrls = [];
   bool _submitted = false;
   bool _saving = false;
+  bool _photoUploading = false;
+
+  static const _maxPhotos = 5;
 
   @override
   void dispose() {
     _textController.dispose();
     super.dispose();
   }
+
+  Future<void> _pickPhoto() async {
+    if (_photoUrls.length >= _maxPhotos || _photoUploading) return;
+    final xfile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
+    if (xfile == null || !mounted) return;
+    setState(() => _photoUploading = true);
+    try {
+      final url = await ApiService.uploadFile(xfile.path);
+      if (mounted) setState(() => _photoUrls.add(url));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: const Color(0xFFEF4444),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        content: Text(
+          'Failed to upload photo. Please try again.',
+          style: GoogleFonts.poppins(fontSize: 13, color: Colors.white),
+        ),
+      ));
+    } finally {
+      if (mounted) setState(() => _photoUploading = false);
+    }
+  }
+
+  void _removePhoto(int index) => setState(() => _photoUrls.removeAt(index));
 
   Future<void> _submit() async {
     if (_selectedStars == 0) {
@@ -63,6 +95,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
         comment: _textController.text.trim().isNotEmpty
             ? _textController.text.trim()
             : null,
+        photoUrls: _photoUrls.isNotEmpty ? List.unmodifiable(_photoUrls) : null,
       );
       if (!mounted) return;
       setState(() => _submitted = true);
@@ -120,7 +153,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                 const SizedBox(height: 28),
                 _buildTextField(),
                 const SizedBox(height: 20),
-                _buildPhotoButton(),
+                _buildPhotosSection(),
                 const SizedBox(height: 36),
                 _buildSubmitButton(),
               ],
@@ -327,57 +360,119 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
     );
   }
 
-  Widget _buildPhotoButton() {
-    return GestureDetector(
-      onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: AppColors.surfaceElevated,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          content: Text(
-            'Photo upload coming soon',
-            style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textPrimary),
-          ),
-        ),
-      ),
-      child: Container(
-        width: double.infinity,
-        height: 56,
-        decoration: BoxDecoration(
-          color: AppColors.surfaceElevated,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.divider),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildPhotosSection() {
+    final canAdd = _photoUrls.length < _maxPhotos;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
           children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: AppColors.purple.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(Icons.add_photo_alternate_rounded,
-                  size: 18, color: AppColors.purple),
-            ),
-            const SizedBox(width: 10),
             Text(
-              'Add Photos',
+              'Photos',
               style: GoogleFonts.poppins(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textSecondary,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(width: 6),
             Text(
-              '(optional)',
-              style: GoogleFonts.poppins(
-                  fontSize: 12, color: AppColors.textMuted),
+              '(optional, ${_photoUrls.length}/$_maxPhotos)',
+              style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textMuted),
             ),
           ],
         ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: [
+            ..._photoUrls.asMap().entries.map((e) => _buildPhotoTile(e.key, e.value)),
+            if (canAdd) _buildAddPhotoTile(),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPhotoTile(int index, String url) {
+    return Stack(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: SizedBox(
+            width: 80,
+            height: 80,
+            child: Image.network(
+              url,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                color: AppColors.surfaceElevated,
+                child: const Icon(Icons.image_outlined,
+                    color: AppColors.textMuted, size: 28),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 4,
+          right: 4,
+          child: GestureDetector(
+            onTap: () => _removePhoto(index),
+            child: Container(
+              width: 22,
+              height: 22,
+              decoration: const BoxDecoration(
+                color: Color(0xFFEF4444),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.close_rounded, size: 13, color: Colors.white),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAddPhotoTile() {
+    return GestureDetector(
+      onTap: _photoUploading ? null : _pickPhoto,
+      child: Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          color: AppColors.surfaceElevated,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: AppColors.purple.withValues(alpha: 0.4),
+            width: 1.5,
+          ),
+        ),
+        child: _photoUploading
+            ? const Center(
+                child: SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: AppColors.purple),
+                ),
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add_photo_alternate_rounded,
+                    size: 24,
+                    color: AppColors.purple.withValues(alpha: 0.8),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Add',
+                    style: GoogleFonts.poppins(
+                        fontSize: 10, color: AppColors.textMuted),
+                  ),
+                ],
+              ),
       ),
     );
   }

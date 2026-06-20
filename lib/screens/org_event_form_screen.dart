@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import '../theme/app_theme.dart';
 import '../models/org_models.dart';
 import '../models/app_category.dart';
@@ -33,6 +35,9 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
 
   String _category = '';
   String _categoryId = '';
+  String? _imageUrl;
+  String? _imageLocalPath;
+  bool _imageUploading = false;
   DateTime? _date;
   TimeOfDay? _time;
   List<AppCategory> _categories = [];
@@ -115,6 +120,30 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
         );
       }
     });
+  }
+
+  Future<void> _pickAndUploadImage() async {
+    final xfile = await ImagePicker().pickImage(
+        source: ImageSource.gallery, imageQuality: 85);
+    if (xfile == null || !mounted) return;
+    setState(() {
+      _imageLocalPath = xfile.path;
+      _imageUploading = true;
+    });
+    try {
+      final url = await ApiService.uploadFile(xfile.path);
+      if (!mounted) return;
+      setState(() {
+        _imageUrl = url;
+        _imageLocalPath = null;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      _showSnack('Failed to upload image', const Color(0xFFEF4444));
+      setState(() => _imageLocalPath = null);
+    } finally {
+      if (mounted) setState(() => _imageUploading = false);
+    }
   }
 
   void _showCategorySheet() {
@@ -286,6 +315,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
             isNationwide: _isNationwide,
             price: parsedPrice,
             priceComment: commentText.isNotEmpty ? commentText : null,
+            imageUrl: _imageUrl,
           );
         } catch (_) {}
       }
@@ -338,6 +368,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
         priceComment: _priceCommentCtrl.text.trim().isNotEmpty
             ? _priceCommentCtrl.text.trim()
             : null,
+        imageUrl: _imageUrl,
       );
       if (!mounted) return;
       _showSnack('Event created successfully', const Color(0xFF059669));
@@ -512,8 +543,9 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
   }
 
   Widget _buildImageUpload() {
+    final hasImage = _imageLocalPath != null || _imageUrl != null;
     return GestureDetector(
-      onTap: () {},
+      onTap: _imageUploading ? null : _pickAndUploadImage,
       child: Container(
         height: 130,
         decoration: BoxDecoration(
@@ -522,23 +554,56 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
           border: Border.all(
               color: AppColors.purple.withValues(alpha: 0.4), width: 1.5),
         ),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ShaderMask(
-                shaderCallback: (b) => AppColors.brandGradient.createShader(b),
-                child: const Icon(Icons.add_photo_alternate_rounded,
-                    color: Colors.white, size: 34),
-              ),
-              const SizedBox(height: 8),
-              Text('Upload Event Image',
-                  style: GoogleFonts.poppins(
-                      fontSize: 13, fontWeight: FontWeight.w500,
-                      color: AppColors.textMuted)),
-            ],
-          ),
-        ),
+        child: _imageUploading
+            ? const Center(
+                child: CircularProgressIndicator(color: AppColors.purple))
+            : hasImage
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        _imageLocalPath != null
+                            ? Image.file(File(_imageLocalPath!),
+                                fit: BoxFit.cover)
+                            : Image.network(_imageUrl!, fit: BoxFit.cover),
+                        Positioned(
+                          right: 8,
+                          bottom: 8,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.black54,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text('Tap to change',
+                                style: GoogleFonts.poppins(
+                                    fontSize: 11, color: Colors.white)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ShaderMask(
+                          shaderCallback: (b) =>
+                              AppColors.brandGradient.createShader(b),
+                          child: const Icon(Icons.add_photo_alternate_rounded,
+                              color: Colors.white, size: 34),
+                        ),
+                        const SizedBox(height: 8),
+                        Text('Upload Event Image',
+                            style: GoogleFonts.poppins(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textMuted)),
+                      ],
+                    ),
+                  ),
       ),
     );
   }

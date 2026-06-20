@@ -89,6 +89,43 @@ class ApiService {
     if (response.statusCode == 401) _onUnauthorized();
   }
 
+  // ── Upload ─────────────────────────────────────────────────────────────────
+
+  static Future<String> uploadFile(String filePath) async {
+    debugPrint('[Upload] uploading file: $filePath');
+    final token = await getSavedToken();
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$_baseUrl/upload'),
+    );
+    if (token != null) request.headers['Authorization'] = 'Bearer $token';
+    request.files.add(await http.MultipartFile.fromPath('file', filePath));
+    final streamed = await request.send();
+    final response = await http.Response.fromStream(streamed);
+    debugPrint('[Upload] status: ${response.statusCode}  body: ${response.body}');
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      final url = data['url'] as String?;
+      if (url == null || url.isEmpty) {
+        throw Exception('Upload succeeded but returned empty URL');
+      }
+      debugPrint('[Upload] success → $url');
+      return url;
+    }
+    if (response.statusCode == 401) _onUnauthorized();
+    final detail = _extractDetail(response.body);
+    throw Exception('Upload failed (${response.statusCode})${detail != null ? ": $detail" : ""}');
+  }
+
+  static String? _extractDetail(String body) {
+    try {
+      final json = jsonDecode(body) as Map<String, dynamic>;
+      return json['detail']?.toString();
+    } catch (_) {
+      return null;
+    }
+  }
+
   static Future<String> getCurrentUserId() async {
     if (_cachedUserId != null) {
       debugPrint('[Auth] getCurrentUserId from cache: "$_cachedUserId"');
@@ -574,6 +611,7 @@ class ApiService {
     required int categoryId,
     required String name,
     String? description,
+    String? imageUrl,
   }) async {
     final headers = await _authHeaders();
     final body = <String, dynamic>{
@@ -584,6 +622,7 @@ class ApiService {
     if (description != null && description.isNotEmpty) {
       body['description'] = description;
     }
+    if (imageUrl != null && imageUrl.isNotEmpty) body['image_url'] = imageUrl;
     final response = await http.post(
       Uri.parse('$_baseUrl/classes/'),
       headers: headers,
@@ -686,12 +725,14 @@ class ApiService {
     String? name,
     String? description,
     int? categoryId,
+    String? imageUrl,
   }) async {
     final headers = await _authHeaders();
     final body = <String, dynamic>{};
     if (name != null) body['name'] = name;
     if (description != null) body['description'] = description;
     if (categoryId != null) body['category_id'] = categoryId;
+    if (imageUrl != null && imageUrl.isNotEmpty) body['image_url'] = imageUrl;
     final response = await http.put(
       Uri.parse('$_baseUrl/classes/$classId'),
       headers: headers,
@@ -726,6 +767,7 @@ class ApiService {
     bool? isNationwide,
     double? price,
     String? priceComment,
+    String? imageUrl,
   }) async {
     final headers = await _authHeaders();
     final body = <String, dynamic>{};
@@ -740,6 +782,7 @@ class ApiService {
     if (isNationwide != null) body['is_nationwide'] = isNationwide;
     if (price != null) body['price'] = price;
     if (priceComment != null) body['price_comment'] = priceComment;
+    if (imageUrl != null && imageUrl.isNotEmpty) body['image_url'] = imageUrl;
     final response = await http.put(
       Uri.parse('$_baseUrl/events/$eventId'),
       headers: headers,
@@ -765,6 +808,7 @@ class ApiService {
     required int organizationId,
     required int rating,
     String? comment,
+    List<String>? photoUrls,
   }) async {
     final headers = await _authHeaders();
     final body = <String, dynamic>{
@@ -772,6 +816,7 @@ class ApiService {
       'rating': rating,
     };
     if (comment != null && comment.isNotEmpty) body['comment'] = comment;
+    if (photoUrls != null && photoUrls.isNotEmpty) body['photo_urls'] = photoUrls;
     final response = await http.post(
       Uri.parse('$_baseUrl/reviews/'),
       headers: headers,
@@ -936,6 +981,7 @@ class ApiService {
     bool isNationwide = false,
     double? price,
     String? priceComment,
+    String? imageUrl,
   }) async {
     final headers = await _authHeaders();
     final body = <String, dynamic>{
@@ -952,6 +998,7 @@ class ApiService {
     if (address != null && address.isNotEmpty) body['address'] = address;
     if (price != null) body['price'] = price;
     if (priceComment != null && priceComment.isNotEmpty) body['price_comment'] = priceComment;
+    if (imageUrl != null && imageUrl.isNotEmpty) body['image_url'] = imageUrl;
     final response = await http.post(
       Uri.parse('$_baseUrl/events/'),
       headers: headers,
