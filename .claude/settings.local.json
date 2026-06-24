@@ -55,7 +55,11 @@
       "Bash(.venv/bin/python3 -c ' *)",
       "Bash(grep -v \"^$\")",
       "Bash(flutter --version)",
-      "Bash(grep -n \"GestureDetector\\\\|body:\\\\|^      \\),$\" /home/natalya/hobby_lab/lib/screens/register_screen.dart)"
+      "Bash(grep -n \"GestureDetector\\\\|body:\\\\|^      \\),$\" /home/natalya/hobby_lab/lib/screens/register_screen.dart)",
+      "Bash(keytool -exportcert -alias androiddebugkey -keystore ~/.android/debug.keystore -storepass android -keypass android)",
+      "Bash(openssl sha1 *)",
+      "Bash(openssl base64 *)",
+      "Bash(keytool -exportcert -alias hobbylab -keystore /home/natalya/hobbylab-upload-keystore.jks -storepass fenix123 -keypass fenix123)"
     ]
   }
 }

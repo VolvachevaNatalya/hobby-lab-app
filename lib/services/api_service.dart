@@ -1,7 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../models/app_class.dart';
 import '../models/app_category.dart';
 import '../models/app_event.dart';
@@ -68,6 +72,124 @@ class ApiService {
       return token;
     }
     throw Exception('Invalid email or password');
+  }
+
+  // TODO: Backend must implement POST /auth/google-login
+  // Request body:  {"id_token": "<Google ID token>"}
+  // Response body: {"access_token": "<app JWT>"}
+  static Future<void> loginWithGoogle() async {
+    final googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
+    final account = await googleSignIn.signIn();
+    if (account == null) throw Exception('Google sign-in cancelled');
+
+    final auth = await account.authentication;
+    final idToken = auth.idToken;
+    if (idToken == null) throw Exception('Failed to get Google ID token');
+
+    final response = await http.post(
+      Uri.parse('$_baseUrl/auth/google-login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'id_token': idToken}),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      final token = data['access_token'] as String;
+      _sessionToken = token;
+      _handlingUnauthorized = false;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_tokenKey, token);
+      // User ID is fetched lazily on first demand via getCurrentUserId().
+      // We intentionally skip the eager getMe() call here: if getMe() were to
+      // return 401 (e.g. transient backend issue for a newly created Google
+      // user), _handleError would fire _onUnauthorized() which calls logout()
+      // and wipes the just-saved token — breaking session persistence.
+      return;
+    }
+    final detail = _extractDetail(response.body);
+    throw Exception(
+        'Google login failed (${response.statusCode})${detail != null ? ": $detail" : ""}');
+  }
+
+  // TODO: Backend must implement POST /auth/facebook-login
+  // Request body:  {"access_token": "<Facebook User Access Token>"}
+  // Response body: {"access_token": "<app JWT>"}
+  static Future<void> loginWithFacebook() async {
+    final result = await FacebookAuth.instance
+        .login(permissions: ['email', 'public_profile']);
+
+    if (result.status == LoginStatus.cancelled) {
+      throw Exception('Facebook sign-in cancelled');
+    }
+    if (result.status != LoginStatus.success || result.accessToken == null) {
+      throw Exception('Facebook sign-in failed: ${result.message}');
+    }
+
+    final fbToken = result.accessToken!.tokenString;
+
+    final response = await http.post(
+      Uri.parse('$_baseUrl/auth/facebook-login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'access_token': fbToken}),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      final token = data['access_token'] as String;
+      _sessionToken = token;
+      _handlingUnauthorized = false;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_tokenKey, token);
+      // Skipping eager getMe() — same reasoning as loginWithGoogle().
+      return;
+    }
+    final detail = _extractDetail(response.body);
+    throw Exception(
+        'Facebook login failed (${response.statusCode})${detail != null ? ": $detail" : ""}');
+  }
+
+  static Future<void> loginWithApple() async {
+    if (!Platform.isIOS && !Platform.isMacOS) {
+      throw Exception('Sign in with Apple is only supported on iOS/macOS');
+    }
+
+    final AuthorizationCredentialAppleID credential;
+    try {
+      credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+    } on SignInWithAppleAuthorizationException catch (e) {
+      if (e.code == AuthorizationErrorCode.canceled) {
+        throw Exception('Apple sign-in cancelled');
+      }
+      rethrow;
+    }
+
+    final identityToken = credential.identityToken;
+    if (identityToken == null) throw Exception('Failed to get Apple identity token');
+
+    final response = await http.post(
+      Uri.parse('$_baseUrl/auth/apple-login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'id_token': identityToken}),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      final token = data['access_token'] as String;
+      _sessionToken = token;
+      _handlingUnauthorized = false;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_tokenKey, token);
+      // Skipping eager getMe() — same reasoning as loginWithGoogle().
+      return;
+    }
+    final detail = _extractDetail(response.body);
+    throw Exception(
+        'Apple login failed (${response.statusCode})${detail != null ? ": $detail" : ""}');
   }
 
   static Future<void> logout() async {

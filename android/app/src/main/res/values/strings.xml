@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hobby Lab</string>
+    <string name="facebook_app_id">2321146662055221</string>
+    <string name="facebook_client_token">6a502700f92ccf241ec46867431f9e9d</string>
+    <string name="fb_login_protocol_scheme">fb2321146662055221</string>
+</resources>

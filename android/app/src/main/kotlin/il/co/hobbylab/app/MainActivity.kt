@@ -1,4 +1,4 @@
-package com.example.hobby_lab
+package il.co.hobbylab.app
 
 import io.flutter.embedding.android.FlutterActivity
 

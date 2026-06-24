@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "924071318406",
+    "project_id": "hobbylab-adae9",
+    "storage_bucket": "hobbylab-adae9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:924071318406:android:7fcaa628a83bc4103b9207",
+        "android_client_info": {
+          "package_name": "il.co.hobbylab.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "924071318406-4hvv8967tg46sslnhk6ikg7edcdins83.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "il.co.hobbylab.app",
+            "certificate_hash": "fba007172c921a2d205ea2a36fdc3c685a8c39bf"
+          }
+        },
+        {
+          "client_id": "924071318406-g5elualdask4r7mqbajllj9k9rm00g4h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "il.co.hobbylab.app",
+            "certificate_hash": "878a5aa97269c247e827a2c1b8c884960f8af789"
+          }
+        },
+        {
+          "client_id": "924071318406-1g7mkrv37ulgri1mc0ke9tgli3m48uqd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzDvKDl0yPOaghRIWEBq7Lab0ZNR2KoUU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "924071318406-1g7mkrv37ulgri1mc0ke9tgli3m48uqd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

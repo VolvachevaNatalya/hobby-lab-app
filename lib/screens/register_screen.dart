@@ -79,6 +79,72 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
+  Future<void> _signInWithFacebook() async {
+    setState(() { _isLoading = true; _errorMessage = null; });
+    try {
+      await ApiService.loginWithFacebook();
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (context, anim, secAnim) => const MainShell(),
+          transitionsBuilder: (context, anim, secAnim, child) =>
+              FadeTransition(opacity: anim, child: child),
+          transitionDuration: const Duration(milliseconds: 400),
+        ),
+      );
+    } catch (e) {
+      if (mounted) {
+        setState(() => _errorMessage = e.toString().replaceFirst('Exception: ', ''));
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _signInWithApple() async {
+    setState(() { _isLoading = true; _errorMessage = null; });
+    try {
+      await ApiService.loginWithApple();
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (context, anim, secAnim) => const MainShell(),
+          transitionsBuilder: (context, anim, secAnim, child) =>
+              FadeTransition(opacity: anim, child: child),
+          transitionDuration: const Duration(milliseconds: 400),
+        ),
+      );
+    } catch (e) {
+      if (mounted) {
+        setState(() => _errorMessage = e.toString().replaceFirst('Exception: ', ''));
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    setState(() { _isLoading = true; _errorMessage = null; });
+    try {
+      await ApiService.loginWithGoogle();
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (context, anim, secAnim) => const MainShell(),
+          transitionsBuilder: (context, anim, secAnim, child) =>
+              FadeTransition(opacity: anim, child: child),
+          transitionDuration: const Duration(milliseconds: 400),
+        ),
+      );
+    } catch (e) {
+      if (mounted) {
+        setState(() => _errorMessage = e.toString().replaceFirst('Exception: ', ''));
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
   void _goToLogin() => Navigator.of(context).pop();
 
   @override
@@ -208,19 +274,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     _SocialIconButton(
                       icon: const FaIcon(FontAwesomeIcons.google,
                           color: Color(0xFF4285F4), size: 24),
-                      onTap: () {},
+                      onTap: _signInWithGoogle,
                     ),
                     const SizedBox(width: 20),
                     _SocialIconButton(
                       icon: const FaIcon(FontAwesomeIcons.apple,
                           color: Colors.white, size: 24),
-                      onTap: () {},
+                      onTap: _signInWithApple,
                     ),
                     const SizedBox(width: 20),
                     _SocialIconButton(
                       icon: const FaIcon(FontAwesomeIcons.facebook,
                           color: Color(0xFF1877F2), size: 24),
-                      onTap: () {},
+                      onTap: _signInWithFacebook,
                     ),
                   ],
                 ),
