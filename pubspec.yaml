@@ -45,8 +45,6 @@ dependencies:
   share_plus: ^10.0.0
   image_picker: ^1.1.2
   font_awesome_flutter: ^11.0.0
-  firebase_core: ^3.6.0
-  firebase_auth: ^5.3.1
   google_sign_in: ^6.2.1
   flutter_facebook_auth: ^7.1.1
   sign_in_with_apple: ^6.1.0
