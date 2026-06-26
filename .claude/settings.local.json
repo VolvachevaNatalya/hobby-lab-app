@@ -59,7 +59,12 @@
       "Bash(keytool -exportcert -alias androiddebugkey -keystore ~/.android/debug.keystore -storepass android -keypass android)",
       "Bash(openssl sha1 *)",
       "Bash(openssl base64 *)",
-      "Bash(keytool -exportcert -alias hobbylab -keystore /home/natalya/hobbylab-upload-keystore.jks -storepass fenix123 -keypass fenix123)"
+      "Bash(keytool -exportcert -alias hobbylab -keystore /home/natalya/hobbylab-upload-keystore.jks -storepass fenix123 -keypass fenix123)",
+      "Bash(git -C /home/natalya/hobby_lab diff HEAD -- lib/screens/home_screen.dart)",
+      "Bash(git -C /home/natalya/hobby_lab diff HEAD -- lib/screens/home_screen.dart lib/screens/activity_details_screen.dart)",
+      "Bash(git -C /home/natalya/hobby_lab status --short)",
+      "Bash(git -C /home/natalya/hobby_lab show HEAD:android/app/src/main/kotlin/com/example/hobby_lab/MainActivity.kt)",
+      "Bash(git *)"
     ]
   }
 }

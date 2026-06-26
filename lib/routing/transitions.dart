@@ -1,23 +1,15 @@
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
 /// Standard page-to-page navigation.
-/// iOS: CupertinoPageRoute — horizontal slide + interactive swipe-back gesture.
-/// Android: MaterialPageRoute — native Android transition.
-PageRoute<T> slideRoute<T>({required WidgetBuilder builder}) {
-  if (Platform.isIOS) {
-    return CupertinoPageRoute<T>(builder: builder);
-  }
-  return MaterialPageRoute<T>(builder: builder);
-}
+/// Horizontal slide on both platforms; iOS also gets the interactive swipe-back
+/// gesture. Uses CupertinoPageRoute on Android to avoid MaterialPageRoute's
+/// predictive-back integration (ZoomPageTransitionsBuilder / OnBackInvokedCallback)
+/// which interferes with the standard Android back button when
+/// android:enableOnBackInvokedCallback is not set in the manifest.
+PageRoute<T> slideRoute<T>({required WidgetBuilder builder}) =>
+    CupertinoPageRoute<T>(builder: builder);
 
 /// Fullscreen modal navigation (slides in from the bottom).
-/// iOS: CupertinoPageRoute(fullscreenDialog: true) — swipe-down-to-dismiss.
-/// Android: MaterialPageRoute(fullscreenDialog: true).
-PageRoute<T> modalRoute<T>({required WidgetBuilder builder}) {
-  if (Platform.isIOS) {
-    return CupertinoPageRoute<T>(builder: builder, fullscreenDialog: true);
-  }
-  return MaterialPageRoute<T>(builder: builder, fullscreenDialog: true);
-}
+/// iOS: swipe-down-to-dismiss. Android: back button works via standard mechanism.
+PageRoute<T> modalRoute<T>({required WidgetBuilder builder}) =>
+    CupertinoPageRoute<T>(builder: builder, fullscreenDialog: true);
