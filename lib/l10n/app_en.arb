@@ -242,5 +242,9 @@
   "trialLessonComment": "Comment",
   "eventPrice": "Price",
   "eventFree": "Free",
-  "eventPriceComment": "Price Comment"
+  "eventPriceComment": "Price Comment",
+
+  "myOrganizations": "My Organizations",
+  "myOrganizationsSubtitle": "View and manage your organizations",
+  "createOrganization": "Create Organization"
 }

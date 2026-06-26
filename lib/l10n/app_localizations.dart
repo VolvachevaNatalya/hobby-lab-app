@@ -1263,6 +1263,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Price Comment'**
   String get eventPriceComment;
+
+  /// No description provided for @myOrganizations.
+  ///
+  /// In en, this message translates to:
+  /// **'My Organizations'**
+  String get myOrganizations;
+
+  /// No description provided for @myOrganizationsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'View and manage your organizations'**
+  String get myOrganizationsSubtitle;
+
+  /// No description provided for @createOrganization.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Organization'**
+  String get createOrganization;
 }
 
 class _AppLocalizationsDelegate

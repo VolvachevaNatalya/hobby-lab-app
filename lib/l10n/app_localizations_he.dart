@@ -604,4 +604,13 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get eventPriceComment => 'הערה למחיר';
+
+  @override
+  String get myOrganizations => 'הארגונים שלי';
+
+  @override
+  String get myOrganizationsSubtitle => 'צפה ונהל את הארגונים שלך';
+
+  @override
+  String get createOrganization => 'יצירת ארגון';
 }

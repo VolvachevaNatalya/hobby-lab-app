@@ -612,4 +612,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eventPriceComment => 'Price Comment';
+
+  @override
+  String get myOrganizations => 'My Organizations';
+
+  @override
+  String get myOrganizationsSubtitle => 'View and manage your organizations';
+
+  @override
+  String get createOrganization => 'Create Organization';
 }

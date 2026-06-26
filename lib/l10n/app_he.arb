@@ -242,5 +242,9 @@
   "trialLessonComment": "הערה",
   "eventPrice": "מחיר",
   "eventFree": "חינם",
-  "eventPriceComment": "הערה למחיר"
+  "eventPriceComment": "הערה למחיר",
+
+  "myOrganizations": "הארגונים שלי",
+  "myOrganizationsSubtitle": "צפה ונהל את הארגונים שלך",
+  "createOrganization": "יצירת ארגון"
 }

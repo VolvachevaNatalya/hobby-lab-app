@@ -9,7 +9,7 @@ import 'edit_profile_screen.dart';
 import 'notifications_settings_screen.dart';
 import 'settings_screen.dart';
 import 'organization_registration_screen.dart';
-import 'org_dashboard_screen.dart';
+import 'my_organizations_screen.dart';
 import 'splash_screen.dart';
 import '../routing/transitions.dart';
 
@@ -21,10 +21,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool _isOrg = false;
+  List<Map<String, dynamic>> _orgs = [];
   bool _loadingOrg = true;
-  String? _orgId;
-  String? _orgName;
   UserProfile? _profile;
 
   @override
@@ -44,13 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _loadOrg() async {
     try {
       final orgs = await ApiService.getMyOrganizations();
-      if (mounted && orgs.isNotEmpty) {
-        setState(() {
-          _orgId = (orgs.first['id'] ?? '').toString();
-          _orgName = (orgs.first['name'] ?? '').toString();
-          _isOrg = true;
-        });
-      }
+      if (mounted) setState(() => _orgs = orgs);
     } catch (_) {
     } finally {
       if (mounted) setState(() => _loadingOrg = false);
@@ -90,8 +82,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           padding: EdgeInsets.symmetric(vertical: 20),
                           child: Center(child: CircularProgressIndicator()),
                         )
-                      else if (_isOrg)
-                        _buildGoDashboardButton(context)
+                      else if (_orgs.isNotEmpty)
+                        _buildMyOrgsButton(context)
                       else
                         _JoinProviderButton(onRegistered: () {
                           setState(() => _loadingOrg = true);
@@ -129,12 +121,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildGoDashboardButton(BuildContext context) {
+  Widget _buildMyOrgsButton(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(
-        slideRoute(builder: (_) => OrgDashboardScreen(orgId: _orgId, orgName: _orgName ?? '')),
-      ),
+      onTap: () async {
+        await Navigator.of(context).push(
+          slideRoute(builder: (_) => const MyOrganizationsScreen()),
+        );
+        if (mounted) {
+          setState(() => _loadingOrg = true);
+          _loadOrg();
+        }
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
@@ -156,7 +154,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               child: const Icon(
-                Icons.dashboard_rounded,
+                Icons.business_rounded,
                 color: Colors.white,
                 size: 22,
               ),
@@ -167,7 +165,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    l10n.goToOrgDashboard,
+                    l10n.myOrganizations,
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -176,7 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    l10n.manageClassesEvents,
+                    l10n.myOrganizationsSubtitle,
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       color: AppColors.textMuted,

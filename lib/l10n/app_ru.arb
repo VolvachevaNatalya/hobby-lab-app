@@ -242,5 +242,9 @@
   "trialLessonComment": "Комментарий",
   "eventPrice": "Цена",
   "eventFree": "Бесплатно",
-  "eventPriceComment": "Комментарий к цене"
+  "eventPriceComment": "Комментарий к цене",
+
+  "myOrganizations": "Мои организации",
+  "myOrganizationsSubtitle": "Просматривайте и управляйте своими организациями",
+  "createOrganization": "Создать организацию"
 }

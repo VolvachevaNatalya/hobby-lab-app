@@ -615,4 +615,14 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get eventPriceComment => 'Комментарий к цене';
+
+  @override
+  String get myOrganizations => 'Мои организации';
+
+  @override
+  String get myOrganizationsSubtitle =>
+      'Просматривайте и управляйте своими организациями';
+
+  @override
+  String get createOrganization => 'Создать организацию';
 }
