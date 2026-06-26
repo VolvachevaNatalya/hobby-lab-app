@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import 'activity_details_screen.dart';
+import '../routing/transitions.dart';
 
 class NotificationDetailsScreen extends StatelessWidget {
   final IconData icon;
@@ -365,25 +366,14 @@ class NotificationDetailsScreen extends StatelessWidget {
   void _openActivity(BuildContext context) {
     if (!_hasActivity) return;
     Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, _, _) => ActivityDetailsScreen(
-          name: activityName!,
-          studio: activityStudio!,
-          category: activityCategory!,
-          colorStart: activityColorStart!,
-          colorEnd: activityColorEnd!,
-          heroIcon: activityIcon!,
-        ),
-        transitionsBuilder: (_, animation, _, child) => SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(1, 0),
-            end: Offset.zero,
-          ).animate(
-              CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-          child: child,
-        ),
-      ),
+      slideRoute(builder: (_) => ActivityDetailsScreen(
+        name: activityName!,
+        studio: activityStudio!,
+        category: activityCategory!,
+        colorStart: activityColorStart!,
+        colorEnd: activityColorEnd!,
+        heroIcon: activityIcon!,
+      )),
     );
   }
 }

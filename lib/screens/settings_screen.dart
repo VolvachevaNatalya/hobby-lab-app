@@ -5,6 +5,7 @@ import '../l10n/app_localizations.dart';
 import '../locale_provider.dart';
 import 'edit_profile_screen.dart';
 import 'language_selection_screen.dart';
+import '../routing/transitions.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -275,18 +276,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _push(BuildContext context, Widget screen) {
-    Navigator.of(context).push(PageRouteBuilder(
-      transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (_, _, _) => screen,
-      transitionsBuilder: (_, animation, _, child) => SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(1, 0),
-          end: Offset.zero,
-        ).animate(
-            CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
-        child: child,
-      ),
-    ));
+    Navigator.of(context).push(slideRoute(builder: (_) => screen));
   }
 
   void _showDeleteDialog(BuildContext context) {

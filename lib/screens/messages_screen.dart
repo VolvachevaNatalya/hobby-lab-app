@@ -4,6 +4,7 @@ import '../theme/app_theme.dart';
 import '../services/api_service.dart';
 import 'main_shell.dart';
 import 'chat_screen.dart';
+import '../routing/transitions.dart';
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -291,24 +292,12 @@ class _ConversationTile extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => Navigator.of(context).push(
-        PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 300),
-          pageBuilder: (_, _, _) => ChatScreen(
-            conversationId:
-                conversation.id.isNotEmpty ? conversation.id : null,
-            name: conversation.name,
-            initials: conversation.initials,
-            avatarColor: conversation.avatarColor,
-          ),
-          transitionsBuilder: (_, animation, _, child) => SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(1, 0),
-              end: Offset.zero,
-            ).animate(
-                CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-            child: child,
-          ),
-        ),
+        slideRoute(builder: (_) => ChatScreen(
+          conversationId: conversation.id.isNotEmpty ? conversation.id : null,
+          name: conversation.name,
+          initials: conversation.initials,
+          avatarColor: conversation.avatarColor,
+        )),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),

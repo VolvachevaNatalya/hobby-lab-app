@@ -9,6 +9,7 @@ import '../services/api_service.dart';
 import 'activity_details_screen.dart';
 import 'org_profile_screen.dart';
 import 'event_details_screen.dart';
+import '../routing/transitions.dart';
 
 class SavedScreen extends StatefulWidget {
   const SavedScreen({super.key});
@@ -265,9 +266,8 @@ class _SavedScreenState extends State<SavedScreen> {
                   colorStart: g.$1,
                   colorEnd: g.$2,
                   onUnsave: () => _unsaveOrg(org.id),
-                  onTap: () => Navigator.of(context).push(PageRouteBuilder(
-                    transitionDuration: const Duration(milliseconds: 300),
-                    pageBuilder: (_, _, _) => OrgProfileScreen(
+                  onTap: () => Navigator.of(context).push(
+                    slideRoute(builder: (_) => OrgProfileScreen(
                       orgId: org.id,
                       name: org.name,
                       colorStart: g.$1,
@@ -275,15 +275,8 @@ class _SavedScreenState extends State<SavedScreen> {
                       category: org.category ?? '',
                       rating: org.averageRating,
                       reviewCount: org.reviewCount,
-                    ),
-                    transitionsBuilder: (_, anim, _, child) => SlideTransition(
-                      position: Tween<Offset>(
-                              begin: const Offset(1, 0), end: Offset.zero)
-                          .animate(CurvedAnimation(
-                              parent: anim, curve: Curves.easeOut)),
-                      child: child,
-                    ),
-                  )),
+                    )),
+                  ),
                 );
               },
               childCount: orgs.length,
@@ -329,21 +322,13 @@ class _SavedScreenState extends State<SavedScreen> {
                   colorStart: g.$1,
                   colorEnd: g.$2,
                   onUnsave: () => _unsaveEvent(event.id),
-                  onTap: () => Navigator.of(context).push(PageRouteBuilder(
-                    transitionDuration: const Duration(milliseconds: 300),
-                    pageBuilder: (_, _, _) => EventDetailsScreen(
+                  onTap: () => Navigator.of(context).push(
+                    slideRoute(builder: (_) => EventDetailsScreen(
                       eventId: event.id,
                       colorStart: g.$1,
                       colorEnd: g.$2,
-                    ),
-                    transitionsBuilder: (_, anim, _, child) => SlideTransition(
-                      position: Tween<Offset>(
-                              begin: const Offset(1, 0), end: Offset.zero)
-                          .animate(CurvedAnimation(
-                              parent: anim, curve: Curves.easeOut)),
-                      child: child,
-                    ),
-                  )),
+                    )),
+                  ),
                 );
               },
               childCount: events.length,

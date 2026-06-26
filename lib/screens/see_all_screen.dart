@@ -6,6 +6,7 @@ import '../services/api_service.dart';
 import '../models/app_class.dart';
 import 'activity_details_screen.dart';
 import 'filters_screen.dart';
+import '../routing/transitions.dart';
 
 // ─── Category helpers (presentation config only) ──────────────────────────────
 
@@ -233,19 +234,7 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
           const SizedBox(width: 10),
           GestureDetector(
             onTap: () => Navigator.of(context).push(
-              PageRouteBuilder(
-                transitionDuration: const Duration(milliseconds: 350),
-                pageBuilder: (_, _, _) => const FiltersScreen(),
-                transitionsBuilder: (_, animation, _, child) =>
-                    SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, 1),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(
-                      parent: animation, curve: Curves.easeOutCubic)),
-                  child: child,
-                ),
-              ),
+              modalRoute(builder: (_) => const FiltersScreen()),
             ),
             child: Container(
               width: 46,
@@ -366,28 +355,17 @@ class _ActivityCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () => Navigator.of(context).push(
-        PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 300),
-          pageBuilder: (_, _, _) => ActivityDetailsScreen(
-            classId: cls.id,
-            name: cls.title,
-            studio: cls.organizationName,
-            category: cls.category,
-            rating: cls.averageRating,
-            reviewCount: cls.reviewCount,
-            colorStart: cs,
-            colorEnd: ce,
-            heroIcon: icon,
-          ),
-          transitionsBuilder: (_, animation, _, child) => SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(1, 0),
-              end: Offset.zero,
-            ).animate(CurvedAnimation(
-                parent: animation, curve: Curves.easeOut)),
-            child: child,
-          ),
-        ),
+        slideRoute(builder: (_) => ActivityDetailsScreen(
+          classId: cls.id,
+          name: cls.title,
+          studio: cls.organizationName,
+          category: cls.category,
+          rating: cls.averageRating,
+          reviewCount: cls.reviewCount,
+          colorStart: cs,
+          colorEnd: ce,
+          heroIcon: icon,
+        )),
       ),
       child: Container(
         decoration: BoxDecoration(

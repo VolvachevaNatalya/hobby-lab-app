@@ -5,6 +5,7 @@ import '../models/app_event.dart';
 import '../services/api_service.dart';
 import '../theme/app_theme.dart';
 import 'event_details_screen.dart';
+import '../routing/transitions.dart';
 
 class SeeAllEventsScreen extends StatefulWidget {
   final String? city;
@@ -160,20 +161,14 @@ class _SeeAllEventsScreenState extends State<SeeAllEventsScreen> {
                             final event = items[i];
                             final s = _styles[i % _styles.length];
                             return GestureDetector(
-                              onTap: () => Navigator.of(ctx).push(PageRouteBuilder(
-                                transitionDuration: const Duration(milliseconds: 300),
-                                pageBuilder: (_, _, _) => EventDetailsScreen(
+                              onTap: () => Navigator.of(ctx).push(
+                                slideRoute(builder: (_) => EventDetailsScreen(
                                   eventId: event.id,
                                   colorStart: s.$1,
                                   colorEnd: s.$2,
                                   icon: s.$3,
-                                ),
-                                transitionsBuilder: (_, anim, _, child) => SlideTransition(
-                                  position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-                                      .animate(CurvedAnimation(parent: anim, curve: Curves.easeOut)),
-                                  child: child,
-                                ),
-                              )),
+                                )),
+                              ),
                               child: Container(
                                 height: 88,
                                 margin: const EdgeInsets.only(bottom: 12),

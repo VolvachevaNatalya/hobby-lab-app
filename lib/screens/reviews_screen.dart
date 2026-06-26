@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../services/api_service.dart';
 import 'write_review_screen.dart';
+import '../routing/transitions.dart';
 
 class ReviewsScreen extends StatefulWidget {
   final String activityName;
@@ -66,22 +67,12 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
 
   Future<void> _goWriteReview() async {
     await Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 320),
-        pageBuilder: (_, _, _) => WriteReviewScreen(
-          activityName: widget.activityName,
-          colorStart: widget.colorStart,
-          colorEnd: widget.colorEnd,
-          organizationId: widget.organizationId,
-        ),
-        transitionsBuilder: (_, animation, _, child) => SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(0, 1),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-          child: child,
-        ),
-      ),
+      modalRoute(builder: (_) => WriteReviewScreen(
+        activityName: widget.activityName,
+        colorStart: widget.colorStart,
+        colorEnd: widget.colorEnd,
+        organizationId: widget.organizationId,
+      )),
     );
     // Reload after writing a review
     if (widget.organizationId != null && mounted) _loadReviews();

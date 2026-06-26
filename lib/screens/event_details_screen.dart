@@ -8,6 +8,7 @@ import '../services/saved_activities.dart';
 import '../l10n/app_localizations.dart';
 import 'chat_screen.dart';
 import 'org_profile_screen.dart';
+import '../routing/transitions.dart';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -662,21 +663,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
   void _openOrgProfile(int orgId) {
     final name = _orgName.isNotEmpty ? _orgName : 'Organization';
-    Navigator.of(context).push(PageRouteBuilder(
-      transitionDuration: const Duration(milliseconds: 320),
-      pageBuilder: (context, a, b) => OrgProfileScreen(
-        orgId: orgId.toString(),
-        name: name,
-        colorStart: widget.colorStart,
-        colorEnd: widget.colorEnd,
-        category: _event?.badge ?? '',
-      ),
-      transitionsBuilder: (ctx, animation, sa, child) => SlideTransition(
-        position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-            .animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-        child: child,
-      ),
-    ));
+    Navigator.of(context).push(slideRoute(builder: (_) => OrgProfileScreen(
+      orgId: orgId.toString(),
+      name: name,
+      colorStart: widget.colorStart,
+      colorEnd: widget.colorEnd,
+      category: _event?.badge ?? '',
+    )));
   }
 
   // ── Other events ─────────────────────────────────────────────────────────────
@@ -845,19 +838,11 @@ class _OtherEventCard extends StatelessWidget {
       onTap: () {
         final id = event['id']?.toString() ?? '';
         if (id.isEmpty) return;
-        Navigator.of(context).push(PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 300),
-          pageBuilder: (context, a, b) => EventDetailsScreen(
-            eventId: id,
-            colorStart: colorStart,
-            colorEnd: colorEnd,
-          ),
-          transitionsBuilder: (ctx, animation, sa, child) => SlideTransition(
-            position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-                .animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-            child: child,
-          ),
-        ));
+        Navigator.of(context).push(slideRoute(builder: (_) => EventDetailsScreen(
+          eventId: id,
+          colorStart: colorStart,
+          colorEnd: colorEnd,
+        )));
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
@@ -970,20 +955,12 @@ class _ContactBarState extends State<_ContactBar> {
     } catch (_) {}
     if (!mounted) return;
     setState(() => _loading = false);
-    Navigator.of(context).push(PageRouteBuilder(
-      transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (context, a, b) => ChatScreen(
-        conversationId: conversationId,
-        name: widget.orgName.isNotEmpty ? widget.orgName : 'Organization',
-        initials: _abbr.isNotEmpty ? _abbr : '?',
-        avatarColor: widget.colorStart,
-      ),
-      transitionsBuilder: (ctx, animation, sa, child) => SlideTransition(
-        position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-            .animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-        child: child,
-      ),
-    ));
+    Navigator.of(context).push(slideRoute(builder: (_) => ChatScreen(
+      conversationId: conversationId,
+      name: widget.orgName.isNotEmpty ? widget.orgName : 'Organization',
+      initials: _abbr.isNotEmpty ? _abbr : '?',
+      avatarColor: widget.colorStart,
+    )));
   }
 
   @override

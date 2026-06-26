@@ -8,6 +8,7 @@ import '../widgets/app_text_field.dart';
 import '../widgets/gradient_button.dart';
 import 'register_screen.dart';
 import 'main_shell.dart';
+import '../routing/transitions.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -147,17 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _goToRegister() {
     Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (context, anim, secAnim) => const RegisterScreen(),
-        transitionsBuilder: (context, anim, secAnim, child) => SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(1, 0),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
-          child: child,
-        ),
-        transitionDuration: const Duration(milliseconds: 380),
-      ),
+      slideRoute(builder: (_) => const RegisterScreen()),
     );
   }
 

@@ -14,6 +14,7 @@ import 'chat_screen.dart';
 import 'event_details_screen.dart';
 import 'reviews_screen.dart';
 import 'write_review_screen.dart';
+import '../routing/transitions.dart';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -248,22 +249,12 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
 
   void _goChat(BuildContext context, String? conversationId) {
     Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, _, _) => ChatScreen(
-          conversationId: conversationId,
-          name: _displayName,
-          initials: _initials.isNotEmpty ? _initials : '?',
-          avatarColor: widget.colorStart,
-        ),
-        transitionsBuilder: (_, animation, _, child) => SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(1, 0),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-          child: child,
-        ),
-      ),
+      slideRoute(builder: (_) => ChatScreen(
+        conversationId: conversationId,
+        name: _displayName,
+        initials: _initials.isNotEmpty ? _initials : '?',
+        avatarColor: widget.colorStart,
+      )),
     );
   }
 
@@ -864,27 +855,15 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                   final classId = cls['id']?.toString();
                   if (classId == null) return;
                   Navigator.of(context).push(
-                    PageRouteBuilder(
-                      transitionDuration: const Duration(milliseconds: 320),
-                      pageBuilder: (_, _, _) => ActivityDetailsScreen(
-                        classId: classId,
-                        name: (cls['name'] ?? '').toString(),
-                        studio: _displayName,
-                        category: widget.category,
-                        colorStart: widget.colorStart,
-                        colorEnd: widget.colorEnd,
-                        heroIcon: Icons.school_rounded,
-                      ),
-                      transitionsBuilder: (_, animation, _, child) =>
-                          SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(1, 0),
-                          end: Offset.zero,
-                        ).animate(CurvedAnimation(
-                            parent: animation, curve: Curves.easeOut)),
-                        child: child,
-                      ),
-                    ),
+                    slideRoute(builder: (_) => ActivityDetailsScreen(
+                      classId: classId,
+                      name: (cls['name'] ?? '').toString(),
+                      studio: _displayName,
+                      category: widget.category,
+                      colorStart: widget.colorStart,
+                      colorEnd: widget.colorEnd,
+                      heroIcon: Icons.school_rounded,
+                    )),
                   );
                 },
                 child: _ClassTile(
@@ -932,23 +911,11 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                   final eventId = ev['id']?.toString();
                   if (eventId == null) return;
                   Navigator.of(context).push(
-                    PageRouteBuilder(
-                      transitionDuration: const Duration(milliseconds: 320),
-                      pageBuilder: (_, _, _) => EventDetailsScreen(
-                        eventId: eventId,
-                        colorStart: widget.colorStart,
-                        colorEnd: widget.colorEnd,
-                      ),
-                      transitionsBuilder: (_, animation, _, child) =>
-                          SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(1, 0),
-                          end: Offset.zero,
-                        ).animate(CurvedAnimation(
-                            parent: animation, curve: Curves.easeOut)),
-                        child: child,
-                      ),
-                    ),
+                    slideRoute(builder: (_) => EventDetailsScreen(
+                      eventId: eventId,
+                      colorStart: widget.colorStart,
+                      colorEnd: widget.colorEnd,
+                    )),
                   );
                 },
                 child: _EventTile(event: ev),
@@ -979,27 +946,15 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
             const Spacer(),
             GestureDetector(
               onTap: () => Navigator.of(context).push(
-                PageRouteBuilder(
-                  transitionDuration: const Duration(milliseconds: 300),
-                  pageBuilder: (_, _, _) => ReviewsScreen(
-                    activityName: _displayName,
-                    rating: _avgRating,
-                    reviewCount: _reviewCount,
-                    colorStart: widget.colorStart,
-                    colorEnd: widget.colorEnd,
-                    organizationId: orgIdInt,
-                    allowWrite: true,
-                  ),
-                  transitionsBuilder: (_, animation, _, child) =>
-                      SlideTransition(
-                    position: Tween<Offset>(
-                      begin: const Offset(1, 0),
-                      end: Offset.zero,
-                    ).animate(CurvedAnimation(
-                        parent: animation, curve: Curves.easeOut)),
-                    child: child,
-                  ),
-                ),
+                slideRoute(builder: (_) => ReviewsScreen(
+                  activityName: _displayName,
+                  rating: _avgRating,
+                  reviewCount: _reviewCount,
+                  colorStart: widget.colorStart,
+                  colorEnd: widget.colorEnd,
+                  organizationId: orgIdInt,
+                  allowWrite: true,
+                )),
               ),
               child: ShaderMask(
                 shaderCallback: (b) => AppColors.brandGradient.createShader(b),
@@ -1032,23 +987,12 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
           onTap: () async {
             final orgIdInt =
                 widget.orgId != null ? int.tryParse(widget.orgId!) : null;
-            await Navigator.of(context).push(PageRouteBuilder(
-              transitionDuration: const Duration(milliseconds: 320),
-              pageBuilder: (_, _, _) => WriteReviewScreen(
-                activityName: _displayName,
-                colorStart: widget.colorStart,
-                colorEnd: widget.colorEnd,
-                organizationId: orgIdInt,
-              ),
-              transitionsBuilder: (_, animation, _, child) => SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(0, 1),
-                  end: Offset.zero,
-                ).animate(
-                    CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-                child: child,
-              ),
-            ));
+            await Navigator.of(context).push(modalRoute(builder: (_) => WriteReviewScreen(
+              activityName: _displayName,
+              colorStart: widget.colorStart,
+              colorEnd: widget.colorEnd,
+              organizationId: orgIdInt,
+            )));
             _reloadReviews();
           },
           child: Container(

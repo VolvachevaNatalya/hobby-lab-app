@@ -9,6 +9,7 @@ import 'org_event_form_screen.dart';
 import 'edit_organization_screen.dart';
 import 'notifications_settings_screen.dart';
 import 'change_password_screen.dart';
+import '../routing/transitions.dart';
 
 // ─── Main screen ──────────────────────────────────────────────────────────────
 
@@ -135,34 +136,14 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
 
   Future<void> _goAddClass() async {
     await Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, _, _) => OrgClassFormScreen(orgId: _orgId),
-        transitionsBuilder: (_, animation, _, child) => SlideTransition(
-          position: Tween<Offset>(
-                  begin: const Offset(1, 0), end: Offset.zero)
-              .animate(CurvedAnimation(
-                  parent: animation, curve: Curves.easeOut)),
-          child: child,
-        ),
-      ),
+      slideRoute(builder: (_) => OrgClassFormScreen(orgId: _orgId)),
     );
     if (mounted) _loadData();
   }
 
   Future<void> _goEditClass(OrgClass cls) async {
     final result = await Navigator.of(context).push<OrgClass>(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, _, _) => OrgClassFormScreen(orgClass: cls),
-        transitionsBuilder: (_, animation, _, child) => SlideTransition(
-          position: Tween<Offset>(
-                  begin: const Offset(1, 0), end: Offset.zero)
-              .animate(CurvedAnimation(
-                  parent: animation, curve: Curves.easeOut)),
-          child: child,
-        ),
-      ),
+      slideRoute(builder: (_) => OrgClassFormScreen(orgClass: cls)),
     );
     if (result != null && mounted) {
       setState(() {
@@ -174,34 +155,14 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
 
   Future<void> _goAddEvent() async {
     await Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, _, _) => OrgEventFormScreen(orgId: _orgId),
-        transitionsBuilder: (_, animation, _, child) => SlideTransition(
-          position: Tween<Offset>(
-                  begin: const Offset(1, 0), end: Offset.zero)
-              .animate(CurvedAnimation(
-                  parent: animation, curve: Curves.easeOut)),
-          child: child,
-        ),
-      ),
+      slideRoute(builder: (_) => OrgEventFormScreen(orgId: _orgId)),
     );
     if (mounted) _loadData();
   }
 
   Future<void> _goEditEvent(OrgEvent event) async {
     final result = await Navigator.of(context).push<OrgEvent>(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, _, _) => OrgEventFormScreen(event: event),
-        transitionsBuilder: (_, animation, _, child) => SlideTransition(
-          position: Tween<Offset>(
-                  begin: const Offset(1, 0), end: Offset.zero)
-              .animate(CurvedAnimation(
-                  parent: animation, curve: Curves.easeOut)),
-          child: child,
-        ),
-      ),
+      slideRoute(builder: (_) => OrgEventFormScreen(event: event)),
     );
     if (result != null && mounted) {
       setState(() {
@@ -1539,53 +1500,23 @@ class _ProfileTabState extends State<_ProfileTab> {
       return;
     }
     await Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, _, _) => EditOrganizationScreen(
-          orgId: orgIdInt,
-          initialName: widget.orgName,
-        ),
-        transitionsBuilder: (_, animation, _, child) => SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(1, 0),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-          child: child,
-        ),
-      ),
+      slideRoute(builder: (_) => EditOrganizationScreen(
+        orgId: orgIdInt,
+        initialName: widget.orgName,
+      )),
     );
     widget.onEditComplete?.call();
   }
 
   void _navigateChangePassword() {
     Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, _, _) => const ChangePasswordScreen(),
-        transitionsBuilder: (_, animation, _, child) => SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(1, 0),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-          child: child,
-        ),
-      ),
+      slideRoute(builder: (_) => const ChangePasswordScreen()),
     );
   }
 
   void _navigateNotifications() {
     Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, _, _) => const NotificationsSettingsScreen(),
-        transitionsBuilder: (_, animation, _, child) => SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(1, 0),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-          child: child,
-        ),
-      ),
+      slideRoute(builder: (_) => const NotificationsSettingsScreen()),
     );
   }
 

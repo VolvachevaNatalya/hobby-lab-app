@@ -10,6 +10,7 @@ import '../theme/app_theme.dart';
 import 'activity_details_screen.dart';
 import 'event_details_screen.dart';
 import 'org_profile_screen.dart';
+import '../routing/transitions.dart';
 
 // ─── Shared gradient / icon pools (mirrors home_screen.dart) ─────────────────
 
@@ -353,9 +354,8 @@ class _OrgCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final g = _gradients[org.id.hashCode.abs() % _gradients.length];
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, _, _) => OrgProfileScreen(
+      onTap: () => Navigator.of(context).push(
+        slideRoute(builder: (_) => OrgProfileScreen(
           orgId: org.id,
           name: org.name,
           colorStart: g.$1,
@@ -363,13 +363,8 @@ class _OrgCard extends StatelessWidget {
           category: org.category ?? '',
           rating: org.averageRating,
           reviewCount: org.reviewCount,
-        ),
-        transitionsBuilder: (_, anim, _, child) => SlideTransition(
-          position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-              .animate(CurvedAnimation(parent: anim, curve: Curves.easeOut)),
-          child: child,
-        ),
-      )),
+        )),
+      ),
       child: Container(
         width: 192,
         margin: const EdgeInsets.only(right: 16),
@@ -672,20 +667,14 @@ class _BannerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenW = MediaQuery.of(context).size.width;
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, _, _) => EventDetailsScreen(
+      onTap: () => Navigator.of(context).push(
+        slideRoute(builder: (_) => EventDetailsScreen(
           eventId: banner.id,
           colorStart: banner.colorStart,
           colorEnd: banner.colorEnd,
           icon: banner.icon,
-        ),
-        transitionsBuilder: (_, anim, _, child) => SlideTransition(
-          position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-              .animate(CurvedAnimation(parent: anim, curve: Curves.easeOut)),
-          child: child,
-        ),
-      )),
+        )),
+      ),
       child: Container(
         width: screenW * 0.78,
         margin: const EdgeInsets.only(right: 16),

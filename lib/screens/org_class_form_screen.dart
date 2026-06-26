@@ -8,6 +8,7 @@ import '../models/org_models.dart';
 import '../models/app_category.dart';
 import '../services/api_service.dart';
 import 'org_group_form_screen.dart';
+import '../routing/transitions.dart';
 
 class OrgClassFormScreen extends StatefulWidget {
   final OrgClass? orgClass;
@@ -224,30 +225,14 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
 
   Future<void> _addGroup() async {
     final result = await Navigator.of(context).push<OrgGroup>(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, _, _) => const OrgGroupFormScreen(),
-        transitionsBuilder: (_, animation, _, child) => SlideTransition(
-          position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-              .animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-          child: child,
-        ),
-      ),
+      slideRoute(builder: (_) => const OrgGroupFormScreen()),
     );
     if (result != null && mounted) setState(() => _groups.add(result));
   }
 
   Future<void> _editGroup(int index) async {
     final result = await Navigator.of(context).push<OrgGroup>(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, _, _) => OrgGroupFormScreen(group: _groups[index]),
-        transitionsBuilder: (_, animation, _, child) => SlideTransition(
-          position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-              .animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-          child: child,
-        ),
-      ),
+      slideRoute(builder: (_) => OrgGroupFormScreen(group: _groups[index])),
     );
     if (result != null && mounted) setState(() => _groups[index] = result);
   }

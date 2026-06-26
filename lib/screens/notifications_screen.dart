@@ -8,6 +8,7 @@ import 'main_shell.dart';
 import 'notification_details_screen.dart';
 import 'notifications_settings_screen.dart';
 import 'chat_screen.dart';
+import '../routing/transitions.dart';
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -154,43 +155,21 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                     final nav = Navigator.of(context);
                                     MainShell.switchTab(1);
                                     nav.pop();
-                                    nav.push(PageRouteBuilder(
-                                      transitionDuration: const Duration(milliseconds: 300),
-                                      pageBuilder: (_, _, _) => ChatScreen(
-                                        conversationId: convId,
-                                        name: '',
-                                        initials: '?',
-                                        avatarColor: item.iconColor,
-                                      ),
-                                      transitionsBuilder: (_, anim, _, child) => SlideTransition(
-                                        position: Tween<Offset>(
-                                          begin: const Offset(1, 0),
-                                          end: Offset.zero,
-                                        ).animate(CurvedAnimation(
-                                            parent: anim, curve: Curves.easeOutCubic)),
-                                        child: child,
-                                      ),
-                                    ));
+                                    nav.push(slideRoute(builder: (_) => ChatScreen(
+                                      conversationId: convId,
+                                      name: '',
+                                      initials: '?',
+                                      avatarColor: item.iconColor,
+                                    )));
                                   }
                                 } else {
-                                  Navigator.of(context).push(PageRouteBuilder(
-                                    transitionDuration: const Duration(milliseconds: 300),
-                                    pageBuilder: (_, _, _) => NotificationDetailsScreen(
-                                      icon: item.icon,
-                                      iconColor: item.iconColor,
-                                      title: item.title,
-                                      body: item.body,
-                                      time: item.time,
-                                    ),
-                                    transitionsBuilder: (_, anim, _, child) => SlideTransition(
-                                      position: Tween<Offset>(
-                                        begin: const Offset(1, 0),
-                                        end: Offset.zero,
-                                      ).animate(CurvedAnimation(
-                                          parent: anim, curve: Curves.easeOutCubic)),
-                                      child: child,
-                                    ),
-                                  ));
+                                  Navigator.of(context).push(slideRoute(builder: (_) => NotificationDetailsScreen(
+                                    icon: item.icon,
+                                    iconColor: item.iconColor,
+                                    title: item.title,
+                                    body: item.body,
+                                    time: item.time,
+                                  )));
                                 }
                               },
                             );
@@ -281,22 +260,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           const Spacer(),
           GestureDetector(
             onTap: () => Navigator.of(context).push(
-              PageRouteBuilder(
-                pageBuilder: (ctx, anim, secAnim) =>
-                    const NotificationsSettingsScreen(),
-                transitionsBuilder: (ctx, anim, secAnim, child) =>
-                    SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(1, 0),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(
-                    parent: anim,
-                    curve: Curves.easeOutCubic,
-                  )),
-                  child: child,
-                ),
-                transitionDuration: const Duration(milliseconds: 300),
-              ),
+              slideRoute(builder: (_) => const NotificationsSettingsScreen()),
             ),
             child: Container(
               width: 42,

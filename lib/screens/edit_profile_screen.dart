@@ -7,6 +7,7 @@ import '../theme/app_theme.dart';
 import '../widgets/app_text_field.dart';
 import '../services/api_service.dart';
 import 'change_password_screen.dart';
+import '../routing/transitions.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -395,18 +396,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final l10n = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () => Navigator.of(context).push(
-        PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 300),
-          pageBuilder: (_, _, _) => const ChangePasswordScreen(),
-          transitionsBuilder: (_, animation, _, child) => SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(1, 0),
-              end: Offset.zero,
-            ).animate(
-                CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-            child: child,
-          ),
-        ),
+        slideRoute(builder: (_) => const ChangePasswordScreen()),
       ),
       child: Container(
         width: double.infinity,

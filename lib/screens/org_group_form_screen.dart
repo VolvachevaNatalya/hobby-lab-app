@@ -6,6 +6,7 @@ import '../theme/app_theme.dart';
 import '../models/org_models.dart';
 import '../services/api_service.dart';
 import 'org_schedule_form_screen.dart';
+import '../routing/transitions.dart';
 
 class OrgGroupFormScreen extends StatefulWidget {
   final OrgGroup? group;
@@ -64,19 +65,7 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
 
   Future<void> _editSchedule() async {
     final result = await Navigator.of(context).push<List<OrgScheduleSlot>>(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, _, _) =>
-            OrgScheduleFormScreen(initial: _schedule),
-        transitionsBuilder: (_, animation, _, child) => SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(1, 0),
-            end: Offset.zero,
-          ).animate(
-              CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-          child: child,
-        ),
-      ),
+      slideRoute(builder: (_) => OrgScheduleFormScreen(initial: _schedule)),
     );
     if (result != null && mounted) setState(() => _schedule = result);
   }

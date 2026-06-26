@@ -5,6 +5,7 @@ import '../models/organization.dart';
 import '../services/api_service.dart';
 import '../theme/app_theme.dart';
 import 'org_profile_screen.dart';
+import '../routing/transitions.dart';
 
 class SeeAllOrgsScreen extends StatefulWidget {
   final String? city;
@@ -175,9 +176,8 @@ class _OrgGridCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, _, _) => OrgProfileScreen(
+      onTap: () => Navigator.of(context).push(
+        slideRoute(builder: (_) => OrgProfileScreen(
           orgId: org.id,
           name: org.name,
           colorStart: const Color(0xFF7C3AED),
@@ -185,13 +185,8 @@ class _OrgGridCard extends StatelessWidget {
           category: org.category ?? '',
           rating: org.averageRating,
           reviewCount: org.reviewCount,
-        ),
-        transitionsBuilder: (_, anim, _, child) => SlideTransition(
-          position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-              .animate(CurvedAnimation(parent: anim, curve: Curves.easeOut)),
-          child: child,
-        ),
-      )),
+        )),
+      ),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.surfaceElevated,

@@ -10,6 +10,7 @@ import '../l10n/app_localizations.dart';
 import 'chat_screen.dart';
 import 'org_profile_screen.dart';
 import 'reviews_screen.dart';
+import '../routing/transitions.dart';
 
 
 
@@ -288,28 +289,14 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                         reviewCount: _reviewCount,
                         reviews: _reviews,
                         onSeeAll: () => Navigator.of(context).push(
-                          PageRouteBuilder(
-                            transitionDuration:
-                                const Duration(milliseconds: 300),
-                            pageBuilder: (_, _, _) => ReviewsScreen(
-                              activityName: widget.name,
-                              rating: _rating,
-                              reviewCount: _reviewCount,
-                              colorStart: widget.colorStart,
-                              colorEnd: widget.colorEnd,
-                              organizationId: _orgIdInt,
-                            ),
-                            transitionsBuilder: (_, animation, _, child) =>
-                                SlideTransition(
-                              position: Tween<Offset>(
-                                begin: const Offset(1, 0),
-                                end: Offset.zero,
-                              ).animate(CurvedAnimation(
-                                  parent: animation,
-                                  curve: Curves.easeOut)),
-                              child: child,
-                            ),
-                          ),
+                          slideRoute(builder: (_) => ReviewsScreen(
+                            activityName: widget.name,
+                            rating: _rating,
+                            reviewCount: _reviewCount,
+                            colorStart: widget.colorStart,
+                            colorEnd: widget.colorEnd,
+                            organizationId: _orgIdInt,
+                          )),
                         ),
                       ),
                       const SizedBox(height: 110),
@@ -675,24 +662,13 @@ class _OrgCard extends StatelessWidget {
 
   void _openProfile(BuildContext context) {
     Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 320),
-        pageBuilder: (_, _, _) => OrgProfileScreen(
-          orgId: orgId,
-          name: studio,
-          colorStart: colorStart,
-          colorEnd: colorEnd,
-          category: category,
-        ),
-        transitionsBuilder: (_, animation, _, child) => SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(1, 0),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(
-              parent: animation, curve: Curves.easeOut)),
-          child: child,
-        ),
-      ),
+      slideRoute(builder: (_) => OrgProfileScreen(
+        orgId: orgId,
+        name: studio,
+        colorStart: colorStart,
+        colorEnd: colorEnd,
+        category: category,
+      )),
     );
   }
 
@@ -1582,20 +1558,12 @@ class _ContactBarState extends State<_ContactBar> {
     } catch (_) {}
     if (!mounted) return;
     setState(() => _loading = false);
-    Navigator.of(context).push(PageRouteBuilder(
-      transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (_, _, _) => ChatScreen(
-        conversationId: conversationId,
-        name: widget.orgName.isNotEmpty ? widget.orgName : 'Organization',
-        initials: _initials.isNotEmpty ? _initials : '?',
-        avatarColor: widget.colorStart,
-      ),
-      transitionsBuilder: (_, animation, _, child) => SlideTransition(
-        position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-            .animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-        child: child,
-      ),
-    ));
+    Navigator.of(context).push(slideRoute(builder: (_) => ChatScreen(
+      conversationId: conversationId,
+      name: widget.orgName.isNotEmpty ? widget.orgName : 'Organization',
+      initials: _initials.isNotEmpty ? _initials : '?',
+      avatarColor: widget.colorStart,
+    )));
   }
 
   @override

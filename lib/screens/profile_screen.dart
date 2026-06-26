@@ -11,6 +11,7 @@ import 'settings_screen.dart';
 import 'organization_registration_screen.dart';
 import 'org_dashboard_screen.dart';
 import 'splash_screen.dart';
+import '../routing/transitions.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -57,17 +58,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _navigateToEditProfile(BuildContext context) async {
-    await Navigator.of(context).push(PageRouteBuilder(
-      pageBuilder: (ctx, anim, secAnim) => const EditProfileScreen(),
-      transitionsBuilder: (ctx, anim, secAnim, child) => SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(1, 0),
-          end: Offset.zero,
-        ).animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
-        child: child,
-      ),
-      transitionDuration: const Duration(milliseconds: 300),
-    ));
+    await Navigator.of(context).push(
+      slideRoute(builder: (_) => const EditProfileScreen()),
+    );
     _loadProfile();
   }
 
@@ -140,20 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final l10n = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () => Navigator.of(context).push(
-        PageRouteBuilder(
-          pageBuilder: (_, _, _) =>
-              OrgDashboardScreen(orgId: _orgId, orgName: _orgName ?? ''),
-          transitionsBuilder: (_, animation, _, child) =>
-              SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(1, 0),
-              end: Offset.zero,
-            ).animate(
-                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
-            child: child,
-          ),
-          transitionDuration: const Duration(milliseconds: 320),
-        ),
+        slideRoute(builder: (_) => OrgDashboardScreen(orgId: _orgId, orgName: _orgName ?? '')),
       ),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -366,19 +346,7 @@ class _JoinProviderButton extends StatelessWidget {
     return GestureDetector(
       onTap: () async {
         await Navigator.of(context).push(
-          PageRouteBuilder(
-            pageBuilder: (ctx, anim, secAnim) =>
-                const OrganizationRegistrationScreen(),
-            transitionsBuilder: (ctx, anim, secAnim, child) => SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(1, 0),
-                end: Offset.zero,
-              ).animate(
-                  CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
-              child: child,
-            ),
-            transitionDuration: const Duration(milliseconds: 320),
-          ),
+          slideRoute(builder: (_) => const OrganizationRegistrationScreen()),
         );
         onRegistered?.call();
       },
@@ -460,21 +428,7 @@ class _GeneralSettingsSection extends StatelessWidget {
         label: l10n.accountSettings,
         onTap: () => Navigator.push(
           outerContext,
-          PageRouteBuilder(
-            pageBuilder: (ctx, anim, secAnim) => const SettingsScreen(),
-            transitionsBuilder: (ctx, anim, secAnim, child) =>
-                SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(1, 0),
-                end: Offset.zero,
-              ).animate(CurvedAnimation(
-                parent: anim,
-                curve: Curves.easeOutCubic,
-              )),
-              child: child,
-            ),
-            transitionDuration: const Duration(milliseconds: 300),
-          ),
+          slideRoute(builder: (_) => const SettingsScreen()),
         ),
       ),
       _SettingItem(
@@ -483,22 +437,7 @@ class _GeneralSettingsSection extends StatelessWidget {
         label: l10n.notifications,
         onTap: () => Navigator.push(
           outerContext,
-          PageRouteBuilder(
-            pageBuilder: (ctx, anim, secAnim) =>
-                const NotificationsSettingsScreen(),
-            transitionsBuilder: (ctx, anim, secAnim, child) =>
-                SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(1, 0),
-                end: Offset.zero,
-              ).animate(CurvedAnimation(
-                parent: anim,
-                curve: Curves.easeOutCubic,
-              )),
-              child: child,
-            ),
-            transitionDuration: const Duration(milliseconds: 300),
-          ),
+          slideRoute(builder: (_) => const NotificationsSettingsScreen()),
         ),
       ),
       _SettingItem(

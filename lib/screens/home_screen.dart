@@ -24,6 +24,7 @@ import 'category_screen.dart';
 import '../services/places_service.dart';
 import 'event_details_screen.dart';
 import '../l10n/app_localizations.dart';
+import '../routing/transitions.dart';
 
 // ─── Data classes ─────────────────────────────────────────────────────────────
 
@@ -260,15 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _openCityPicker() async {
     final selection = await Navigator.of(context).push<CitySelection>(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 320),
-        pageBuilder: (_, _, _) => CityPickerScreen(initialCity: _locationCity),
-        transitionsBuilder: (_, anim, _, child) => SlideTransition(
-          position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
-              .animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
-          child: child,
-        ),
-      ),
+      modalRoute(builder: (_) => CityPickerScreen(initialCity: _locationCity)),
     );
     if (selection != null && mounted) {
       setState(() => _locationCity = selection.name);
@@ -305,24 +298,16 @@ class _HomeScreenState extends State<HomeScreen> {
       orElse: () => _Category(id: id, name: name, icon: Icons.category_rounded, color: AppColors.purple),
     );
     Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, _, _) => CategoryScreen(
-          categoryId: id,
-          categoryName: name,
-          categoryIcon: cat.icon,
-          categoryColor: cat.color,
-          classes: _apiClasses.where((c) => c.categoryId == id).toList(),
-          events: _apiEvents.where((e) => e.categoryId == id).toList(),
-          userLat: _fetchedLat,
-          userLng: _fetchedLng,
-        ),
-        transitionsBuilder: (_, anim, _, child) => SlideTransition(
-          position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-              .animate(CurvedAnimation(parent: anim, curve: Curves.easeOut)),
-          child: child,
-        ),
-      ),
+      slideRoute(builder: (_) => CategoryScreen(
+        categoryId: id,
+        categoryName: name,
+        categoryIcon: cat.icon,
+        categoryColor: cat.color,
+        classes: _apiClasses.where((c) => c.categoryId == id).toList(),
+        events: _apiEvents.where((e) => e.categoryId == id).toList(),
+        userLat: _fetchedLat,
+        userLng: _fetchedLng,
+      )),
     );
   }
 
@@ -419,15 +404,9 @@ class _HomeScreenState extends State<HomeScreen> {
               _SectionHeader(
                 title: l10n.eventsSection,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                onSeeAll: () => Navigator.of(context).push(PageRouteBuilder(
-                  transitionDuration: const Duration(milliseconds: 300),
-                  pageBuilder: (_, _, _) => SeeAllEventsScreen(city: _locationCity),
-                  transitionsBuilder: (_, anim, _, child) => SlideTransition(
-                    position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-                        .animate(CurvedAnimation(parent: anim, curve: Curves.easeOut)),
-                    child: child,
-                  ),
-                )),
+                onSeeAll: () => Navigator.of(context).push(
+                  slideRoute(builder: (_) => SeeAllEventsScreen(city: _locationCity)),
+                ),
               ),
               const SizedBox(height: 16),
               _BannersSection(apiEvents: _apiEvents.take(10).toList()),
@@ -448,15 +427,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: l10n.popularNearYou,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 onSeeAll: () => Navigator.of(context).push(
-                  PageRouteBuilder(
-                    transitionDuration: const Duration(milliseconds: 300),
-                    pageBuilder: (_, _, _) => SeeAllScreen(title: l10n.popularNearYou),
-                    transitionsBuilder: (_, animation, _, child) => SlideTransition(
-                      position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-                          .animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-                      child: child,
-                    ),
-                  ),
+                  slideRoute(builder: (_) => SeeAllScreen(title: l10n.popularNearYou)),
                 ),
               ),
               const SizedBox(height: 16),
@@ -472,15 +443,9 @@ class _HomeScreenState extends State<HomeScreen> {
               _SectionHeader(
                 title: l10n.organizationsNearYou,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                onSeeAll: () => Navigator.of(context).push(PageRouteBuilder(
-                  transitionDuration: const Duration(milliseconds: 300),
-                  pageBuilder: (_, _, _) => SeeAllOrgsScreen(city: _locationCity),
-                  transitionsBuilder: (_, anim, _, child) => SlideTransition(
-                    position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-                        .animate(CurvedAnimation(parent: anim, curve: Curves.easeOut)),
-                    child: child,
-                  ),
-                )),
+                onSeeAll: () => Navigator.of(context).push(
+                  slideRoute(builder: (_) => SeeAllOrgsScreen(city: _locationCity)),
+                ),
               ),
               const SizedBox(height: 16),
               _loadingClasses
@@ -557,15 +522,7 @@ class _Header extends StatelessWidget {
         GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () => Navigator.of(context).push(
-            PageRouteBuilder(
-              pageBuilder: (ctx, anim, secAnim) => const NotificationsScreen(),
-              transitionsBuilder: (ctx, anim, secAnim, child) => SlideTransition(
-                position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-                    .animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
-                child: child,
-              ),
-              transitionDuration: const Duration(milliseconds: 300),
-            ),
+            slideRoute(builder: (_) => const NotificationsScreen()),
           ).then((_) => onNotificationsOpened()),
           child: Stack(
             clipBehavior: Clip.none,
@@ -655,15 +612,7 @@ class _SearchBar extends StatelessWidget {
         const SizedBox(width: 12),
         GestureDetector(
           onTap: () => Navigator.of(context).push(
-            PageRouteBuilder(
-              transitionDuration: const Duration(milliseconds: 350),
-              pageBuilder: (_, _, _) => const FiltersScreen(),
-              transitionsBuilder: (_, animation, _, child) => SlideTransition(
-                position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
-                    .animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
-                child: child,
-              ),
-            ),
+            modalRoute(builder: (_) => const FiltersScreen()),
           ),
           child: Container(
             width: 50,
@@ -773,20 +722,12 @@ class _BannerCard extends StatelessWidget {
     final screenW = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: () => Navigator.of(context).push(
-        PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 300),
-          pageBuilder: (_, _, _) => EventDetailsScreen(
-            eventId: banner.id,
-            colorStart: banner.colorStart,
-            colorEnd: banner.colorEnd,
-            icon: banner.icon,
-          ),
-          transitionsBuilder: (_, animation, _, child) => SlideTransition(
-            position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-                .animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-            child: child,
-          ),
-        ),
+        slideRoute(builder: (_) => EventDetailsScreen(
+          eventId: banner.id,
+          colorStart: banner.colorStart,
+          colorEnd: banner.colorEnd,
+          icon: banner.icon,
+        )),
       ),
       child: Container(
         width: screenW * 0.78,
@@ -1197,9 +1138,8 @@ class _OrgCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final g = _gradients[org.id.hashCode.abs() % _gradients.length];
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, _, _) => OrgProfileScreen(
+      onTap: () => Navigator.of(context).push(
+        slideRoute(builder: (_) => OrgProfileScreen(
           orgId: org.id,
           name: org.name,
           colorStart: g.$1,
@@ -1207,13 +1147,8 @@ class _OrgCard extends StatelessWidget {
           category: org.category ?? '',
           rating: org.averageRating,
           reviewCount: org.reviewCount,
-        ),
-        transitionsBuilder: (_, anim, _, child) => SlideTransition(
-          position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-              .animate(CurvedAnimation(parent: anim, curve: Curves.easeOut)),
-          child: child,
-        ),
-      )),
+        )),
+      ),
       child: Container(
         width: 192,
         margin: const EdgeInsets.only(right: 16),
