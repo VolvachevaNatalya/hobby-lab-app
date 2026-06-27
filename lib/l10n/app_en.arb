@@ -253,5 +253,17 @@
   "deleteOrganizationTitle": "Delete Organization?",
   "deleteOrganizationWarning": "This will permanently delete this organization and all its data — classes, groups, events, photos, and reviews. This action cannot be undone.",
   "organizationDeleted": "Organization deleted",
-  "failedToDeleteOrganization": "Failed to delete organization. Please try again."
+  "failedToDeleteOrganization": "Failed to delete organization. Please try again.",
+
+  "joinOrganization": "Join Organization",
+  "joinOrganizationSubtitle": "Join an organization using an invite code",
+  "inviteCodeLabel": "Invite Code",
+  "inviteCodeHint": "Enter 8-character invite code",
+  "verifyCode": "Verify",
+  "changeInviteCode": "Change invite code",
+  "confirmAndJoin": "Confirm & Join",
+  "requiresApprovalNote": "Admin approval required before joining",
+  "joinImmediateNote": "You'll be added as a member immediately",
+  "requestSubmitted": "Request submitted. Waiting for admin approval.",
+  "joinedOrgSuccess": "You've joined the organization!"
 }

@@ -651,33 +651,31 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get joinOrganizationSubtitle =>
-      'Введите пригласительный код для вступления';
+      'Вступите в организацию по коду приглашения';
 
   @override
-  String get inviteCodeLabel => 'Пригласительный код';
+  String get inviteCodeLabel => 'Код приглашения';
 
   @override
-  String get inviteCodeHint => 'Введите 8-значный код';
+  String get inviteCodeHint => 'Введите 8-символьный код';
 
   @override
   String get verifyCode => 'Проверить';
 
   @override
-  String get changeInviteCode => 'Изменить код';
+  String get changeInviteCode => 'Изменить код приглашения';
 
   @override
   String get confirmAndJoin => 'Подтвердить и вступить';
 
   @override
-  String get requiresApprovalNote =>
-      'Требуется подтверждение администратора';
+  String get requiresApprovalNote => 'Требуется одобрение администратора';
 
   @override
-  String get joinImmediateNote => 'Вы сразу станете участником';
+  String get joinImmediateNote => 'Вы будете добавлены как участник сразу';
 
   @override
-  String get requestSubmitted =>
-      'Запрос отправлен. Ожидайте подтверждения администратора.';
+  String get requestSubmitted => 'Заявка отправлена. Ожидайте одобрения.';
 
   @override
   String get joinedOrgSuccess => 'Вы вступили в организацию!';

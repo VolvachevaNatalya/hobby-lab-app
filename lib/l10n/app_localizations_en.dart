@@ -668,12 +668,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get requiresApprovalNote => 'Admin approval required before joining';
 
   @override
-  String get joinImmediateNote => "You'll be added as a member immediately";
+  String get joinImmediateNote => 'You\'ll be added as a member immediately';
 
   @override
   String get requestSubmitted =>
       'Request submitted. Waiting for admin approval.';
 
   @override
-  String get joinedOrgSuccess => "You've joined the organization!";
+  String get joinedOrgSuccess => 'You\'ve joined the organization!';
 }

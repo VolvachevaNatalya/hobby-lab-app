@@ -253,5 +253,17 @@
   "deleteOrganizationTitle": "למחוק ארגון?",
   "deleteOrganizationWarning": "פעולה זו תמחק לצמיתות את הארגון וכל הנתונים שלו — שיעורים, קבוצות, אירועים, תמונות וביקורות. לא ניתן לבטל פעולה זו.",
   "organizationDeleted": "הארגון נמחק",
-  "failedToDeleteOrganization": "מחיקת הארגון נכשלה. נסה שוב."
+  "failedToDeleteOrganization": "מחיקת הארגון נכשלה. נסה שוב.",
+
+  "joinOrganization": "הצטרף לארגון",
+  "joinOrganizationSubtitle": "הצטרף לארגון באמצעות קוד הזמנה",
+  "inviteCodeLabel": "קוד הזמנה",
+  "inviteCodeHint": "הזן קוד בן 8 תווים",
+  "verifyCode": "אמת",
+  "changeInviteCode": "שנה קוד הזמנה",
+  "confirmAndJoin": "אשר והצטרף",
+  "requiresApprovalNote": "נדרש אישור מנהל לפני הצטרפות",
+  "joinImmediateNote": "תתווסף כחבר מיד",
+  "requestSubmitted": "הבקשה נשלחה. ממתין לאישור מנהל.",
+  "joinedOrgSuccess": "הצטרפת לארגון!"
 }

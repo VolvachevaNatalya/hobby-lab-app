@@ -253,5 +253,17 @@
   "deleteOrganizationTitle": "Удалить организацию?",
   "deleteOrganizationWarning": "Это навсегда удалит организацию и все её данные — занятия, группы, события, фотографии и отзывы. Это действие нельзя отменить.",
   "organizationDeleted": "Организация удалена",
-  "failedToDeleteOrganization": "Не удалось удалить организацию. Попробуйте ещё раз."
+  "failedToDeleteOrganization": "Не удалось удалить организацию. Попробуйте ещё раз.",
+
+  "joinOrganization": "Вступить в организацию",
+  "joinOrganizationSubtitle": "Вступите в организацию по коду приглашения",
+  "inviteCodeLabel": "Код приглашения",
+  "inviteCodeHint": "Введите 8-символьный код",
+  "verifyCode": "Проверить",
+  "changeInviteCode": "Изменить код приглашения",
+  "confirmAndJoin": "Подтвердить и вступить",
+  "requiresApprovalNote": "Требуется одобрение администратора",
+  "joinImmediateNote": "Вы будете добавлены как участник сразу",
+  "requestSubmitted": "Заявка отправлена. Ожидайте одобрения.",
+  "joinedOrgSuccess": "Вы вступили в организацию!"
 }
