@@ -625,4 +625,24 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get createOrganization => 'Создать организацию';
+
+  @override
+  String get dangerZone => 'Опасная зона';
+
+  @override
+  String get deleteOrganization => 'Удалить организацию';
+
+  @override
+  String get deleteOrganizationTitle => 'Удалить организацию?';
+
+  @override
+  String get deleteOrganizationWarning =>
+      'Это навсегда удалит организацию и все её данные — занятия, группы, события, фотографии и отзывы. Это действие нельзя отменить.';
+
+  @override
+  String get organizationDeleted => 'Организация удалена';
+
+  @override
+  String get failedToDeleteOrganization =>
+      'Не удалось удалить организацию. Попробуйте ещё раз.';
 }

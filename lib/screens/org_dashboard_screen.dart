@@ -1499,12 +1499,17 @@ class _ProfileTabState extends State<_ProfileTab> {
       _showComingSoon('Edit Profile');
       return;
     }
-    await Navigator.of(context).push(
+    final result = await Navigator.of(context).push<dynamic>(
       slideRoute(builder: (_) => EditOrganizationScreen(
         orgId: orgIdInt,
         initialName: widget.orgName,
       )),
     );
+    if (!mounted) return;
+    if (result == 'deleted') {
+      Navigator.of(context).pop('deleted');
+      return;
+    }
     widget.onEditComplete?.call();
   }
 

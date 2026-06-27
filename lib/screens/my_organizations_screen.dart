@@ -132,11 +132,14 @@ class _MyOrganizationsScreenState extends State<MyOrganizationsScreen> {
           id: id,
           name: name,
           subtitle: subtitle,
-          onTap: () => Navigator.of(context).push(
-            slideRoute(
-              builder: (_) => OrgDashboardScreen(orgId: id, orgName: name),
-            ),
-          ),
+          onTap: () async {
+            await Navigator.of(context).push(
+              slideRoute(
+                builder: (_) => OrgDashboardScreen(orgId: id, orgName: name),
+              ),
+            );
+            if (mounted) _load();
+          },
         );
       },
     );

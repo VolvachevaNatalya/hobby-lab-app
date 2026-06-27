@@ -246,5 +246,12 @@
 
   "myOrganizations": "הארגונים שלי",
   "myOrganizationsSubtitle": "צפה ונהל את הארגונים שלך",
-  "createOrganization": "יצירת ארגון"
+  "createOrganization": "יצירת ארגון",
+
+  "dangerZone": "אזור סכנה",
+  "deleteOrganization": "מחק ארגון",
+  "deleteOrganizationTitle": "למחוק ארגון?",
+  "deleteOrganizationWarning": "פעולה זו תמחק לצמיתות את הארגון וכל הנתונים שלו — שיעורים, קבוצות, אירועים, תמונות וביקורות. לא ניתן לבטל פעולה זו.",
+  "organizationDeleted": "הארגון נמחק",
+  "failedToDeleteOrganization": "מחיקת הארגון נכשלה. נסה שוב."
 }

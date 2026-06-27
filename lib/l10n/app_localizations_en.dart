@@ -621,4 +621,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get createOrganization => 'Create Organization';
+
+  @override
+  String get dangerZone => 'Danger Zone';
+
+  @override
+  String get deleteOrganization => 'Delete Organization';
+
+  @override
+  String get deleteOrganizationTitle => 'Delete Organization?';
+
+  @override
+  String get deleteOrganizationWarning =>
+      'This will permanently delete this organization and all its data — classes, groups, events, photos, and reviews. This action cannot be undone.';
+
+  @override
+  String get organizationDeleted => 'Organization deleted';
+
+  @override
+  String get failedToDeleteOrganization =>
+      'Failed to delete organization. Please try again.';
 }

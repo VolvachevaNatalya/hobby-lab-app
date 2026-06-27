@@ -91,10 +91,7 @@ class _EventCardState extends State<EventCard> {
     final event = widget.event;
     final colors = eventPalette(event.id);
     final dateStr = _fmtDate(event.startDatetime);
-    // Only show a real category name — never fall back to the status badge
-    // (which comes from the DB 'status' column and would show "ACTIVE").
-    final categoryLabel =
-        event.categoryName?.isNotEmpty == true ? event.categoryName : null;
+    const String? categoryLabel = null;
 
     return GestureDetector(
       onTap: widget.onTap,
@@ -123,7 +120,7 @@ class _EventCardState extends State<EventCard> {
                     width: 94,
                     height: 94,
                     child: _EventImage(
-                      imageUrl: event.imageUrl,
+                      imageUrl: null,
                       colorStart: colors.$1,
                       colorEnd: colors.$2,
                     ),
@@ -153,21 +150,9 @@ class _EventCardState extends State<EventCard> {
                             ),
                           ),
 
-                          // Organisation name
-                          if (event.organizationName?.isNotEmpty == true)
-                            Text(
-                              event.organizationName!,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.poppins(
-                                fontSize: 11,
-                                color: AppColors.textMuted,
-                              ),
-                            ),
-
                           // Rating + date
                           _BottomRow(
-                            rating: event.averageRating,
+                            rating: 0,
                             dateStr: dateStr,
                           ),
                         ],

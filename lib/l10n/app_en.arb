@@ -246,5 +246,12 @@
 
   "myOrganizations": "My Organizations",
   "myOrganizationsSubtitle": "View and manage your organizations",
-  "createOrganization": "Create Organization"
+  "createOrganization": "Create Organization",
+
+  "dangerZone": "Danger Zone",
+  "deleteOrganization": "Delete Organization",
+  "deleteOrganizationTitle": "Delete Organization?",
+  "deleteOrganizationWarning": "This will permanently delete this organization and all its data — classes, groups, events, photos, and reviews. This action cannot be undone.",
+  "organizationDeleted": "Organization deleted",
+  "failedToDeleteOrganization": "Failed to delete organization. Please try again."
 }

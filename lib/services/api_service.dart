@@ -1090,6 +1090,16 @@ class ApiService {
     }
   }
 
+  static Future<void> deleteOrganization(String orgId) async {
+    final response = await http.delete(
+      Uri.parse('$_baseUrl/organizations/$orgId'),
+      headers: await _authHeaders(),
+    );
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw Exception('Failed to delete organization');
+    }
+  }
+
   static Future<Map<String, dynamic>> createEvent({
     required int organizationId,
     required String title,

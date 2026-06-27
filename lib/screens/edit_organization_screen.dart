@@ -95,6 +95,7 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
   bool _saving = false;
   bool _loading = true;
   bool _submitted = false;
+  bool _deleting = false;
   final _picker = ImagePicker();
 
   @override
@@ -326,6 +327,76 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
     }
   }
 
+  Future<void> _deleteOrganization() async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surfaceElevated,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          l10n.deleteOrganizationTitle,
+          style: GoogleFonts.poppins(
+              fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+        ),
+        content: Text(
+          l10n.deleteOrganizationWarning,
+          style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textSecondary, height: 1.5),
+        ),
+        actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        actions: [
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                side: const BorderSide(color: AppColors.divider),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text(
+                l10n.btnCancel,
+                style: GoogleFonts.poppins(
+                    fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFEF4444),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                elevation: 0,
+              ),
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: Text(
+                l10n.btnDelete,
+                style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    setState(() => _deleting = true);
+    try {
+      await ApiService.deleteOrganization(widget.orgId.toString());
+      if (!mounted) return;
+      Navigator.of(context).pop('deleted');
+    } catch (_) {
+      if (mounted) {
+        setState(() => _deleting = false);
+        _showSnack(l10n.failedToDeleteOrganization, const Color(0xFFEF4444));
+      }
+    }
+  }
+
   void _showSnack(String msg, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -459,6 +530,9 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
                       _buildPhotosSection(context),
                       const SizedBox(height: 32),
                       _buildSaveButton(),
+                      const SizedBox(height: 40),
+                      _buildDangerZone(),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
@@ -848,6 +922,80 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
                 ),
               ),
           ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDangerZone() {
+    final l10n = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.warning_amber_rounded, size: 15, color: Color(0xFFEF4444)),
+            const SizedBox(width: 6),
+            Text(
+              l10n.dangerZone,
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFFEF4444),
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.35)),
+          ),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: (_deleting || _saving) ? null : _deleteOrganization,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+              child: Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEF4444).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: _deleting
+                        ? const Center(
+                            child: SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: Color(0xFFEF4444)),
+                            ),
+                          )
+                        : const Icon(Icons.delete_outline_rounded,
+                            size: 18, color: Color(0xFFEF4444)),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      l10n.deleteOrganization,
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFFEF4444),
+                      ),
+                    ),
+                  ),
+                  const Icon(Icons.arrow_forward_ios_rounded,
+                      size: 14, color: Color(0xFFEF4444)),
+                ],
+              ),
+            ),
+          ),
         ),
       ],
     );

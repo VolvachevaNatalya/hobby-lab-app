@@ -613,4 +613,23 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get createOrganization => 'יצירת ארגון';
+
+  @override
+  String get dangerZone => 'אזור סכנה';
+
+  @override
+  String get deleteOrganization => 'מחק ארגון';
+
+  @override
+  String get deleteOrganizationTitle => 'למחוק ארגון?';
+
+  @override
+  String get deleteOrganizationWarning =>
+      'פעולה זו תמחק לצמיתות את הארגון וכל הנתונים שלו — שיעורים, קבוצות, אירועים, תמונות וביקורות. לא ניתן לבטל פעולה זו.';
+
+  @override
+  String get organizationDeleted => 'הארגון נמחק';
+
+  @override
+  String get failedToDeleteOrganization => 'מחיקת הארגון נכשלה. נסה שוב.';
 }

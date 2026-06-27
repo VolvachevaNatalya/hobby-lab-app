@@ -1281,6 +1281,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create Organization'**
   String get createOrganization;
+
+  /// No description provided for @dangerZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Danger Zone'**
+  String get dangerZone;
+
+  /// No description provided for @deleteOrganization.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Organization'**
+  String get deleteOrganization;
+
+  /// No description provided for @deleteOrganizationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Organization?'**
+  String get deleteOrganizationTitle;
+
+  /// No description provided for @deleteOrganizationWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete this organization and all its data — classes, groups, events, photos, and reviews. This action cannot be undone.'**
+  String get deleteOrganizationWarning;
+
+  /// No description provided for @organizationDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization deleted'**
+  String get organizationDeleted;
+
+  /// No description provided for @failedToDeleteOrganization.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete organization. Please try again.'**
+  String get failedToDeleteOrganization;
 }
 
 class _AppLocalizationsDelegate

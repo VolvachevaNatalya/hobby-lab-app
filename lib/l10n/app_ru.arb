@@ -246,5 +246,12 @@
 
   "myOrganizations": "Мои организации",
   "myOrganizationsSubtitle": "Просматривайте и управляйте своими организациями",
-  "createOrganization": "Создать организацию"
+  "createOrganization": "Создать организацию",
+
+  "dangerZone": "Опасная зона",
+  "deleteOrganization": "Удалить организацию",
+  "deleteOrganizationTitle": "Удалить организацию?",
+  "deleteOrganizationWarning": "Это навсегда удалит организацию и все её данные — занятия, группы, события, фотографии и отзывы. Это действие нельзя отменить.",
+  "organizationDeleted": "Организация удалена",
+  "failedToDeleteOrganization": "Не удалось удалить организацию. Попробуйте ещё раз."
 }
