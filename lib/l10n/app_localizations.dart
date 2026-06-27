@@ -1317,6 +1317,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to delete organization. Please try again.'**
   String get failedToDeleteOrganization;
+
+  /// No description provided for @joinOrganization.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Organization'**
+  String get joinOrganization;
+
+  /// No description provided for @joinOrganizationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Join an organization using an invite code'**
+  String get joinOrganizationSubtitle;
+
+  /// No description provided for @inviteCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite Code'**
+  String get inviteCodeLabel;
+
+  /// No description provided for @inviteCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter 8-character invite code'**
+  String get inviteCodeHint;
+
+  /// No description provided for @verifyCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get verifyCode;
+
+  /// No description provided for @changeInviteCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Change invite code'**
+  String get changeInviteCode;
+
+  /// No description provided for @confirmAndJoin.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm & Join'**
+  String get confirmAndJoin;
+
+  /// No description provided for @requiresApprovalNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin approval required before joining'**
+  String get requiresApprovalNote;
+
+  /// No description provided for @joinImmediateNote.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll be added as a member immediately'**
+  String get joinImmediateNote;
+
+  /// No description provided for @requestSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Request submitted. Waiting for admin approval.'**
+  String get requestSubmitted;
+
+  /// No description provided for @joinedOrgSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve joined the organization!'**
+  String get joinedOrgSuccess;
 }
 
 class _AppLocalizationsDelegate

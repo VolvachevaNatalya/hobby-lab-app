@@ -10,6 +10,7 @@ import 'notifications_settings_screen.dart';
 import 'settings_screen.dart';
 import 'organization_registration_screen.dart';
 import 'my_organizations_screen.dart';
+import 'join_organization_screen.dart';
 import 'splash_screen.dart';
 import '../routing/transitions.dart';
 
@@ -89,6 +90,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           setState(() => _loadingOrg = true);
                           _loadOrg();
                         }),
+                      const SizedBox(height: 12),
+                      _buildJoinOrgCard(context),
                       const SizedBox(height: 28),
                       _GeneralSettingsSection(context: context),
                       const SizedBox(height: 24),
@@ -116,6 +119,73 @@ class _ProfileScreenState extends State<ProfileScreen> {
             fontWeight: FontWeight.w700,
             color: AppColors.textPrimary,
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildJoinOrgCard(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(
+        slideRoute(builder: (_) => const JoinOrganizationScreen()),
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.divider),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF7C3AED), Color(0xFFEC4899)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: const Icon(
+                Icons.group_add_rounded,
+                color: Colors.white,
+                size: 22,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.joinOrganization,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    l10n.joinOrganizationSubtitle,
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      color: AppColors.textMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 14,
+              color: AppColors.textMuted,
+            ),
+          ],
         ),
       ),
     );

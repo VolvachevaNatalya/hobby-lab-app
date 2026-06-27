@@ -641,4 +641,39 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get failedToDeleteOrganization =>
       'Failed to delete organization. Please try again.';
+
+  @override
+  String get joinOrganization => 'Join Organization';
+
+  @override
+  String get joinOrganizationSubtitle =>
+      'Join an organization using an invite code';
+
+  @override
+  String get inviteCodeLabel => 'Invite Code';
+
+  @override
+  String get inviteCodeHint => 'Enter 8-character invite code';
+
+  @override
+  String get verifyCode => 'Verify';
+
+  @override
+  String get changeInviteCode => 'Change invite code';
+
+  @override
+  String get confirmAndJoin => 'Confirm & Join';
+
+  @override
+  String get requiresApprovalNote => 'Admin approval required before joining';
+
+  @override
+  String get joinImmediateNote => "You'll be added as a member immediately";
+
+  @override
+  String get requestSubmitted =>
+      'Request submitted. Waiting for admin approval.';
+
+  @override
+  String get joinedOrgSuccess => "You've joined the organization!";
 }

@@ -645,4 +645,40 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get failedToDeleteOrganization =>
       'Не удалось удалить организацию. Попробуйте ещё раз.';
+
+  @override
+  String get joinOrganization => 'Вступить в организацию';
+
+  @override
+  String get joinOrganizationSubtitle =>
+      'Введите пригласительный код для вступления';
+
+  @override
+  String get inviteCodeLabel => 'Пригласительный код';
+
+  @override
+  String get inviteCodeHint => 'Введите 8-значный код';
+
+  @override
+  String get verifyCode => 'Проверить';
+
+  @override
+  String get changeInviteCode => 'Изменить код';
+
+  @override
+  String get confirmAndJoin => 'Подтвердить и вступить';
+
+  @override
+  String get requiresApprovalNote =>
+      'Требуется подтверждение администратора';
+
+  @override
+  String get joinImmediateNote => 'Вы сразу станете участником';
+
+  @override
+  String get requestSubmitted =>
+      'Запрос отправлен. Ожидайте подтверждения администратора.';
+
+  @override
+  String get joinedOrgSuccess => 'Вы вступили в организацию!';
 }

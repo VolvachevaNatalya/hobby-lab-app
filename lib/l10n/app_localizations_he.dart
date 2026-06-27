@@ -632,4 +632,37 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get failedToDeleteOrganization => 'מחיקת הארגון נכשלה. נסה שוב.';
+
+  @override
+  String get joinOrganization => 'הצטרף לארגון';
+
+  @override
+  String get joinOrganizationSubtitle => 'הצטרף לארגון באמצעות קוד הזמנה';
+
+  @override
+  String get inviteCodeLabel => 'קוד הזמנה';
+
+  @override
+  String get inviteCodeHint => 'הזן קוד בן 8 תווים';
+
+  @override
+  String get verifyCode => 'אמת';
+
+  @override
+  String get changeInviteCode => 'שנה קוד הזמנה';
+
+  @override
+  String get confirmAndJoin => 'אשר והצטרף';
+
+  @override
+  String get requiresApprovalNote => 'נדרש אישור מנהל לפני הצטרפות';
+
+  @override
+  String get joinImmediateNote => 'תתווסף כחבר מיד';
+
+  @override
+  String get requestSubmitted => 'הבקשה נשלחה. ממתין לאישור מנהל.';
+
+  @override
+  String get joinedOrgSuccess => 'הצטרפת לארגון!';
 }
