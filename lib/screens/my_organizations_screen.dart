@@ -133,12 +133,27 @@ class _MyOrganizationsScreenState extends State<MyOrganizationsScreen> {
           name: name,
           subtitle: subtitle,
           onTap: () async {
-            await Navigator.of(context).push(
+            final l10n = AppLocalizations.of(context)!;
+            final messenger = ScaffoldMessenger.of(context);
+            final result = await Navigator.of(context).push<dynamic>(
               slideRoute(
                 builder: (_) => OrgDashboardScreen(orgId: id, orgName: name),
               ),
             );
-            if (mounted) _load();
+            if (!mounted) return;
+            if (result == 'deleted') {
+              messenger.showSnackBar(SnackBar(
+                content: Text(
+                  l10n.organizationDeleted,
+                  style: GoogleFonts.poppins(fontSize: 13, color: Colors.white),
+                ),
+                backgroundColor: const Color(0xFF059669),
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+              ));
+            }
+            _load();
           },
         );
       },
