@@ -16,6 +16,7 @@ import '../models/app_notification.dart';
 import '../models/user_profile.dart';
 import '../models/organization.dart';
 import '../models/org_photo.dart';
+import '../models/org_invite.dart';
 
 const _baseUrl = 'https://hobbylab-api-production-84bd.up.railway.app';
 const _tokenKey = 'auth_token';
@@ -1097,6 +1098,132 @@ class ApiService {
     );
     if (response.statusCode != 200 && response.statusCode != 204) {
       throw Exception('Failed to delete organization');
+    }
+  }
+
+  // ── Organization invites ──────────────────────────────────────────────────────
+
+  static Future<InviteCodeResolveResult> resolveInviteCode(String code) async {
+    final uri = Uri.parse('$_baseUrl/invite-codes/resolve')
+        .replace(queryParameters: {'code': code});
+    final response = await http.get(uri, headers: await _authHeaders());
+    if (response.statusCode == 200) {
+      return InviteCodeResolveResult.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+    }
+    _handleError(response);
+    final detail = _extractDetail(response.body);
+    throw Exception(detail ?? 'Invalid invite code');
+  }
+
+  static Future<List<OrgInviteCode>> getInviteCodes(String orgId) async {
+    final response = await http.get(
+      Uri.parse('$_baseUrl/organizations/$orgId/invite-codes'),
+      headers: await _authHeaders(),
+    );
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List<dynamic>)
+          .map((e) => OrgInviteCode.fromJson(e as Map<String, dynamic>))
+          .toList();
+    }
+    _handleError(response);
+    throw Exception('Failed to load invite codes');
+  }
+
+  static Future<OrgInviteCode> createInviteCode(
+    String orgId, {
+    String defaultRole = 'member',
+    bool requiresApproval = true,
+    DateTime? expiresAt,
+  }) async {
+    final headers = await _authHeaders();
+    final body = <String, dynamic>{
+      'default_role': defaultRole,
+      'requires_approval': requiresApproval,
+    };
+    if (expiresAt != null) body['expires_at'] = expiresAt.toUtc().toIso8601String();
+    final response = await http.post(
+      Uri.parse('$_baseUrl/organizations/$orgId/invite-codes'),
+      headers: headers,
+      body: jsonEncode(body),
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return OrgInviteCode.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+    }
+    _handleError(response);
+    throw Exception('Failed to create invite code');
+  }
+
+  static Future<OrgInviteCode> deactivateInviteCode(
+      String orgId, int codeId) async {
+    final response = await http.patch(
+      Uri.parse(
+          '$_baseUrl/organizations/$orgId/invite-codes/$codeId/deactivate'),
+      headers: await _authHeaders(),
+    );
+    if (response.statusCode == 200) {
+      return OrgInviteCode.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+    }
+    _handleError(response);
+    throw Exception('Failed to deactivate invite code');
+  }
+
+  static Future<JoinResult> submitJoinRequest(
+      String orgId, String code) async {
+    final headers = await _authHeaders();
+    final response = await http.post(
+      Uri.parse('$_baseUrl/organizations/$orgId/join-requests'),
+      headers: headers,
+      body: jsonEncode({'code': code}),
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return JoinResult.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+    }
+    _handleError(response);
+    final detail = _extractDetail(response.body);
+    throw Exception(detail ?? 'Failed to submit join request');
+  }
+
+  static Future<List<OrgJoinRequest>> getJoinRequests(String orgId) async {
+    final response = await http.get(
+      Uri.parse('$_baseUrl/organizations/$orgId/join-requests'),
+      headers: await _authHeaders(),
+    );
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List<dynamic>)
+          .map((e) => OrgJoinRequest.fromJson(e as Map<String, dynamic>))
+          .toList();
+    }
+    _handleError(response);
+    throw Exception('Failed to load join requests');
+  }
+
+  static Future<void> approveJoinRequest(
+      String orgId, int requestId) async {
+    final response = await http.post(
+      Uri.parse(
+          '$_baseUrl/organizations/$orgId/join-requests/$requestId/approve'),
+      headers: await _authHeaders(),
+    );
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      _handleError(response);
+      throw Exception('Failed to approve join request');
+    }
+  }
+
+  static Future<void> rejectJoinRequest(
+      String orgId, int requestId) async {
+    final response = await http.post(
+      Uri.parse(
+          '$_baseUrl/organizations/$orgId/join-requests/$requestId/reject'),
+      headers: await _authHeaders(),
+    );
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      _handleError(response);
+      throw Exception('Failed to reject join request');
     }
   }
 
