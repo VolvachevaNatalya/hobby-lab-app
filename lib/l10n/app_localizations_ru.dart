@@ -679,4 +679,77 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get joinedOrgSuccess => 'Вы вступили в организацию!';
+
+  @override
+  String get invitesAndRequests => 'Приглашения и заявки';
+
+  @override
+  String get invitesAndRequestsSubtitle =>
+      'Управление кодами приглашений и заявками';
+
+  @override
+  String get inviteCodes => 'Коды приглашений';
+
+  @override
+  String get joinRequests => 'Заявки на вступление';
+
+  @override
+  String get createInviteCode => 'Создать код приглашения';
+
+  @override
+  String get activeStatus => 'Активен';
+
+  @override
+  String get inactiveStatus => 'Неактивен';
+
+  @override
+  String get approvalRequired => 'Нужно одобрение';
+
+  @override
+  String get noApprovalRequired => 'Без одобрения';
+
+  @override
+  String get expiresPrefix => 'Истекает';
+
+  @override
+  String get deactivateCode => 'Деактивировать';
+
+  @override
+  String get defaultRoleLabel => 'Роль по умолчанию';
+
+  @override
+  String get roleMember => 'Участник';
+
+  @override
+  String get roleAdmin => 'Администратор';
+
+  @override
+  String get requiresApprovalToggle => 'Требует одобрения';
+
+  @override
+  String get noInviteCodesYet => 'Кодов приглашений пока нет';
+
+  @override
+  String get noPendingRequests => 'Нет ожидающих заявок';
+
+  @override
+  String get btnApprove => 'Одобрить';
+
+  @override
+  String get btnReject => 'Отклонить';
+
+  @override
+  String get codeDeactivatedSuccess => 'Код приглашения деактивирован';
+
+  @override
+  String get requestApprovedSuccess => 'Заявка одобрена';
+
+  @override
+  String get requestRejectedSuccess => 'Заявка отклонена';
+
+  @override
+  String get codeCopied => 'Код скопирован';
+
+  @override
+  String get btnCreate => 'Создать';
 }

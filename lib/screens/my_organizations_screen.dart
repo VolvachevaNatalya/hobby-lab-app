@@ -137,7 +137,7 @@ class _MyOrganizationsScreenState extends State<MyOrganizationsScreen> {
             final messenger = ScaffoldMessenger.of(context);
             final result = await Navigator.of(context).push<dynamic>(
               slideRoute(
-                builder: (_) => OrgDashboardScreen(orgId: id, orgName: name),
+                builder: (_) => OrgDashboardScreen(orgId: id, orgName: name, userRole: org['role']?.toString()),
               ),
             );
             if (!mounted) return;

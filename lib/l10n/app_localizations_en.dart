@@ -676,4 +676,77 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get joinedOrgSuccess => 'You\'ve joined the organization!';
+
+  @override
+  String get invitesAndRequests => 'Invites & Requests';
+
+  @override
+  String get invitesAndRequestsSubtitle =>
+      'Manage invite codes and join requests';
+
+  @override
+  String get inviteCodes => 'Invite Codes';
+
+  @override
+  String get joinRequests => 'Join Requests';
+
+  @override
+  String get createInviteCode => 'Create Invite Code';
+
+  @override
+  String get activeStatus => 'Active';
+
+  @override
+  String get inactiveStatus => 'Inactive';
+
+  @override
+  String get approvalRequired => 'Approval required';
+
+  @override
+  String get noApprovalRequired => 'No approval';
+
+  @override
+  String get expiresPrefix => 'Expires';
+
+  @override
+  String get deactivateCode => 'Deactivate';
+
+  @override
+  String get defaultRoleLabel => 'Default Role';
+
+  @override
+  String get roleMember => 'Member';
+
+  @override
+  String get roleAdmin => 'Admin';
+
+  @override
+  String get requiresApprovalToggle => 'Requires Approval';
+
+  @override
+  String get noInviteCodesYet => 'No invite codes yet';
+
+  @override
+  String get noPendingRequests => 'No pending join requests';
+
+  @override
+  String get btnApprove => 'Approve';
+
+  @override
+  String get btnReject => 'Reject';
+
+  @override
+  String get codeDeactivatedSuccess => 'Invite code deactivated';
+
+  @override
+  String get requestApprovedSuccess => 'Request approved';
+
+  @override
+  String get requestRejectedSuccess => 'Request rejected';
+
+  @override
+  String get codeCopied => 'Code copied';
+
+  @override
+  String get btnCreate => 'Create';
 }

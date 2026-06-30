@@ -664,6 +664,23 @@ class ApiService {
     throw Exception('Failed to load organizations');
   }
 
+  /// Probes the invite-codes endpoint to determine admin access.
+  /// Returns true (owner/admin), false (member), or null (network/auth error).
+  static Future<bool?> checkIsAdminOrOwner(String orgId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$_baseUrl/organizations/$orgId/invite-codes'),
+        headers: await _authHeaders(),
+      );
+      if (response.statusCode == 200) return true;
+      if (response.statusCode == 403) return false;
+      _handleError(response);
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
   static Future<List<Map<String, dynamic>>> getOrgClasses(String orgId) async {
     final uri = Uri.parse('$_baseUrl/classes/')
         .replace(queryParameters: {'organization_id': orgId});

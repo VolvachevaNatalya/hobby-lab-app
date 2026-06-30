@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../models/org_models.dart';
 import '../services/api_service.dart';
@@ -9,6 +10,7 @@ import 'org_event_form_screen.dart';
 import 'edit_organization_screen.dart';
 import 'notifications_settings_screen.dart';
 import 'change_password_screen.dart';
+import 'org_invites_screen.dart';
 import '../routing/transitions.dart';
 
 // ─── Main screen ──────────────────────────────────────────────────────────────
@@ -16,8 +18,9 @@ import '../routing/transitions.dart';
 class OrgDashboardScreen extends StatefulWidget {
   final String orgName;
   final String? orgId;
+  final String? userRole;
 
-  const OrgDashboardScreen({super.key, this.orgName = '', this.orgId});
+  const OrgDashboardScreen({super.key, this.orgName = '', this.orgId, this.userRole});
 
   @override
   State<OrgDashboardScreen> createState() => _OrgDashboardState();
@@ -28,8 +31,11 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
   bool _loading = true;
   String _orgId = '';
   String _orgName = '';
+  String _userRole = 'member';
   List<OrgClass> _classes = [];
   List<OrgEvent> _events = [];
+
+  bool get _isAdminOrOwner => _userRole == 'owner' || _userRole == 'admin';
 
   String get _initials {
     final name = _orgName.isNotEmpty ? _orgName : 'MO';
@@ -45,20 +51,43 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
     super.initState();
     _orgName = widget.orgName;
     _orgId = widget.orgId ?? '';
+    _userRole = widget.userRole ?? 'owner';
     _loadData();
   }
 
   Future<void> _loadData() async {
     try {
+      // Always fetch membership list to resolve both orgId (if absent) and current user's role.
+      final myOrgs = await ApiService.getMyOrganizations();
+
       if (_orgId.isEmpty) {
-        final orgs = await ApiService.getMyOrganizations();
-        if (orgs.isEmpty) {
+        if (myOrgs.isEmpty) {
           if (mounted) setState(() => _loading = false);
           return;
         }
-        final org = orgs.first;
-        _orgId = (org['id'] ?? '').toString();
-        if (mounted) setState(() => _orgName = (org['name'] ?? _orgName).toString());
+        final first = myOrgs.first;
+        _orgId = (first['id'] ?? '').toString();
+        if (mounted) setState(() => _orgName = (first['name'] ?? _orgName).toString());
+      }
+
+      final myEntry = myOrgs.firstWhere(
+        (o) => (o['id'] ?? '').toString() == _orgId,
+        orElse: () => <String, dynamic>{},
+      );
+
+      // Determine role: use API value when present, otherwise probe invite-codes endpoint.
+      String resolvedRole = _userRole; // retain initState value as default
+      final apiRole = myEntry['role']?.toString();
+      if (apiRole != null && apiRole.isNotEmpty) {
+        resolvedRole = apiRole;
+      } else {
+        final isAdmin = await ApiService.checkIsAdminOrOwner(_orgId);
+        if (isAdmin == true) {
+          resolvedRole = 'admin';
+        } else if (isAdmin == false) {
+          resolvedRole = 'member';
+        }
+        // null means network/auth error → keep _userRole (initState: widget.userRole ?? 'owner')
       }
 
       final results = await Future.wait([
@@ -124,6 +153,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
 
       if (mounted) {
         setState(() {
+          _userRole = resolvedRole;
           _classes = classes;
           _events = events;
           _loading = false;
@@ -132,6 +162,18 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
     } catch (_) {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  void _goInvites() {
+    if (_orgId.isEmpty) return;
+    Navigator.of(context).push(
+      slideRoute(
+        builder: (_) => OrganizationInvitesScreen(
+          orgId: _orgId,
+          orgName: _orgName,
+        ),
+      ),
+    );
   }
 
   Future<void> _goAddClass() async {
@@ -234,6 +276,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
             onAddEvent: _goAddEvent,
             onSwitchClasses: () => setState(() => _tab = 1),
             onSwitchEvents: () => setState(() => _tab = 2),
+            onInvites: _isAdminOrOwner ? _goInvites : null,
             onEditClass: _goEditClass,
             onEditEvent: _goEditEvent,
           ),
@@ -250,7 +293,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
             onDelete: _deleteEvent,
           ),
           const _MessagesTab(),
-          _ProfileTab(orgName: _orgName, initials: _initials, orgId: _orgId, onEditComplete: _loadData),
+          _ProfileTab(orgName: _orgName, initials: _initials, orgId: _orgId, isAdmin: _isAdminOrOwner, onEditComplete: _loadData),
         ],
       ),
       bottomNavigationBar: _buildBottomNav(),
@@ -341,6 +384,7 @@ class _DashboardTab extends StatelessWidget {
   final VoidCallback onAddEvent;
   final VoidCallback onSwitchClasses;
   final VoidCallback onSwitchEvents;
+  final VoidCallback? onInvites;
   final void Function(OrgClass)? onEditClass;
   final void Function(OrgEvent)? onEditEvent;
 
@@ -353,6 +397,7 @@ class _DashboardTab extends StatelessWidget {
     required this.onAddEvent,
     required this.onSwitchClasses,
     required this.onSwitchEvents,
+    this.onInvites,
     this.onEditClass,
     this.onEditEvent,
   });
@@ -379,6 +424,10 @@ class _DashboardTab extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildStats(),
+                  if (onInvites != null) ...[
+                    const SizedBox(height: 16),
+                    _buildInvitesCard(context),
+                  ],
                   const SizedBox(height: 28),
                   _SectionHeader(
                     title: 'My Classes',
@@ -422,6 +471,60 @@ class _DashboardTab extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildInvitesCard(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return GestureDetector(
+      onTap: onInvites,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: AppColors.surfaceElevated,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.purple.withValues(alpha: 0.35)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                gradient: AppColors.brandGradient,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.card_giftcard_rounded,
+                  color: Colors.white, size: 18),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.invitesAndRequests,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  Text(
+                    l10n.invitesAndRequestsSubtitle,
+                    style: GoogleFonts.poppins(
+                      fontSize: 11,
+                      color: AppColors.textMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios_rounded,
+                size: 14, color: AppColors.textMuted),
+          ],
+        ),
       ),
     );
   }
@@ -1479,12 +1582,14 @@ class _ProfileTab extends StatefulWidget {
   final String orgName;
   final String initials;
   final String orgId;
+  final bool isAdmin;
   final VoidCallback? onEditComplete;
 
   const _ProfileTab({
     required this.orgName,
     required this.initials,
     required this.orgId,
+    this.isAdmin = false,
     this.onEditComplete,
   });
 
@@ -1494,6 +1599,7 @@ class _ProfileTab extends StatefulWidget {
 
 class _ProfileTabState extends State<_ProfileTab> {
   Future<void> _navigateEditProfile() async {
+    if (!widget.isAdmin) return;
     final orgIdInt = int.tryParse(widget.orgId);
     if (orgIdInt == null) {
       _showComingSoon('Edit Profile');
@@ -1516,6 +1622,18 @@ class _ProfileTabState extends State<_ProfileTab> {
   void _navigateChangePassword() {
     Navigator.of(context).push(
       slideRoute(builder: (_) => const ChangePasswordScreen()),
+    );
+  }
+
+  void _navigateInvites() {
+    if (!widget.isAdmin || widget.orgId.isEmpty) return;
+    Navigator.of(context).push(
+      slideRoute(
+        builder: (_) => OrganizationInvitesScreen(
+          orgId: widget.orgId,
+          orgName: widget.orgName,
+        ),
+      ),
     );
   }
 
@@ -1562,6 +1680,7 @@ class _ProfileTabState extends State<_ProfileTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return SafeArea(
       child: SingleChildScrollView(
         child: Column(
@@ -1625,13 +1744,18 @@ class _ProfileTabState extends State<_ProfileTab> {
               child: Column(
                 children: [
                   _SettingCard(title: 'Account Settings', items: [
-                    _SettingItem(Icons.edit_rounded, 'Edit Profile',
-                        onTap: _navigateEditProfile),
+                    if (widget.isAdmin)
+                      _SettingItem(Icons.edit_rounded, 'Edit Profile',
+                          onTap: _navigateEditProfile),
                     _SettingItem(Icons.lock_outline_rounded, 'Change Password',
                         onTap: _navigateChangePassword),
                   ]),
                   const SizedBox(height: 16),
                   _SettingCard(title: 'Business', items: [
+                    if (widget.isAdmin)
+                      _SettingItem(Icons.card_giftcard_rounded,
+                          l10n.invitesAndRequests,
+                          onTap: _navigateInvites),
                     _SettingItem(Icons.notifications_outlined, 'Notifications',
                         onTap: _navigateNotifications),
                     _SettingItem(Icons.payments_outlined, 'Billing & Payments',

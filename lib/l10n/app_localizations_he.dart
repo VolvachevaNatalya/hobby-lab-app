@@ -665,4 +665,76 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get joinedOrgSuccess => 'הצטרפת לארגון!';
+
+  @override
+  String get invitesAndRequests => 'הזמנות ובקשות';
+
+  @override
+  String get invitesAndRequestsSubtitle => 'נהל קודי הזמנה ובקשות הצטרפות';
+
+  @override
+  String get inviteCodes => 'קודי הזמנה';
+
+  @override
+  String get joinRequests => 'בקשות הצטרפות';
+
+  @override
+  String get createInviteCode => 'צור קוד הזמנה';
+
+  @override
+  String get activeStatus => 'פעיל';
+
+  @override
+  String get inactiveStatus => 'לא פעיל';
+
+  @override
+  String get approvalRequired => 'נדרש אישור';
+
+  @override
+  String get noApprovalRequired => 'ללא אישור';
+
+  @override
+  String get expiresPrefix => 'פג תוקף';
+
+  @override
+  String get deactivateCode => 'בטל';
+
+  @override
+  String get defaultRoleLabel => 'תפקיד ברירת מחדל';
+
+  @override
+  String get roleMember => 'חבר';
+
+  @override
+  String get roleAdmin => 'מנהל';
+
+  @override
+  String get requiresApprovalToggle => 'דורש אישור';
+
+  @override
+  String get noInviteCodesYet => 'אין קודי הזמנה עדיין';
+
+  @override
+  String get noPendingRequests => 'אין בקשות ממתינות';
+
+  @override
+  String get btnApprove => 'אשר';
+
+  @override
+  String get btnReject => 'דחה';
+
+  @override
+  String get codeDeactivatedSuccess => 'קוד ההזמנה בוטל';
+
+  @override
+  String get requestApprovedSuccess => 'הבקשה אושרה';
+
+  @override
+  String get requestRejectedSuccess => 'הבקשה נדחתה';
+
+  @override
+  String get codeCopied => 'הקוד הועתק';
+
+  @override
+  String get btnCreate => 'צור';
 }

@@ -1383,6 +1383,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You\'ve joined the organization!'**
   String get joinedOrgSuccess;
+
+  /// No description provided for @invitesAndRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Invites & Requests'**
+  String get invitesAndRequests;
+
+  /// No description provided for @invitesAndRequestsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage invite codes and join requests'**
+  String get invitesAndRequestsSubtitle;
+
+  /// No description provided for @inviteCodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite Codes'**
+  String get inviteCodes;
+
+  /// No description provided for @joinRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Requests'**
+  String get joinRequests;
+
+  /// No description provided for @createInviteCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Invite Code'**
+  String get createInviteCode;
+
+  /// No description provided for @activeStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get activeStatus;
+
+  /// No description provided for @inactiveStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get inactiveStatus;
+
+  /// No description provided for @approvalRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Approval required'**
+  String get approvalRequired;
+
+  /// No description provided for @noApprovalRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'No approval'**
+  String get noApprovalRequired;
+
+  /// No description provided for @expiresPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires'**
+  String get expiresPrefix;
+
+  /// No description provided for @deactivateCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate'**
+  String get deactivateCode;
+
+  /// No description provided for @defaultRoleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Role'**
+  String get defaultRoleLabel;
+
+  /// No description provided for @roleMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get roleMember;
+
+  /// No description provided for @roleAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin'**
+  String get roleAdmin;
+
+  /// No description provided for @requiresApprovalToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Requires Approval'**
+  String get requiresApprovalToggle;
+
+  /// No description provided for @noInviteCodesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No invite codes yet'**
+  String get noInviteCodesYet;
+
+  /// No description provided for @noPendingRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending join requests'**
+  String get noPendingRequests;
+
+  /// No description provided for @btnApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get btnApprove;
+
+  /// No description provided for @btnReject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get btnReject;
+
+  /// No description provided for @codeDeactivatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite code deactivated'**
+  String get codeDeactivatedSuccess;
+
+  /// No description provided for @requestApprovedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Request approved'**
+  String get requestApprovedSuccess;
+
+  /// No description provided for @requestRejectedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Request rejected'**
+  String get requestRejectedSuccess;
+
+  /// No description provided for @codeCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Code copied'**
+  String get codeCopied;
+
+  /// No description provided for @btnCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get btnCreate;
 }
 
 class _AppLocalizationsDelegate
