@@ -752,4 +752,39 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get btnCreate => 'Создать';
+
+  @override
+  String get membersTitle => 'Участники';
+
+  @override
+  String get membersSubtitle => 'Управление участниками организации';
+
+  @override
+  String get noMembersFound => 'Участников не найдено';
+
+  @override
+  String get roleOwner => 'Владелец';
+
+  @override
+  String get makeAdmin => 'Сделать администратором';
+
+  @override
+  String get makeMember => 'Сделать участником';
+
+  @override
+  String get removeMember => 'Удалить';
+
+  @override
+  String get removeMemberTitle => 'Удалить участника?';
+
+  @override
+  String removeMemberConfirm(String name) {
+    return 'Удалить $name из организации?';
+  }
+
+  @override
+  String get memberRemovedSuccess => 'Участник удалён';
+
+  @override
+  String get memberRoleChangedSuccess => 'Роль обновлена';
 }

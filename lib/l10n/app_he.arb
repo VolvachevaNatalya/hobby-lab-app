@@ -290,5 +290,22 @@
   "requestApprovedSuccess": "הבקשה אושרה",
   "requestRejectedSuccess": "הבקשה נדחתה",
   "codeCopied": "הקוד הועתק",
-  "btnCreate": "צור"
+  "btnCreate": "צור",
+
+  "membersTitle": "חברים",
+  "membersSubtitle": "ניהול חברי הארגון",
+  "noMembersFound": "לא נמצאו חברים",
+  "roleOwner": "בעלים",
+  "makeAdmin": "הפוך למנהל",
+  "makeMember": "הפוך לחבר",
+  "removeMember": "הסר",
+  "removeMemberTitle": "הסרת חבר?",
+  "removeMemberConfirm": "להסיר את {name} מהארגון?",
+  "@removeMemberConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "memberRemovedSuccess": "החבר הוסר",
+  "memberRoleChangedSuccess": "התפקיד עודכן"
 }

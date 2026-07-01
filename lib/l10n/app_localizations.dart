@@ -1527,6 +1527,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create'**
   String get btnCreate;
+
+  /// No description provided for @membersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get membersTitle;
+
+  /// No description provided for @membersSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage organization members'**
+  String get membersSubtitle;
+
+  /// No description provided for @noMembersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No members found'**
+  String get noMembersFound;
+
+  /// No description provided for @roleOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner'**
+  String get roleOwner;
+
+  /// No description provided for @makeAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Make Admin'**
+  String get makeAdmin;
+
+  /// No description provided for @makeMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Make Member'**
+  String get makeMember;
+
+  /// No description provided for @removeMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get removeMember;
+
+  /// No description provided for @removeMemberTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Member?'**
+  String get removeMemberTitle;
+
+  /// No description provided for @removeMemberConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name} from the organization?'**
+  String removeMemberConfirm(String name);
+
+  /// No description provided for @memberRemovedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Member removed'**
+  String get memberRemovedSuccess;
+
+  /// No description provided for @memberRoleChangedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Role updated'**
+  String get memberRoleChangedSuccess;
 }
 
 class _AppLocalizationsDelegate

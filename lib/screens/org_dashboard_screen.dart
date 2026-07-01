@@ -11,6 +11,7 @@ import 'edit_organization_screen.dart';
 import 'notifications_settings_screen.dart';
 import 'change_password_screen.dart';
 import 'org_invites_screen.dart';
+import 'org_members_screen.dart';
 import '../routing/transitions.dart';
 
 // ─── Main screen ──────────────────────────────────────────────────────────────
@@ -176,6 +177,19 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
     );
   }
 
+  void _goMembers() {
+    if (_orgId.isEmpty) return;
+    Navigator.of(context).push(
+      slideRoute(
+        builder: (_) => OrganizationMembersScreen(
+          orgId: _orgId,
+          orgName: _orgName,
+          viewerRole: _userRole,
+        ),
+      ),
+    );
+  }
+
   Future<void> _goAddClass() async {
     await Navigator.of(context).push(
       slideRoute(builder: (_) => OrgClassFormScreen(orgId: _orgId)),
@@ -277,6 +291,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
             onSwitchClasses: () => setState(() => _tab = 1),
             onSwitchEvents: () => setState(() => _tab = 2),
             onInvites: _isAdminOrOwner ? _goInvites : null,
+            onMembers: _isAdminOrOwner ? _goMembers : null,
             onEditClass: _goEditClass,
             onEditEvent: _goEditEvent,
           ),
@@ -293,7 +308,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
             onDelete: _deleteEvent,
           ),
           const _MessagesTab(),
-          _ProfileTab(orgName: _orgName, initials: _initials, orgId: _orgId, isAdmin: _isAdminOrOwner, onEditComplete: _loadData),
+          _ProfileTab(orgName: _orgName, initials: _initials, orgId: _orgId, isAdmin: _isAdminOrOwner, viewerRole: _userRole, onEditComplete: _loadData),
         ],
       ),
       bottomNavigationBar: _buildBottomNav(),
@@ -385,6 +400,7 @@ class _DashboardTab extends StatelessWidget {
   final VoidCallback onSwitchClasses;
   final VoidCallback onSwitchEvents;
   final VoidCallback? onInvites;
+  final VoidCallback? onMembers;
   final void Function(OrgClass)? onEditClass;
   final void Function(OrgEvent)? onEditEvent;
 
@@ -398,6 +414,7 @@ class _DashboardTab extends StatelessWidget {
     required this.onSwitchClasses,
     required this.onSwitchEvents,
     this.onInvites,
+    this.onMembers,
     this.onEditClass,
     this.onEditEvent,
   });
@@ -427,6 +444,10 @@ class _DashboardTab extends StatelessWidget {
                   if (onInvites != null) ...[
                     const SizedBox(height: 16),
                     _buildInvitesCard(context),
+                  ],
+                  if (onMembers != null) ...[
+                    const SizedBox(height: 12),
+                    _buildMembersCard(context),
                   ],
                   const SizedBox(height: 28),
                   _SectionHeader(
@@ -513,6 +534,60 @@ class _DashboardTab extends StatelessWidget {
                   ),
                   Text(
                     l10n.invitesAndRequestsSubtitle,
+                    style: GoogleFonts.poppins(
+                      fontSize: 11,
+                      color: AppColors.textMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios_rounded,
+                size: 14, color: AppColors.textMuted),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMembersCard(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return GestureDetector(
+      onTap: onMembers,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: AppColors.surfaceElevated,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.purple.withValues(alpha: 0.35)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                gradient: AppColors.brandGradient,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.group_rounded,
+                  color: Colors.white, size: 18),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.membersTitle,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  Text(
+                    l10n.membersSubtitle,
                     style: GoogleFonts.poppins(
                       fontSize: 11,
                       color: AppColors.textMuted,
@@ -1583,6 +1658,7 @@ class _ProfileTab extends StatefulWidget {
   final String initials;
   final String orgId;
   final bool isAdmin;
+  final String viewerRole;
   final VoidCallback? onEditComplete;
 
   const _ProfileTab({
@@ -1590,6 +1666,7 @@ class _ProfileTab extends StatefulWidget {
     required this.initials,
     required this.orgId,
     this.isAdmin = false,
+    this.viewerRole = 'member',
     this.onEditComplete,
   });
 
@@ -1632,6 +1709,19 @@ class _ProfileTabState extends State<_ProfileTab> {
         builder: (_) => OrganizationInvitesScreen(
           orgId: widget.orgId,
           orgName: widget.orgName,
+        ),
+      ),
+    );
+  }
+
+  void _navigateMembers() {
+    if (!widget.isAdmin || widget.orgId.isEmpty) return;
+    Navigator.of(context).push(
+      slideRoute(
+        builder: (_) => OrganizationMembersScreen(
+          orgId: widget.orgId,
+          orgName: widget.orgName,
+          viewerRole: widget.viewerRole,
         ),
       ),
     );
@@ -1756,6 +1846,10 @@ class _ProfileTabState extends State<_ProfileTab> {
                       _SettingItem(Icons.card_giftcard_rounded,
                           l10n.invitesAndRequests,
                           onTap: _navigateInvites),
+                    if (widget.isAdmin)
+                      _SettingItem(Icons.group_rounded,
+                          l10n.membersTitle,
+                          onTap: _navigateMembers),
                     _SettingItem(Icons.notifications_outlined, 'Notifications',
                         onTap: _navigateNotifications),
                     _SettingItem(Icons.payments_outlined, 'Billing & Payments',

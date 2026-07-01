@@ -737,4 +737,39 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get btnCreate => 'צור';
+
+  @override
+  String get membersTitle => 'חברים';
+
+  @override
+  String get membersSubtitle => 'ניהול חברי הארגון';
+
+  @override
+  String get noMembersFound => 'לא נמצאו חברים';
+
+  @override
+  String get roleOwner => 'בעלים';
+
+  @override
+  String get makeAdmin => 'הפוך למנהל';
+
+  @override
+  String get makeMember => 'הפוך לחבר';
+
+  @override
+  String get removeMember => 'הסר';
+
+  @override
+  String get removeMemberTitle => 'הסרת חבר?';
+
+  @override
+  String removeMemberConfirm(String name) {
+    return 'להסיר את $name מהארגון?';
+  }
+
+  @override
+  String get memberRemovedSuccess => 'החבר הוסר';
+
+  @override
+  String get memberRoleChangedSuccess => 'התפקיד עודכן';
 }

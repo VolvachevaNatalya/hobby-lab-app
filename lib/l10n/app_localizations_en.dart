@@ -749,4 +749,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get btnCreate => 'Create';
+
+  @override
+  String get membersTitle => 'Members';
+
+  @override
+  String get membersSubtitle => 'Manage organization members';
+
+  @override
+  String get noMembersFound => 'No members found';
+
+  @override
+  String get roleOwner => 'Owner';
+
+  @override
+  String get makeAdmin => 'Make Admin';
+
+  @override
+  String get makeMember => 'Make Member';
+
+  @override
+  String get removeMember => 'Remove';
+
+  @override
+  String get removeMemberTitle => 'Remove Member?';
+
+  @override
+  String removeMemberConfirm(String name) {
+    return 'Remove $name from the organization?';
+  }
+
+  @override
+  String get memberRemovedSuccess => 'Member removed';
+
+  @override
+  String get memberRoleChangedSuccess => 'Role updated';
 }

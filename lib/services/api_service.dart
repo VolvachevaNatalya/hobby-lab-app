@@ -17,6 +17,7 @@ import '../models/user_profile.dart';
 import '../models/organization.dart';
 import '../models/org_photo.dart';
 import '../models/org_invite.dart';
+import '../models/org_member.dart';
 
 const _baseUrl = 'https://hobbylab-api-production-84bd.up.railway.app';
 const _tokenKey = 'auth_token';
@@ -679,6 +680,46 @@ class ApiService {
     } catch (_) {
       return null;
     }
+  }
+
+  // ── Organization members ──────────────────────────────────────────────────────
+
+  static Future<List<OrgMember>> getOrgMembers(String orgId) async {
+    final response = await http.get(
+      Uri.parse('$_baseUrl/organizations/$orgId/members'),
+      headers: await _authHeaders(),
+    );
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List<dynamic>)
+          .map((e) => OrgMember.fromJson(e as Map<String, dynamic>))
+          .toList();
+    }
+    _handleError(response);
+    throw Exception('Failed to load members');
+  }
+
+  static Future<void> updateMemberRole(
+      String orgId, int userId, String role) async {
+    final response = await http.patch(
+      Uri.parse('$_baseUrl/organizations/$orgId/members/$userId/role'),
+      headers: await _authHeaders(),
+      body: jsonEncode({'role': role}),
+    );
+    if (response.statusCode == 200) return;
+    _handleError(response);
+    final detail = _extractDetail(response.body);
+    throw Exception(detail ?? 'Failed to update member role');
+  }
+
+  static Future<void> removeMember(String orgId, int userId) async {
+    final response = await http.delete(
+      Uri.parse('$_baseUrl/organizations/$orgId/members/$userId'),
+      headers: await _authHeaders(),
+    );
+    if (response.statusCode == 200 || response.statusCode == 204) return;
+    _handleError(response);
+    final detail = _extractDetail(response.body);
+    throw Exception(detail ?? 'Failed to remove member');
   }
 
   static Future<List<Map<String, dynamic>>> getOrgClasses(String orgId) async {

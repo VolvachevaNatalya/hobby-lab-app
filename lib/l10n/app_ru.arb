@@ -290,5 +290,22 @@
   "requestApprovedSuccess": "Заявка одобрена",
   "requestRejectedSuccess": "Заявка отклонена",
   "codeCopied": "Код скопирован",
-  "btnCreate": "Создать"
+  "btnCreate": "Создать",
+
+  "membersTitle": "Участники",
+  "membersSubtitle": "Управление участниками организации",
+  "noMembersFound": "Участников не найдено",
+  "roleOwner": "Владелец",
+  "makeAdmin": "Сделать администратором",
+  "makeMember": "Сделать участником",
+  "removeMember": "Удалить",
+  "removeMemberTitle": "Удалить участника?",
+  "removeMemberConfirm": "Удалить {name} из организации?",
+  "@removeMemberConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "memberRemovedSuccess": "Участник удалён",
+  "memberRoleChangedSuccess": "Роль обновлена"
 }

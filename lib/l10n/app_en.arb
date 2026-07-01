@@ -290,5 +290,22 @@
   "requestApprovedSuccess": "Request approved",
   "requestRejectedSuccess": "Request rejected",
   "codeCopied": "Code copied",
-  "btnCreate": "Create"
+  "btnCreate": "Create",
+
+  "membersTitle": "Members",
+  "membersSubtitle": "Manage organization members",
+  "noMembersFound": "No members found",
+  "roleOwner": "Owner",
+  "makeAdmin": "Make Admin",
+  "makeMember": "Make Member",
+  "removeMember": "Remove",
+  "removeMemberTitle": "Remove Member?",
+  "removeMemberConfirm": "Remove {name} from the organization?",
+  "@removeMemberConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "memberRemovedSuccess": "Member removed",
+  "memberRoleChangedSuccess": "Role updated"
 }
