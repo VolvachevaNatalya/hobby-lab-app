@@ -772,4 +772,10 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get memberRoleChangedSuccess => 'התפקיד עודכן';
+
+  @override
+  String get selectCategories => 'בחר קטגוריות';
+
+  @override
+  String get maxCategoriesReached => 'מקסימום 10 קטגוריות';
 }

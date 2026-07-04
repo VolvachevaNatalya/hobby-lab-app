@@ -307,5 +307,8 @@
     }
   },
   "memberRemovedSuccess": "Участник удалён",
-  "memberRoleChangedSuccess": "Роль обновлена"
+  "memberRoleChangedSuccess": "Роль обновлена",
+
+  "selectCategories": "Выберите категории",
+  "maxCategoriesReached": "Максимум 10 категорий"
 }

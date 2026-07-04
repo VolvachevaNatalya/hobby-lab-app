@@ -1593,6 +1593,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Role updated'**
   String get memberRoleChangedSuccess;
+
+  /// No description provided for @selectCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Categories'**
+  String get selectCategories;
+
+  /// No description provided for @maxCategoriesReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum 10 categories'**
+  String get maxCategoriesReached;
 }
 
 class _AppLocalizationsDelegate

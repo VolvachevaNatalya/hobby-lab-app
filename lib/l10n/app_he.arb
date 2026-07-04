@@ -307,5 +307,8 @@
     }
   },
   "memberRemovedSuccess": "החבר הוסר",
-  "memberRoleChangedSuccess": "התפקיד עודכן"
+  "memberRoleChangedSuccess": "התפקיד עודכן",
+
+  "selectCategories": "בחר קטגוריות",
+  "maxCategoriesReached": "מקסימום 10 קטגוריות"
 }

@@ -307,5 +307,8 @@
     }
   },
   "memberRemovedSuccess": "Member removed",
-  "memberRoleChangedSuccess": "Role updated"
+  "memberRoleChangedSuccess": "Role updated",
+
+  "selectCategories": "Select Categories",
+  "maxCategoriesReached": "Maximum 10 categories"
 }

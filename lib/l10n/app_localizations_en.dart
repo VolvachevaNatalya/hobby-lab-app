@@ -784,4 +784,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get memberRoleChangedSuccess => 'Role updated';
+
+  @override
+  String get selectCategories => 'Select Categories';
+
+  @override
+  String get maxCategoriesReached => 'Maximum 10 categories';
 }

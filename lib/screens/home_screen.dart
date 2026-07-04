@@ -304,7 +304,11 @@ class _HomeScreenState extends State<HomeScreen> {
         categoryIcon: cat.icon,
         categoryColor: cat.color,
         classes: _apiClasses.where((c) => c.categoryId == id).toList(),
-        events: _apiEvents.where((e) => e.categoryId == id).toList(),
+        events: _apiEvents
+            .where((e) =>
+                e.categoryIds.contains(id) ||
+                (e.categoryIds.isEmpty && e.categoryId == id))
+            .toList(),
         userLat: _fetchedLat,
         userLng: _fetchedLng,
       )),

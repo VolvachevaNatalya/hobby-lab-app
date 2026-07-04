@@ -135,10 +135,24 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
               (json['start_datetime'] ?? '').toString(),
             ) ??
             DateTime.now();
+        final rawCats = json['categories'] as List<dynamic>?;
+        final categoryIds = <String>[];
+        String categoryName;
+        if (rawCats != null && rawCats.isNotEmpty) {
+          categoryName = (rawCats.first as Map)['name']?.toString() ?? 'Other';
+          for (final c in rawCats) {
+            final id = (c as Map)['id']?.toString();
+            if (id != null) categoryIds.add(id);
+          }
+        } else {
+          categoryName = catId != null ? (catMap[catId] ?? 'Other') : 'Other';
+          if (catId != null) categoryIds.add(catId);
+        }
         return OrgEvent(
           id: (json['id'] ?? '').toString(),
           name: (json['title'] ?? '').toString(),
-          category: catId != null ? (catMap[catId] ?? 'Other') : 'Other',
+          category: categoryName,
+          categoryIds: categoryIds,
           description: (json['description'] ?? '').toString(),
           date: startDt,
           time: TimeOfDay(hour: startDt.hour, minute: startDt.minute),

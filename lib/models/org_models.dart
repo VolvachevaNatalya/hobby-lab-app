@@ -52,6 +52,7 @@ class OrgEvent {
   final String id;
   String name;
   String category;
+  List<String> categoryIds;
   String description;
   DateTime date;
   TimeOfDay time;
@@ -67,6 +68,7 @@ class OrgEvent {
     required this.id,
     required this.name,
     required this.category,
+    this.categoryIds = const [],
     this.description = '',
     required this.date,
     required this.time,

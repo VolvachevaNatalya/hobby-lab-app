@@ -941,6 +941,7 @@ class ApiService {
     String? description,
     String? startDatetime,
     int? categoryId,
+    List<int>? categoryIds,
     int? minAge,
     int? maxAge,
     int? capacity,
@@ -955,7 +956,11 @@ class ApiService {
     if (title != null) body['title'] = title;
     if (description != null) body['description'] = description;
     if (startDatetime != null) body['start_datetime'] = startDatetime;
-    if (categoryId != null) body['category_id'] = categoryId;
+    if (categoryIds != null && categoryIds.isNotEmpty) {
+      body['category_ids'] = categoryIds;
+    } else if (categoryId != null) {
+      body['category_id'] = categoryId;
+    }
     if (minAge != null) body['min_age'] = minAge;
     if (maxAge != null) body['max_age'] = maxAge;
     if (capacity != null) body['capacity'] = capacity;
@@ -1290,6 +1295,7 @@ class ApiService {
     required String title,
     required String startDatetime,
     int? categoryId,
+    List<int>? categoryIds,
     String? description,
     int? minAge,
     int? maxAge,
@@ -1307,7 +1313,11 @@ class ApiService {
       'start_datetime': startDatetime,
       'is_nationwide': isNationwide,
     };
-    if (categoryId != null) body['category_id'] = categoryId;
+    if (categoryIds != null && categoryIds.isNotEmpty) {
+      body['category_ids'] = categoryIds;
+    } else if (categoryId != null) {
+      body['category_id'] = categoryId;
+    }
     if (description != null && description.isNotEmpty) body['description'] = description;
     if (minAge != null && minAge > 0) body['min_age'] = minAge;
     if (maxAge != null && maxAge < 99) body['max_age'] = maxAge;

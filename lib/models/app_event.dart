@@ -4,6 +4,7 @@ class AppEvent {
   final String subtitle;
   final String badge;
   final String? categoryId;
+  final List<String> categoryIds;
   final String? startDatetime;
   final String? endDatetime;
   final String? address;
@@ -23,6 +24,7 @@ class AppEvent {
     required this.subtitle,
     required this.badge,
     this.categoryId,
+    this.categoryIds = const [],
     this.startDatetime,
     this.endDatetime,
     this.address,
@@ -37,13 +39,13 @@ class AppEvent {
     this.priceComment,
   });
 
-  factory AppEvent.fromJson(Map<String, dynamic> json) {
-    return AppEvent(
+  factory AppEvent.fromJson(Map<String, dynamic> json) => AppEvent(
       id: (json['id'] ?? '').toString(),
       title: (json['title'] ?? json['name'] ?? '').toString(),
       subtitle: (json['description'] ?? json['subtitle'] ?? '').toString(),
       badge: (json['badge'] ?? json['status'] ?? json['type'] ?? 'NEW').toString().toUpperCase(),
       categoryId: json['category_id']?.toString(),
+      categoryIds: _parseCategoryIds(json),
       startDatetime: json['start_datetime']?.toString(),
       endDatetime: json['end_datetime']?.toString(),
       address: json['address']?.toString(),
@@ -57,5 +59,16 @@ class AppEvent {
       price: (json['price'] as num?)?.toDouble(),
       priceComment: json['price_comment']?.toString(),
     );
+}
+
+List<String> _parseCategoryIds(Map<String, dynamic> json) {
+  final cats = json['categories'];
+  if (cats is List && cats.isNotEmpty) {
+    return cats
+        .map((c) => (c as Map<String, dynamic>)['id']?.toString())
+        .whereType<String>()
+        .toList();
   }
+  final legacy = json['category_id']?.toString();
+  return legacy != null ? [legacy] : const [];
 }

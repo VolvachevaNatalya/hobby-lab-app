@@ -787,4 +787,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get memberRoleChangedSuccess => 'Роль обновлена';
+
+  @override
+  String get selectCategories => 'Выберите категории';
+
+  @override
+  String get maxCategoriesReached => 'Максимум 10 категорий';
 }

@@ -11,6 +11,9 @@ import 'activity_details_screen.dart';
 import 'event_details_screen.dart';
 import 'org_profile_screen.dart';
 import '../routing/transitions.dart';
+import 'see_all_events_screen.dart';
+import 'see_all_orgs_screen.dart';
+import 'see_all_screen.dart';
 
 // ─── Shared gradient / icon pools (mirrors home_screen.dart) ─────────────────
 
@@ -224,6 +227,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     _SectionHeader(
                       title: l10n.tabOrganizations,
                       padding: const EdgeInsets.symmetric(horizontal: 20),
+                      onSeeAll: () => Navigator.of(context)
+                          .push(slideRoute(builder: (_) => const SeeAllOrgsScreen())),
                     ),
                     const SizedBox(height: 16),
                     if (_loadingOrgs)
@@ -251,6 +256,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     _SectionHeader(
                       title: l10n.eventsSection,
                       padding: const EdgeInsets.symmetric(horizontal: 20),
+                      onSeeAll: () => Navigator.of(context)
+                          .push(slideRoute(builder: (_) => const SeeAllEventsScreen())),
                     ),
                     const SizedBox(height: 16),
                     if (banners.isEmpty)
@@ -273,6 +280,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     _SectionHeader(
                       title: l10n.activitiesSection,
                       padding: const EdgeInsets.symmetric(horizontal: 20),
+                      onSeeAll: () => Navigator.of(context).push(
+                          slideRoute(builder: (_) => SeeAllScreen(
+                              title: widget.categoryName,
+                              initialCategory: widget.categoryName))),
                     ),
                     const SizedBox(height: 16),
                     if (activities.isEmpty)
@@ -307,10 +318,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
 class _SectionHeader extends StatelessWidget {
   final String title;
   final EdgeInsets padding;
+  final VoidCallback? onSeeAll;
 
   const _SectionHeader({
     required this.title,
     this.padding = EdgeInsets.zero,
+    this.onSeeAll,
   });
 
   @override
@@ -324,12 +337,15 @@ class _SectionHeader extends StatelessWidget {
                   fontSize: 18, fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary)),
           const Spacer(),
-          ShaderMask(
-            shaderCallback: (b) => AppColors.brandGradient.createShader(b),
-            child: Text(AppLocalizations.of(context)!.btnSeeAll,
-                style: GoogleFonts.poppins(
-                    fontSize: 13, fontWeight: FontWeight.w500,
-                    color: Colors.white)),
+          GestureDetector(
+            onTap: onSeeAll ?? () {},
+            child: ShaderMask(
+              shaderCallback: (b) => AppColors.brandGradient.createShader(b),
+              child: Text(AppLocalizations.of(context)!.btnSeeAll,
+                  style: GoogleFonts.poppins(
+                      fontSize: 13, fontWeight: FontWeight.w500,
+                      color: Colors.white)),
+            ),
           ),
         ],
       ),
