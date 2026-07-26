@@ -4,16 +4,20 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import '../theme/app_theme.dart';
+import '../models/app_city.dart';
 import '../models/org_models.dart';
 import '../models/app_category.dart';
+import '../routing/transitions.dart';
 import '../services/api_service.dart';
 import '../l10n/app_localizations.dart';
+import 'city_picker_screen.dart';
 
 class OrgEventFormScreen extends StatefulWidget {
   final OrgEvent? event;
   final String? orgId;
+  final AppCity? initialCity;
 
-  const OrgEventFormScreen({super.key, this.event, this.orgId});
+  const OrgEventFormScreen({super.key, this.event, this.orgId, this.initialCity});
 
   @override
   State<OrgEventFormScreen> createState() => _OrgEventFormScreenState();
@@ -32,6 +36,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
   // Keys for scrolling to first error
   final _detailsCardKey = GlobalKey();
   final _dateCardKey = GlobalKey();
+  final _locationCardKey = GlobalKey();
 
   List<AppCategory> _selectedCategories = [];
   List<String> _initialCategoryIds = [];
@@ -46,6 +51,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
   bool _saving = false;
   bool _isNationwide = false;
   bool _submitted = false;
+  AppCity? _selectedCity;
 
   bool get _isEdit => widget.event != null;
 
@@ -68,11 +74,13 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
       _date = e.date;
       _time = e.time;
       _isNationwide = e.isNationwide;
+    } else {
+      _selectedCity = widget.initialCity;
     }
-    _loadCategories();
+    _loadCategoriesAndCity();
   }
 
-  Future<void> _loadCategories() async {
+  Future<void> _loadCategoriesAndCity() async {
     try {
       final cats = await ApiService.getCategories();
       if (mounted) {
@@ -89,6 +97,20 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
               final match =
                   cats.where((c) => c.name == _initialCategoryName).firstOrNull;
               if (match != null) _selectedCategories = [match];
+            }
+          }
+          final e = widget.event;
+          if (e != null && e.cityId != null && _selectedCity == null) {
+            final nameHe = e.cityNameHe ?? '';
+            final nameEn = e.cityNameEn ?? '';
+            final nameRu = e.cityNameRu ?? '';
+            if (nameHe.isNotEmpty || nameEn.isNotEmpty || nameRu.isNotEmpty) {
+              _selectedCity = AppCity(
+                id: e.cityId!,
+                nameHe: nameHe,
+                nameEn: nameEn,
+                nameRu: nameRu,
+              );
             }
           }
         });
@@ -123,6 +145,8 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
         key = _detailsCardKey;
       } else if (_date == null) {
         key = _dateCardKey;
+      } else if (_selectedCity == null && !_isNationwide) {
+        key = _locationCardKey;
       } else {
         return;
       }
@@ -386,7 +410,10 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
   Future<void> _save() async {
     if (_saving) return; // prevent double-tap
 
-    if (_nameCtrl.text.trim().isEmpty || _selectedCategories.isEmpty || _date == null) {
+    if (_nameCtrl.text.trim().isEmpty ||
+        _selectedCategories.isEmpty ||
+        _date == null ||
+        (_selectedCity == null && !_isNationwide)) {
       setState(() => _submitted = true);
       _scrollToFirstError();
       return;
@@ -419,6 +446,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
             maxAge: int.tryParse(_maxAgeCtrl.text),
             capacity: int.tryParse(_capacityCtrl.text),
             address: _locationCtrl.text.trim().isNotEmpty ? _locationCtrl.text.trim() : null,
+            cityId: _selectedCity?.id,
             isNationwide: _isNationwide,
             price: parsedPrice,
             priceComment: commentText.isNotEmpty ? commentText : null,
@@ -477,6 +505,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
         address: _locationCtrl.text.trim().isNotEmpty
             ? _locationCtrl.text.trim()
             : null,
+        cityId: _selectedCity?.id,
         isNationwide: _isNationwide,
         price: double.tryParse(_priceCtrl.text.trim()),
         priceComment: _priceCommentCtrl.text.trim().isNotEmpty
@@ -574,13 +603,23 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                     const SizedBox(height: 20),
                     _sectionLabel('Location'),
                     const SizedBox(height: 12),
-                    _buildFieldCard(children: [
-                      _inlineField(
-                        ctrl: _locationCtrl,
-                        hint: 'Address / venue name',
-                        icon: Icons.location_on_rounded,
-                      ),
-                    ]),
+                    _buildFieldCard(
+                      key: _locationCardKey,
+                      hasError: _submitted && _selectedCity == null && !_isNationwide,
+                      children: [
+                        _inlineField(
+                          ctrl: _locationCtrl,
+                          hint: 'Address / venue name',
+                          icon: Icons.location_on_rounded,
+                        ),
+                        _divider(),
+                        _buildCityPickerRow(
+                          error: _submitted && _selectedCity == null && !_isNationwide,
+                        ),
+                      ],
+                    ),
+                    if (_submitted && _selectedCity == null && !_isNationwide)
+                      _errorLabel(l10n.fieldRequired),
                     const SizedBox(height: 20),
                     _buildNationwideRow(),
                     const SizedBox(height: 20),
@@ -1086,6 +1125,52 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                   fontSize: 11, color: AppColors.textMuted)),
         ),
       ],
+    );
+  }
+
+  Future<void> _openCityPicker() async {
+    final city = await Navigator.of(context).push<AppCity>(
+      modalRoute(builder: (_) => const CityPickerScreen()),
+    );
+    if (city != null && mounted) {
+      setState(() => _selectedCity = city);
+    }
+  }
+
+  Widget _buildCityPickerRow({bool error = false}) {
+    final lang = Localizations.localeOf(context).languageCode;
+    final label = _selectedCity?.displayName(lang);
+    final hasLabel = label != null && label.isNotEmpty;
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: _openCityPicker,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: Row(
+          children: [
+            Icon(Icons.location_city_rounded, size: 20,
+                color: error ? const Color(0xFFEF4444) : AppColors.textMuted),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                label != null && label.isNotEmpty ? label : 'City',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: error
+                      ? const Color(0xFFEF4444)
+                      : (hasLabel ? AppColors.textPrimary : AppColors.textMuted),
+                ),
+              ),
+            ),
+            if (error && !hasLabel)
+              const Padding(
+                padding: EdgeInsets.only(right: 4),
+                child: Text('*', style: _requiredStyle),
+              ),
+            const Icon(Icons.chevron_right_rounded, size: 20, color: AppColors.textMuted),
+          ],
+        ),
+      ),
     );
   }
 

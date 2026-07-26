@@ -36,13 +36,15 @@ class OrgClass {
   final String id;
   String name;
   String category;
+  List<String> categoryIds;
   String description;
   List<OrgGroup> groups;
 
   OrgClass({
     required this.id,
     required this.name,
-    required this.category,
+    this.category = '',
+    this.categoryIds = const [],
     this.description = '',
     this.groups = const [],
   });
@@ -57,6 +59,10 @@ class OrgEvent {
   DateTime date;
   TimeOfDay time;
   String location;
+  int? cityId;
+  String? cityNameHe;
+  String? cityNameEn;
+  String? cityNameRu;
   int minAge;
   int maxAge;
   int capacity;
@@ -73,6 +79,10 @@ class OrgEvent {
     required this.date,
     required this.time,
     this.location = '',
+    this.cityId,
+    this.cityNameHe,
+    this.cityNameEn,
+    this.cityNameRu,
     this.minAge = 0,
     this.maxAge = 99,
     this.capacity = 20,

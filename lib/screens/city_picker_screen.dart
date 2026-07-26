@@ -2,12 +2,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
-import '../services/places_service.dart';
+import '../models/app_city.dart';
+import '../services/api_service.dart';
 import '../theme/app_theme.dart';
 
 class CityPickerScreen extends StatefulWidget {
-  final String? initialCity;
-  const CityPickerScreen({super.key, this.initialCity});
+  const CityPickerScreen({super.key});
 
   @override
   State<CityPickerScreen> createState() => _CityPickerScreenState();
@@ -18,13 +18,12 @@ class _CityPickerScreenState extends State<CityPickerScreen> {
   final _focus = FocusNode();
   Timer? _debounce;
 
-  List<CityResult> _results = [];
+  List<AppCity> _results = [];
   bool _loading = false;
 
   @override
   void initState() {
     super.initState();
-    _ctrl.text = widget.initialCity ?? '';
     WidgetsBinding.instance.addPostFrameCallback((_) => _focus.requestFocus());
   }
 
@@ -50,24 +49,18 @@ class _CityPickerScreenState extends State<CityPickerScreen> {
   }
 
   Future<void> _fetch(String input) async {
-    final lang = Localizations.localeOf(context).languageCode;
-    final results = await PlacesService.searchCities(input, language: lang);
+    final results = await ApiService.getCities(q: input);
     if (mounted) setState(() { _results = results; _loading = false; });
   }
 
-  void _onSelect(CityResult city) {
-    Navigator.of(context).pop(
-      CitySelection(
-        name: city.name,
-        latitude: city.latitude,
-        longitude: city.longitude,
-      ),
-    );
+  void _onSelect(AppCity city) {
+    Navigator.of(context).pop(city);
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final lang = Localizations.localeOf(context).languageCode;
     final hasInput = _ctrl.text.trim().isNotEmpty;
 
     return Scaffold(
@@ -166,6 +159,7 @@ class _CityPickerScreenState extends State<CityPickerScreen> {
                               ),
                               itemBuilder: (ctx, i) => _CityTile(
                                 city: _results[i],
+                                lang: lang,
                                 onTap: () => _onSelect(_results[i]),
                               ),
                             ),
@@ -232,10 +226,11 @@ class _CityPickerScreenState extends State<CityPickerScreen> {
 }
 
 class _CityTile extends StatelessWidget {
-  final CityResult city;
+  final AppCity city;
+  final String lang;
   final VoidCallback onTap;
 
-  const _CityTile({required this.city, required this.onTap});
+  const _CityTile({required this.city, required this.lang, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -258,20 +253,11 @@ class _CityTile extends StatelessWidget {
             ),
             const SizedBox(width: 14),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(city.name,
-                      style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary)),
-                  if (city.secondaryText.isNotEmpty)
-                    Text(city.secondaryText,
-                        style: GoogleFonts.poppins(
-                            fontSize: 12, color: AppColors.textMuted)),
-                ],
-              ),
+              child: Text(city.displayName(lang),
+                  style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary)),
             ),
             const Icon(Icons.arrow_forward_ios_rounded,
                 size: 13, color: AppColors.textMuted),

@@ -310,5 +310,7 @@
   "memberRoleChangedSuccess": "התפקיד עודכן",
 
   "selectCategories": "בחר קטגוריות",
-  "maxCategoriesReached": "מקסימום 10 קטגוריות"
+  "maxCategoriesReached": "מקסימום 10 קטגוריות",
+
+  "nationwideLabel": "ארצי"
 }

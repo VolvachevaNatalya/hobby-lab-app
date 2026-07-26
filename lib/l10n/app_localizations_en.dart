@@ -790,4 +790,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get maxCategoriesReached => 'Maximum 10 categories';
+
+  @override
+  String get nationwideLabel => 'Nationwide';
 }

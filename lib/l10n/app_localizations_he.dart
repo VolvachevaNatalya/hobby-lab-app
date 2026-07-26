@@ -778,4 +778,7 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get maxCategoriesReached => 'מקסימום 10 קטגוריות';
+
+  @override
+  String get nationwideLabel => 'ארצי';
 }

@@ -1605,6 +1605,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Maximum 10 categories'**
   String get maxCategoriesReached;
+
+  /// No description provided for @nationwideLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Nationwide'**
+  String get nationwideLabel;
 }
 
 class _AppLocalizationsDelegate

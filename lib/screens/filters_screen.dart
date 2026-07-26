@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../services/api_service.dart';
 
@@ -58,6 +59,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -91,7 +93,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
                     const SizedBox(height: 6),
                     _buildRangeDisplay(
                       _price.start == 0
-                          ? 'Free'
+                          ? l10n.eventFree
                           : '₪${_price.start.round()}',
                       '₪${_price.end.round()}',
                     ),

@@ -793,4 +793,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get maxCategoriesReached => 'Максимум 10 категорий';
+
+  @override
+  String get nationwideLabel => 'По всей стране';
 }

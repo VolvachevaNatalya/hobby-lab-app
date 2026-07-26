@@ -127,6 +127,7 @@ class CategoryScreen extends StatefulWidget {
   final List<AppEvent> events;
   final double? userLat;
   final double? userLng;
+  final int? cityId;
 
   const CategoryScreen({
     super.key,
@@ -138,6 +139,7 @@ class CategoryScreen extends StatefulWidget {
     required this.events,
     this.userLat,
     this.userLng,
+    this.cityId,
   });
 
   @override
@@ -158,6 +160,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     try {
       final orgs = await ApiService.getOrganizations(
         categoryId: int.tryParse(widget.categoryId),
+        cityId: widget.cityId,
         userLat: widget.userLat,
         userLng: widget.userLng,
       );
@@ -227,8 +230,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     _SectionHeader(
                       title: l10n.tabOrganizations,
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      onSeeAll: () => Navigator.of(context)
-                          .push(slideRoute(builder: (_) => const SeeAllOrgsScreen())),
+                      onSeeAll: () => Navigator.of(context).push(
+                          slideRoute(builder: (_) => SeeAllOrgsScreen(
+                            categoryId: int.tryParse(widget.categoryId),
+                            cityId: widget.cityId,
+                          ))),
                     ),
                     const SizedBox(height: 16),
                     if (_loadingOrgs)

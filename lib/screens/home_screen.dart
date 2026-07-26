@@ -9,6 +9,7 @@ import '../models/app_event.dart';
 import '../models/app_category.dart';
 import '../models/app_notification.dart';
 import '../models/organization.dart';
+import '../models/app_city.dart';
 import '../services/api_service.dart';
 import '../services/saved_activities.dart';
 import 'search_screen.dart';
@@ -21,7 +22,6 @@ import 'filters_screen.dart';
 import 'org_profile_screen.dart';
 import 'city_picker_screen.dart';
 import 'category_screen.dart';
-import '../services/places_service.dart';
 import 'event_details_screen.dart';
 import '../l10n/app_localizations.dart';
 import '../routing/transitions.dart';
@@ -99,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Organization> _apiOrganizations = [];
   bool _loadingClasses = true;
   int _unreadCount = 0;
-  String? _locationCity;
+  AppCity? _selectedCity;
   double? _fetchedLat;
   double? _fetchedLng;
   int _fetchVersion = 0; // incremented each time _fetchData starts; stale results are dropped
@@ -129,7 +129,6 @@ class _HomeScreenState extends State<HomeScreen> {
   /// coordinates we have.  Falls back gracefully if GPS is denied/unavailable.
   Future<void> _initLoad() async {
     double? lat, lng;
-    String? city;
     try {
       var permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
@@ -144,18 +143,21 @@ class _HomeScreenState extends State<HomeScreen> {
         lng = pos.longitude;
         final marks = await placemarkFromCoordinates(lat, lng);
         if (marks.isNotEmpty) {
-          city = marks.first.locality ??
+          final cityName = marks.first.locality ??
               marks.first.subAdministrativeArea ??
               marks.first.administrativeArea;
-        }
-        if (mounted && city != null && city.isNotEmpty) {
-          setState(() => _locationCity = city);
+          if (cityName != null && cityName.isNotEmpty) {
+            final cities = await ApiService.getCities(q: cityName);
+            if (cities.isNotEmpty && mounted) {
+              setState(() => _selectedCity = cities.first);
+            }
+          }
         }
       }
     } catch (_) {
       // GPS unavailable or timed out — proceed without coordinates
     }
-    _fetchData(city: city, userLat: lat, userLng: lng);
+    _fetchData(userLat: lat, userLng: lng);
   }
 
   static _Category _categoryFromAppCat(AppCategory c) {
@@ -174,18 +176,19 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> _fetchData({String? city, double? userLat, double? userLng}) async {
+  Future<void> _fetchData({double? userLat, double? userLng}) async {
     _fetchedLat = userLat;
     _fetchedLng = userLng;
     final version = ++_fetchVersion;
+    final cityId = _selectedCity?.id;
     try {
       final results = await Future.wait([
-        ApiService.getClasses(city: city, userLat: userLat, userLng: userLng),
-        ApiService.getEvents(city: city, userLat: userLat, userLng: userLng),
+        ApiService.getClasses(userLat: userLat, userLng: userLng),
+        ApiService.getEvents(cityId: cityId, userLat: userLat, userLng: userLng),
         ApiService.getCategories(),
         ApiService.getNotifications(),
         ApiService.getFavorites(),
-        ApiService.getOrganizations(city: city, userLat: userLat, userLng: userLng),
+        ApiService.getOrganizations(cityId: cityId, userLat: userLat, userLng: userLng),
       ]);
       if (mounted && version == _fetchVersion) {
         final classes = results[0] as List<AppClass>;
@@ -260,16 +263,12 @@ class _HomeScreenState extends State<HomeScreen> {
   // This method is kept only for the "re-detect location" button if added later.
 
   Future<void> _openCityPicker() async {
-    final selection = await Navigator.of(context).push<CitySelection>(
-      modalRoute(builder: (_) => CityPickerScreen(initialCity: _locationCity)),
+    final city = await Navigator.of(context).push<AppCity>(
+      modalRoute(builder: (_) => const CityPickerScreen()),
     );
-    if (selection != null && mounted) {
-      setState(() => _locationCity = selection.name);
-      _fetchData(
-        city: selection.name,
-        userLat: selection.latitude,
-        userLng: selection.longitude,
-      );
+    if (city != null && mounted) {
+      setState(() => _selectedCity = city);
+      _fetchData();
     }
   }
 
@@ -303,7 +302,11 @@ class _HomeScreenState extends State<HomeScreen> {
         categoryName: name,
         categoryIcon: cat.icon,
         categoryColor: cat.color,
-        classes: _apiClasses.where((c) => c.categoryId == id).toList(),
+        classes: _apiClasses
+            .where((c) =>
+                c.categoryIds.contains(id) ||
+                (c.categoryIds.isEmpty && c.categoryId == id))
+            .toList(),
         events: _apiEvents
             .where((e) =>
                 e.categoryIds.contains(id) ||
@@ -311,6 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
             .toList(),
         userLat: _fetchedLat,
         userLng: _fetchedLng,
+        cityId: _selectedCity?.id,
       )),
     );
   }
@@ -379,6 +383,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final popular = _toDisplay(_apiClasses.take(10).toList());
     final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).languageCode;;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -395,7 +400,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     _Header(
                       unreadCount: _unreadCount,
-                      locationCity: _locationCity,
+                      locationCity: _selectedCity?.displayName(locale),
                       onTapLocation: _openCityPicker,
                       onNotificationsOpened: _refreshUnreadCount,
                     ),
@@ -409,7 +414,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: l10n.eventsSection,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 onSeeAll: () => Navigator.of(context).push(
-                  slideRoute(builder: (_) => SeeAllEventsScreen(city: _locationCity)),
+                  slideRoute(builder: (_) => SeeAllEventsScreen(cityId: _selectedCity?.id)),
                 ),
               ),
               const SizedBox(height: 16),
@@ -448,7 +453,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: l10n.organizationsNearYou,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 onSeeAll: () => Navigator.of(context).push(
-                  slideRoute(builder: (_) => SeeAllOrgsScreen(city: _locationCity)),
+                  slideRoute(builder: (_) => SeeAllOrgsScreen(cityId: _selectedCity?.id)),
                 ),
               ),
               const SizedBox(height: 16),
@@ -459,7 +464,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     )
                   : _apiOrganizations.isEmpty
                       ? _buildEmptyOrgs()
-                      : _OrgsRow(orgs: _apiOrganizations.take(10).toList(), city: _locationCity),
+                      : _OrgsRow(orgs: _apiOrganizations.take(10).toList()),
               const SizedBox(height: 48),
             ],
           ),
@@ -1110,8 +1115,7 @@ class _ActivityCardState extends State<_ActivityCard> {
 
 class _OrgsRow extends StatelessWidget {
   final List<Organization> orgs;
-  final String? city;
-  const _OrgsRow({required this.orgs, this.city});
+  const _OrgsRow({required this.orgs});
 
   @override
   Widget build(BuildContext context) {
@@ -1203,15 +1207,20 @@ class _OrgCard extends StatelessWidget {
                     children: [
                       Text(org.name, maxLines: 2, overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textPrimary, height: 1.25)),
-                      if (org.city != null && org.city!.isNotEmpty) ...[
-                        const SizedBox(height: 2),
-                        Row(children: [
-                          const Icon(Icons.location_on_rounded, size: 10, color: AppColors.textMuted),
-                          const SizedBox(width: 2),
-                          Expanded(child: Text(org.city!, maxLines: 1, overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.poppins(fontSize: 10, color: AppColors.textMuted))),
-                        ]),
-                      ],
+                      Builder(builder: (ctx) {
+                        final lang = Localizations.localeOf(ctx).languageCode;
+                        final cityLabel = org.localizedCity(lang);
+                        if (cityLabel == null || cityLabel.isEmpty) return const SizedBox.shrink();
+                        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          const SizedBox(height: 2),
+                          Row(children: [
+                            const Icon(Icons.location_on_rounded, size: 10, color: AppColors.textMuted),
+                            const SizedBox(width: 2),
+                            Expanded(child: Text(cityLabel, maxLines: 1, overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.poppins(fontSize: 10, color: AppColors.textMuted))),
+                          ]),
+                        ]);
+                      }),
                     ],
                   ),
                 ),

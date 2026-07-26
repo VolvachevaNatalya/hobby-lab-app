@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
+import '../models/app_category.dart';
+import '../models/app_city.dart';
+import '../models/org_models.dart';
+import '../routing/transitions.dart';
 import '../theme/app_theme.dart';
 import '../services/api_service.dart';
+import 'city_picker_screen.dart';
 import 'org_dashboard_screen.dart';
 
 // ─── Social URL helpers ───────────────────────────────────────────────────────
@@ -41,7 +46,6 @@ class _OrganizationRegistrationScreenState
   final _emailController = TextEditingController();
   final _websiteController = TextEditingController();
   final _addressController = TextEditingController();
-  final _cityController = TextEditingController();
   final _instagramController = TextEditingController();
   final _facebookController = TextEditingController();
   final _telegramController = TextEditingController();
@@ -51,11 +55,12 @@ class _OrganizationRegistrationScreenState
 
   final _nameKey = GlobalKey();
 
-  String _category = '';
+  AppCity? _selectedCity;
+  final List<AppCategory> _selectedCategories = [];
+  List<AppCategory> _categories = [];
+  bool _loadingCategories = true;
   bool _saving = false;
   bool _submitted = false;
-  List<String> _categories = [];
-  bool _loadingCategories = true;
 
   static const _days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -83,12 +88,7 @@ class _OrganizationRegistrationScreenState
   Future<void> _loadCategories() async {
     try {
       final cats = await ApiService.getCategories();
-      if (mounted) {
-        setState(() {
-          _categories = cats.map((c) => c.name).toList();
-          _loadingCategories = false;
-        });
-      }
+      if (mounted) setState(() { _categories = cats; _loadingCategories = false; });
     } catch (_) {
       if (mounted) setState(() => _loadingCategories = false);
     }
@@ -103,7 +103,6 @@ class _OrganizationRegistrationScreenState
     _emailController.dispose();
     _websiteController.dispose();
     _addressController.dispose();
-    _cityController.dispose();
     _instagramController.dispose();
     _facebookController.dispose();
     _telegramController.dispose();
@@ -114,93 +113,182 @@ class _OrganizationRegistrationScreenState
   }
 
   void _showCategorySheet() {
+    if (_loadingCategories) return;
+    final l10n = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
+
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.divider,
-                  borderRadius: BorderRadius.circular(2),
-                ),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (sheetCtx) => StatefulBuilder(
+        builder: (ctx, setModalState) {
+          void toggle(AppCategory cat) {
+            final isSelected = _selectedCategories.any((c) => c.id == cat.id);
+            if (isSelected) {
+              setState(() => _selectedCategories.removeWhere((c) => c.id == cat.id));
+              setModalState(() {});
+            } else {
+              if (_selectedCategories.length >= 10) {
+                messenger.showSnackBar(SnackBar(
+                  content: Text(l10n.maxCategoriesReached,
+                      style: GoogleFonts.poppins(fontSize: 13)),
+                  backgroundColor: const Color(0xFFEF4444),
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  margin: const EdgeInsets.all(16),
+                ));
+                return;
+              }
+              setState(() => _selectedCategories.add(cat));
+              setModalState(() {});
+            }
+          }
+
+          return SafeArea(
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(ctx).size.height * 0.75,
               ),
-              const SizedBox(height: 16),
-              Text(
-                'Select Category',
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
+              decoration: const BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
-              const SizedBox(height: 12),
-              if (_loadingCategories)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24),
-                  child: Center(child: CircularProgressIndicator()),
-                )
-              else
-                ..._categories.map((cat) {
-                final sel = _category == cat;
-                return GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    setState(() => _category = cat);
-                    Navigator.of(ctx).pop();
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 14),
-                    margin: const EdgeInsets.only(bottom: 4),
-                    decoration: BoxDecoration(
-                      color: sel
-                          ? AppColors.purple.withValues(alpha: 0.12)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: sel
-                            ? AppColors.purple.withValues(alpha: 0.4)
-                            : Colors.transparent,
-                      ),
-                    ),
-                    child: Row(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                    child: Column(
                       children: [
-                        Expanded(
-                          child: Text(
-                            cat,
-                            style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              color: sel
-                                  ? AppColors.purpleLight
-                                  : AppColors.textPrimary,
-                              fontWeight:
-                                  sel ? FontWeight.w600 : FontWeight.w400,
+                        Center(
+                          child: Container(
+                            width: 40, height: 4,
+                            decoration: BoxDecoration(
+                              color: AppColors.divider,
+                              borderRadius: BorderRadius.circular(2),
                             ),
                           ),
                         ),
-                        if (sel)
-                          const Icon(Icons.check_rounded,
-                              color: AppColors.purple, size: 18),
+                        const SizedBox(height: 14),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                l10n.selectCategories,
+                                style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textPrimary),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: AppColors.purple.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                '${_selectedCategories.length}/10',
+                                style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.purpleLight),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        const Divider(height: 1, color: AppColors.divider),
                       ],
                     ),
                   ),
-                );
-              }),
-              const SizedBox(height: 8),
-            ],
-          ),
-        ),
+                  Flexible(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+                      shrinkWrap: true,
+                      itemCount: _categories.length,
+                      itemBuilder: (_, i) {
+                        final cat = _categories[i];
+                        final sel = _selectedCategories.any((c) => c.id == cat.id);
+                        return GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => toggle(cat),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            margin: const EdgeInsets.only(bottom: 4),
+                            decoration: BoxDecoration(
+                              color: sel
+                                  ? AppColors.purple.withValues(alpha: 0.12)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 32, height: 32,
+                                  decoration: BoxDecoration(
+                                    gradient: sel
+                                        ? LinearGradient(colors: [
+                                            catColorStart(cat.name),
+                                            catColorEnd(cat.name),
+                                          ])
+                                        : null,
+                                    color: sel ? null : AppColors.surfaceElevated,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(catIcon(cat.name),
+                                      size: 16,
+                                      color: sel ? Colors.white : AppColors.textMuted),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(cat.name,
+                                      style: GoogleFonts.poppins(
+                                          fontSize: 14,
+                                          color: sel
+                                              ? AppColors.purpleLight
+                                              : AppColors.textPrimary,
+                                          fontWeight: sel
+                                              ? FontWeight.w600
+                                              : FontWeight.w400)),
+                                ),
+                                if (sel)
+                                  const Icon(Icons.check_rounded,
+                                      color: AppColors.purple, size: 18),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(sheetCtx).pop(),
+                      child: Container(
+                        width: double.infinity,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          gradient: AppColors.brandGradient,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Center(
+                          child: Text('Done',
+                              style: GoogleFonts.poppins(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white)),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -252,7 +340,7 @@ class _OrganizationRegistrationScreenState
   Future<void> _submit() async {
     if (_saving) return; // prevent double-tap
 
-    if (_nameController.text.trim().isEmpty) {
+    if (_nameController.text.trim().isEmpty || _selectedCategories.isEmpty) {
       setState(() => _submitted = true);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_nameKey.currentContext != null) {
@@ -266,9 +354,14 @@ class _OrganizationRegistrationScreenState
       return;
     }
     setState(() => _saving = true);
+    final catIds = _selectedCategories
+        .map((c) => int.tryParse(c.id))
+        .whereType<int>()
+        .toList();
     try {
       final orgData = await ApiService.createOrganization(
         name: _nameController.text.trim(),
+        categoryIds: catIds.isNotEmpty ? catIds : null,
         description: _descriptionController.text.trim().isNotEmpty
             ? _descriptionController.text.trim()
             : null,
@@ -284,9 +377,7 @@ class _OrganizationRegistrationScreenState
         address: _addressController.text.trim().isNotEmpty
             ? _addressController.text.trim()
             : null,
-        city: _cityController.text.trim().isNotEmpty
-            ? _cityController.text.trim()
-            : null,
+        cityId: _selectedCity?.id,
         instagramUrl: _withSocialPrefix(_instagramController.text, 'instagram.com/'),
         facebookUrl:  _withSocialPrefix(_facebookController.text,  'facebook.com/'),
         telegramUrl:  _withSocialPrefix(_telegramController.text,  't.me/'),
@@ -384,12 +475,7 @@ class _OrganizationRegistrationScreenState
                     icon: Icons.location_on_outlined,
                   ),
                   _cardDivider(),
-                  _buildInlineField(
-                    controller: _cityController,
-                    hint: 'City',
-                    icon: Icons.location_city_rounded,
-                    action: TextInputAction.done,
-                  ),
+                  _buildCityPickerRow(),
                 ]),
                 const SizedBox(height: 20),
                 _sectionLabel('Social Media'),
@@ -568,7 +654,8 @@ class _OrganizationRegistrationScreenState
 
   Widget _buildNameCard() {
     final l10n = AppLocalizations.of(context)!;
-    final hasError = _submitted && _nameController.text.trim().isEmpty;
+    final nameError = _submitted && _nameController.text.trim().isEmpty;
+    final catError = _submitted && _selectedCategories.isEmpty;
     return Column(
       key: _nameKey,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -578,7 +665,9 @@ class _OrganizationRegistrationScreenState
             color: AppColors.surface,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: hasError ? const Color(0xFFEF4444) : AppColors.divider,
+              color: (nameError || catError)
+                  ? const Color(0xFFEF4444)
+                  : AppColors.divider,
             ),
           ),
           child: Column(
@@ -588,20 +677,28 @@ class _OrganizationRegistrationScreenState
                 hint: 'Organization name',
                 icon: Icons.business_rounded,
                 isRequired: true,
-                error: hasError,
+                error: nameError,
               ),
               _cardDivider(),
               _buildDescriptionField(),
               _cardDivider(),
-              _buildCategoryField(),
+              _buildCategoryField(error: catError),
             ],
           ),
         ),
-        if (hasError)
+        if (nameError)
           Padding(
             padding: const EdgeInsets.only(left: 4, top: 4),
             child: Text(
               l10n.fieldRequired,
+              style: GoogleFonts.poppins(fontSize: 11, color: const Color(0xFFEF4444)),
+            ),
+          ),
+        if (catError)
+          Padding(
+            padding: const EdgeInsets.only(left: 4, top: 4),
+            child: Text(
+              'Please select at least one category',
               style: GoogleFonts.poppins(fontSize: 11, color: const Color(0xFFEF4444)),
             ),
           ),
@@ -722,29 +819,129 @@ class _OrganizationRegistrationScreenState
     );
   }
 
-  Widget _buildCategoryField() {
-    final empty = _category.isEmpty;
+  Widget _buildCategoryField({bool error = false}) {
+    final empty = _selectedCategories.isEmpty;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: _showCategorySheet,
       child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Icon(Icons.category_rounded,
+                  size: 20,
+                  color: error ? const Color(0xFFEF4444) : AppColors.textMuted),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: empty
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Text(
+                        'Categories',
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: error
+                              ? const Color(0xFFEF4444)
+                              : AppColors.textMuted,
+                        ),
+                      ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.only(top: 4, bottom: 4),
+                      child: Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
+                        children: _selectedCategories
+                            .map((cat) => _buildCategoryChip(cat))
+                            .toList(),
+                      ),
+                    ),
+            ),
+            if (empty)
+              Padding(
+                padding: const EdgeInsets.only(top: 4, right: 4),
+                child: const Text('*', style: _requiredStyle),
+              ),
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: const Icon(Icons.keyboard_arrow_down_rounded,
+                  color: AppColors.textMuted, size: 22),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryChip(AppCategory cat) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            catColorStart(cat.name).withValues(alpha: 0.25),
+            catColorEnd(cat.name).withValues(alpha: 0.25),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: catColorStart(cat.name).withValues(alpha: 0.5)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(catIcon(cat.name), size: 11, color: catColorStart(cat.name)),
+          const SizedBox(width: 4),
+          Text(cat.name,
+              style: GoogleFonts.poppins(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textPrimary)),
+          const SizedBox(width: 4),
+          GestureDetector(
+            onTap: () => setState(() =>
+                _selectedCategories.removeWhere((c) => c.id == cat.id)),
+            child: const Icon(Icons.close, size: 12, color: AppColors.textMuted),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _openCityPicker() async {
+    final city = await Navigator.of(context).push<AppCity>(
+      modalRoute(builder: (_) => const CityPickerScreen()),
+    );
+    if (city != null && mounted) {
+      setState(() => _selectedCity = city);
+    }
+  }
+
+  Widget _buildCityPickerRow() {
+    final lang = Localizations.localeOf(context).languageCode;
+    final label = _selectedCity?.displayName(lang);
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: _openCityPicker,
+      child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
           children: [
-            Icon(Icons.category_rounded,
-                size: 20, color: AppColors.textMuted),
+            const Icon(Icons.location_city_rounded, size: 20, color: AppColors.textMuted),
             const SizedBox(width: 14),
             Expanded(
               child: Text(
-                empty ? 'Category' : _category,
+                label ?? 'City',
                 style: GoogleFonts.poppins(
                   fontSize: 14,
-                  color: empty ? AppColors.textMuted : AppColors.textPrimary,
+                  color: label != null ? AppColors.textPrimary : AppColors.textMuted,
                 ),
               ),
             ),
-            const Icon(Icons.keyboard_arrow_down_rounded,
-                color: AppColors.textMuted, size: 22),
+            const Icon(Icons.keyboard_arrow_right_rounded, size: 18, color: AppColors.textMuted),
           ],
         ),
       ),

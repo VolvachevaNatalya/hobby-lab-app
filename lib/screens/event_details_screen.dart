@@ -418,9 +418,21 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     }
 
     final hasAddress = event.address != null && event.address!.isNotEmpty;
-    final hasCity = event.city != null && event.city!.isNotEmpty;
-    if (hasAddress || hasCity) {
-      final loc = [event.address, event.city]
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).languageCode;
+    String? cityLabel;
+    if (event.isNationwide) {
+      cityLabel = l10n.nationwideLabel;
+    } else {
+      cityLabel = switch (locale) {
+        'he' => event.cityNameHe,
+        'ru' => event.cityNameRu,
+        _ => event.cityNameEn,
+      };
+      if (cityLabel == null || cityLabel.isEmpty) cityLabel = event.city;
+    }
+    if (hasAddress || (cityLabel != null && cityLabel.isNotEmpty)) {
+      final loc = [event.address, cityLabel]
           .where((s) => s != null && s.isNotEmpty)
           .join(', ');
       items.add(_InfoItem(

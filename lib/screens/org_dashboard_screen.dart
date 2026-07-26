@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../models/org_models.dart';
+import '../models/app_city.dart';
 import '../services/api_service.dart';
 import '../models/app_category.dart';
 import 'org_class_form_screen.dart';
@@ -118,12 +119,26 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
       }
 
       final classes = rawClasses.map((json) {
-        final catId = json['category_id']?.toString();
         final classId = (json['id'] ?? '').toString();
+        final rawCats = json['categories'] as List<dynamic>?;
+        final List<String> classCatIds;
+        final String classCatName;
+        if (rawCats != null && rawCats.isNotEmpty) {
+          classCatName = (rawCats.first as Map)['name']?.toString() ?? 'Other';
+          classCatIds = rawCats
+              .map((c) => (c as Map)['id']?.toString())
+              .whereType<String>()
+              .toList();
+        } else {
+          final catId = json['category_id']?.toString();
+          classCatName = catId != null ? (catMap[catId] ?? 'Other') : 'Other';
+          classCatIds = catId != null ? [catId] : const [];
+        }
         return OrgClass(
           id: classId,
           name: (json['name'] ?? '').toString(),
-          category: catId != null ? (catMap[catId] ?? 'Other') : 'Other',
+          category: classCatName,
+          categoryIds: classCatIds,
           description: (json['description'] ?? '').toString(),
           groups: groupsMap[classId] ?? [],
         );
@@ -157,6 +172,10 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
           date: startDt,
           time: TimeOfDay(hour: startDt.hour, minute: startDt.minute),
           location: (json['address'] ?? '').toString(),
+          cityId: json['city_id'] as int?,
+          cityNameHe: json['city_name_he']?.toString(),
+          cityNameEn: json['city_name_en']?.toString(),
+          cityNameRu: json['city_name_ru']?.toString(),
           minAge: (json['min_age'] ?? 0) as int,
           maxAge: (json['max_age'] ?? 99) as int,
           capacity: (json['capacity'] ?? 0) as int,
@@ -224,8 +243,22 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
   }
 
   Future<void> _goAddEvent() async {
+    AppCity? initialCity;
+    try {
+      final orgData = await ApiService.getOrganization(_orgId);
+      final cityId = orgData['city_id'] as int?;
+      if (cityId != null) {
+        initialCity = AppCity(
+          id: cityId,
+          nameHe: orgData['city_name_he'] as String? ?? '',
+          nameEn: orgData['city_name_en'] as String? ?? '',
+          nameRu: orgData['city_name_ru'] as String? ?? '',
+        );
+      }
+    } catch (_) {}
+    if (!mounted) return;
     await Navigator.of(context).push(
-      slideRoute(builder: (_) => OrgEventFormScreen(orgId: _orgId)),
+      slideRoute(builder: (_) => OrgEventFormScreen(orgId: _orgId, initialCity: initialCity)),
     );
     if (mounted) _loadData();
   }
@@ -1008,6 +1041,15 @@ class _EventPreviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = catColorStart(event.category);
     final ce = catColorEnd(event.category);
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).languageCode;
+    final String? cityLabel = event.isNationwide
+        ? l10n.nationwideLabel
+        : switch (locale) {
+            'he' => event.cityNameHe,
+            'ru' => event.cityNameRu,
+            _ => event.cityNameEn,
+          };
     return GestureDetector(
       onTap: onManage,
       child: Container(
@@ -1047,10 +1089,23 @@ class _EventPreviewCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${fmtDate(event.date)} · ${event.price == 0 ? 'Free' : '₪${event.price.toStringAsFixed(0)}'}',
+                    '${fmtDate(event.date)} · ${event.price == 0 ? AppLocalizations.of(context)!.eventFree : '₪${event.price.toStringAsFixed(0)}'}',
                     style: GoogleFonts.poppins(
                         fontSize: 11, color: AppColors.textMuted),
                   ),
+                  if (cityLabel != null && cityLabel.isNotEmpty)
+                    Row(children: [
+                      const Icon(Icons.location_on_rounded, size: 10, color: AppColors.textMuted),
+                      const SizedBox(width: 3),
+                      Flexible(
+                        child: Text(
+                          cityLabel,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.poppins(fontSize: 10, color: AppColors.textMuted),
+                        ),
+                      ),
+                    ]),
                 ],
               ),
             ),
@@ -1451,6 +1506,15 @@ class _EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = catColorStart(event.category);
     final ce = catColorEnd(event.category);
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).languageCode;
+    final String? cityLabel = event.isNationwide
+        ? l10n.nationwideLabel
+        : switch (locale) {
+            'he' => event.cityNameHe,
+            'ru' => event.cityNameRu,
+            _ => event.cityNameEn,
+          };
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -1501,6 +1565,10 @@ class _EventCard extends StatelessWidget {
                   _InfoRow(Icons.location_on_rounded,
                       event.location),
                 ],
+                if (cityLabel != null && cityLabel.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  _InfoRow(Icons.location_city_rounded, cityLabel),
+                ],
                 const SizedBox(height: 8),
                 Row(
                   children: [
@@ -1512,7 +1580,7 @@ class _EventCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     _Chip(
                       event.price == 0
-                          ? 'Free'
+                          ? AppLocalizations.of(context)!.eventFree
                           : '₪${event.price.toStringAsFixed(0)}',
                       bgColor: AppColors.purple.withValues(alpha: 0.1),
                       textColor: AppColors.purpleLight,

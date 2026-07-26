@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../models/organization.dart';
 import '../models/org_photo.dart';
@@ -220,8 +221,19 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
   String? get _website => _orgData?['website'] as String?;
   String? get _address {
     final addr = _orgData?['address'] as String?;
-    final city = _orgData?['city'] as String?;
-    if (addr == null && city == null) return null;
+    final legacyCity = _orgData?['city'] as String?;
+    String? city;
+    if (legacyCity != null && legacyCity.isNotEmpty) {
+      city = legacyCity;
+    } else {
+      final locale = Localizations.localeOf(context).languageCode;
+      city = switch (locale) {
+        'he' => _orgData?['city_name_he'] as String?,
+        'ru' => _orgData?['city_name_ru'] as String?,
+        _ => _orgData?['city_name_en'] as String?,
+      };
+    }
+    if (addr == null && (city == null || city.isEmpty)) return null;
     return [addr, city].where((s) => s != null && s.isNotEmpty).join(', ');
   }
   String? get _description => _orgData?['description'] as String?;
@@ -1407,7 +1419,7 @@ class _ClassTile extends StatelessWidget {
                     ],
                     if (price != null)
                       _Chip(
-                        label: '${(price as num).toStringAsFixed(0)} ₸',
+                        label: '₪${(price as num).toStringAsFixed(0)}',
                         icon: Icons.attach_money_rounded,
                       ),
                   ],
@@ -1441,6 +1453,19 @@ class _EventTile extends StatelessWidget {
       } catch (_) {
         dateStr = startDate.toString();
       }
+    }
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).languageCode;
+    final String cityLabel;
+    if (event['is_nationwide'] == true) {
+      cityLabel = l10n.nationwideLabel;
+    } else {
+      final raw = switch (locale) {
+        'he' => event['city_name_he'],
+        'ru' => event['city_name_ru'],
+        _ => event['city_name_en'],
+      };
+      cityLabel = (raw ?? event['city'] ?? '').toString();
     }
 
     return Container(
@@ -1499,6 +1524,27 @@ class _EventTile extends StatelessWidget {
                         style: GoogleFonts.poppins(
                           fontSize: 11,
                           color: AppColors.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                if (cityLabel.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on_rounded,
+                          size: 11, color: AppColors.textMuted),
+                      const SizedBox(width: 3),
+                      Flexible(
+                        child: Text(
+                          cityLabel,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.poppins(
+                            fontSize: 11,
+                            color: AppColors.textMuted,
+                          ),
                         ),
                       ),
                     ],

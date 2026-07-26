@@ -310,5 +310,7 @@
   "memberRoleChangedSuccess": "Роль обновлена",
 
   "selectCategories": "Выберите категории",
-  "maxCategoriesReached": "Максимум 10 категорий"
+  "maxCategoriesReached": "Максимум 10 категорий",
+
+  "nationwideLabel": "По всей стране"
 }

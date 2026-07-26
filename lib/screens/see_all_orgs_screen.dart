@@ -8,8 +8,9 @@ import 'org_profile_screen.dart';
 import '../routing/transitions.dart';
 
 class SeeAllOrgsScreen extends StatefulWidget {
-  final String? city;
-  const SeeAllOrgsScreen({super.key, this.city});
+  final int? cityId;
+  final int? categoryId;
+  const SeeAllOrgsScreen({super.key, this.cityId, this.categoryId});
 
   @override
   State<SeeAllOrgsScreen> createState() => _SeeAllOrgsScreenState();
@@ -35,7 +36,10 @@ class _SeeAllOrgsScreenState extends State<SeeAllOrgsScreen> {
 
   Future<void> _load() async {
     try {
-      final orgs = await ApiService.getOrganizations(city: widget.city);
+      final orgs = await ApiService.getOrganizations(
+        cityId: widget.cityId,
+        categoryId: widget.categoryId,
+      );
       if (mounted) setState(() { _orgs = orgs; _loading = false; });
     } catch (_) {
       if (mounted) setState(() => _loading = false);
@@ -47,7 +51,6 @@ class _SeeAllOrgsScreenState extends State<SeeAllOrgsScreen> {
     final q = _query.toLowerCase();
     return _orgs.where((o) =>
         o.name.toLowerCase().contains(q) ||
-        (o.city?.toLowerCase().contains(q) ?? false) ||
         (o.description?.toLowerCase().contains(q) ?? false)).toList();
   }
 
@@ -214,15 +217,20 @@ class _OrgGridCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(org.name, maxLines: 2, overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textPrimary, height: 1.3)),
-            if (org.city != null && org.city!.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Row(children: [
-                const Icon(Icons.location_on_rounded, size: 11, color: AppColors.textMuted),
-                const SizedBox(width: 2),
-                Expanded(child: Text(org.city!, maxLines: 1, overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(fontSize: 10, color: AppColors.textMuted))),
-              ]),
-            ],
+            Builder(builder: (ctx) {
+              final lang = Localizations.localeOf(ctx).languageCode;
+              final cityLabel = org.localizedCity(lang);
+              if (cityLabel == null || cityLabel.isEmpty) return const SizedBox.shrink();
+              return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const SizedBox(height: 4),
+                Row(children: [
+                  const Icon(Icons.location_on_rounded, size: 11, color: AppColors.textMuted),
+                  const SizedBox(width: 2),
+                  Expanded(child: Text(cityLabel, maxLines: 1, overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.poppins(fontSize: 10, color: AppColors.textMuted))),
+                ]),
+              ]);
+            }),
             const Spacer(),
             Row(children: [
               const Icon(Icons.star_rounded, size: 12, color: Color(0xFFFFD700)),

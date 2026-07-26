@@ -310,5 +310,7 @@
   "memberRoleChangedSuccess": "Role updated",
 
   "selectCategories": "Select Categories",
-  "maxCategoriesReached": "Maximum 10 categories"
+  "maxCategoriesReached": "Maximum 10 categories",
+
+  "nationwideLabel": "Nationwide"
 }

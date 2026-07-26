@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import '../models/app_city.dart';
 import '../models/app_class.dart';
 import '../models/app_category.dart';
 import '../models/app_event.dart';
@@ -272,9 +273,22 @@ class ApiService {
 
   // ── Classes ────────────────────────────────────────────────────────────────
 
-  static Future<List<AppClass>> getClasses({String? city, double? userLat, double? userLng}) async {
+  static Future<List<AppCity>> getCities({String? q}) async {
     final params = <String, String>{};
-    if (city != null && city.isNotEmpty) params['city'] = city;
+    if (q != null && q.isNotEmpty) params['q'] = q;
+    final uri = Uri.parse('$_baseUrl/cities/')
+        .replace(queryParameters: params.isEmpty ? null : params);
+    final response = await http.get(uri, headers: await _authHeaders());
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List<dynamic>)
+          .map((e) => AppCity.fromJson(e as Map<String, dynamic>))
+          .toList();
+    }
+    return [];
+  }
+
+  static Future<List<AppClass>> getClasses({double? userLat, double? userLng}) async {
+    final params = <String, String>{};
     if (userLat != null && userLng != null) {
       params['user_latitude'] = userLat.toString();
       params['user_longitude'] = userLng.toString();
@@ -351,9 +365,9 @@ class ApiService {
 
   // ── Events ─────────────────────────────────────────────────────────────────
 
-  static Future<List<AppEvent>> getEvents({String? city, double? userLat, double? userLng}) async {
+  static Future<List<AppEvent>> getEvents({int? cityId, double? userLat, double? userLng}) async {
     final params = <String, String>{};
-    if (city != null && city.isNotEmpty) params['city'] = city;
+    if (cityId != null) params['city_id'] = cityId.toString();
     if (userLat != null && userLng != null) {
       params['user_latitude'] = userLat.toString();
       params['user_longitude'] = userLng.toString();
@@ -371,13 +385,13 @@ class ApiService {
   }
 
   static Future<List<Organization>> getOrganizations({
-    String? city,
+    int? cityId,
     double? userLat,
     double? userLng,
     int? categoryId,
   }) async {
     final params = <String, String>{};
-    if (city != null && city.isNotEmpty) params['city'] = city;
+    if (cityId != null) params['city_id'] = cityId.toString();
     if (userLat != null && userLng != null) {
       params['user_latitude'] = userLat.toString();
       params['user_longitude'] = userLng.toString();
@@ -789,7 +803,7 @@ class ApiService {
 
   static Future<Map<String, dynamic>> createClass({
     required int organizationId,
-    required int categoryId,
+    List<int>? categoryIds,
     required String name,
     String? description,
     String? imageUrl,
@@ -797,9 +811,11 @@ class ApiService {
     final headers = await _authHeaders();
     final body = <String, dynamic>{
       'organization_id': organizationId,
-      'category_id': categoryId,
       'name': name,
     };
+    if (categoryIds != null && categoryIds.isNotEmpty) {
+      body['category_ids'] = categoryIds;
+    }
     if (description != null && description.isNotEmpty) {
       body['description'] = description;
     }
@@ -868,7 +884,8 @@ class ApiService {
     String? email,
     String? website,
     String? address,
-    String? city,
+    int? cityId,
+    List<int>? categoryIds,
     String? instagramUrl,
     String? facebookUrl,
     String? telegramUrl,
@@ -878,12 +895,13 @@ class ApiService {
   }) async {
     final headers = await _authHeaders();
     final body = <String, dynamic>{'name': name};
+    if (categoryIds != null && categoryIds.isNotEmpty) body['category_ids'] = categoryIds;
     if (description != null && description.isNotEmpty) body['description'] = description;
     if (phone != null && phone.isNotEmpty) body['phone'] = phone;
     if (email != null && email.isNotEmpty) body['email'] = email;
     if (website != null && website.isNotEmpty) body['website'] = website;
     if (address != null && address.isNotEmpty) body['address'] = address;
-    if (city != null && city.isNotEmpty) body['city'] = city;
+    if (cityId != null) body['city_id'] = cityId;
     if (instagramUrl != null && instagramUrl.isNotEmpty) body['instagram_url'] = instagramUrl;
     if (facebookUrl != null && facebookUrl.isNotEmpty) body['facebook_url'] = facebookUrl;
     if (telegramUrl != null && telegramUrl.isNotEmpty) body['telegram_url'] = telegramUrl;
@@ -905,14 +923,16 @@ class ApiService {
     required int classId,
     String? name,
     String? description,
-    int? categoryId,
+    List<int>? categoryIds,
     String? imageUrl,
   }) async {
     final headers = await _authHeaders();
     final body = <String, dynamic>{};
     if (name != null) body['name'] = name;
     if (description != null) body['description'] = description;
-    if (categoryId != null) body['category_id'] = categoryId;
+    if (categoryIds != null && categoryIds.isNotEmpty) {
+      body['category_ids'] = categoryIds;
+    }
     if (imageUrl != null && imageUrl.isNotEmpty) body['image_url'] = imageUrl;
     final response = await http.put(
       Uri.parse('$_baseUrl/classes/$classId'),
@@ -946,6 +966,7 @@ class ApiService {
     int? maxAge,
     int? capacity,
     String? address,
+    int? cityId,
     bool? isNationwide,
     double? price,
     String? priceComment,
@@ -965,6 +986,7 @@ class ApiService {
     if (maxAge != null) body['max_age'] = maxAge;
     if (capacity != null) body['capacity'] = capacity;
     if (address != null) body['address'] = address;
+    if (cityId != null) body['city_id'] = cityId;
     if (isNationwide != null) body['is_nationwide'] = isNationwide;
     if (price != null) body['price'] = price;
     if (priceComment != null) body['price_comment'] = priceComment;
@@ -1049,7 +1071,8 @@ class ApiService {
     String? phone,
     String? website,
     String? address,
-    String? city,
+    int? cityId,
+    List<int>? categoryIds,
     String? instagramUrl,
     String? facebookUrl,
     String? telegramUrl,
@@ -1065,12 +1088,13 @@ class ApiService {
     final headers = await _authHeaders();
     final body = <String, dynamic>{};
     if (name != null) body['name'] = name;
+    if (categoryIds != null && categoryIds.isNotEmpty) body['category_ids'] = categoryIds;
     if (description != null) body['description'] = description;
     if (email != null) body['email'] = email;
     if (phone != null) body['phone'] = phone;
     if (website != null) body['website'] = website;
     if (address != null) body['address'] = address;
-    if (city != null) body['city'] = city;
+    if (cityId != null) body['city_id'] = cityId;
     if (instagramUrl != null) body['instagram_url'] = instagramUrl;
     if (facebookUrl != null) body['facebook_url'] = facebookUrl;
     if (telegramUrl != null) body['telegram_url'] = telegramUrl;
@@ -1301,6 +1325,7 @@ class ApiService {
     int? maxAge,
     int? capacity,
     String? address,
+    int? cityId,
     bool isNationwide = false,
     double? price,
     String? priceComment,
@@ -1323,6 +1348,7 @@ class ApiService {
     if (maxAge != null && maxAge < 99) body['max_age'] = maxAge;
     if (capacity != null) body['capacity'] = capacity;
     if (address != null && address.isNotEmpty) body['address'] = address;
+    if (cityId != null) body['city_id'] = cityId;
     if (price != null) body['price'] = price;
     if (priceComment != null && priceComment.isNotEmpty) body['price_comment'] = priceComment;
     if (imageUrl != null && imageUrl.isNotEmpty) body['image_url'] = imageUrl;
