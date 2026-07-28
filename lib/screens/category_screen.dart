@@ -149,11 +149,17 @@ class CategoryScreen extends StatefulWidget {
 class _CategoryScreenState extends State<CategoryScreen> {
   List<Organization> _orgs = [];
   bool _loadingOrgs = true;
+  List<AppEvent> _events = [];
+  bool _loadingEvents = true;
+  List<AppClass> _classes = [];
+  bool _loadingClasses = true;
 
   @override
   void initState() {
     super.initState();
     _loadOrgs();
+    _loadEvents();
+    _loadClasses();
   }
 
   Future<void> _loadOrgs() async {
@@ -170,11 +176,35 @@ class _CategoryScreenState extends State<CategoryScreen> {
     }
   }
 
+  Future<void> _loadEvents() async {
+    try {
+      final events = await ApiService.getEvents(
+        categoryId: int.tryParse(widget.categoryId),
+        cityId: widget.cityId,
+      );
+      if (mounted) setState(() { _events = events; _loadingEvents = false; });
+    } catch (_) {
+      if (mounted) setState(() => _loadingEvents = false);
+    }
+  }
+
+  Future<void> _loadClasses() async {
+    try {
+      final classes = await ApiService.getClasses(
+        categoryId: int.tryParse(widget.categoryId),
+        cityId: widget.cityId,
+      );
+      if (mounted) setState(() { _classes = classes; _loadingClasses = false; });
+    } catch (_) {
+      if (mounted) setState(() => _loadingClasses = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final activities = _toActivities(widget.classes);
-    final banners = _toBanners(widget.events);
+    final activities = _toActivities(_classes);
+    final banners = _toBanners(_events);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -262,11 +292,19 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     _SectionHeader(
                       title: l10n.eventsSection,
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      onSeeAll: () => Navigator.of(context)
-                          .push(slideRoute(builder: (_) => const SeeAllEventsScreen())),
+                      onSeeAll: () => Navigator.of(context).push(
+                          slideRoute(builder: (_) => SeeAllEventsScreen(
+                            categoryId: int.tryParse(widget.categoryId),
+                            cityId: widget.cityId,
+                          ))),
                     ),
                     const SizedBox(height: 16),
-                    if (banners.isEmpty)
+                    if (_loadingEvents)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 32),
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    else if (banners.isEmpty)
                       _buildEmpty(context,
                           icon: Icons.event_busy_rounded,
                           title: l10n.noActivitiesYet,
@@ -289,10 +327,17 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       onSeeAll: () => Navigator.of(context).push(
                           slideRoute(builder: (_) => SeeAllScreen(
                               title: widget.categoryName,
-                              initialCategory: widget.categoryName))),
+                              initialCategory: widget.categoryName,
+                              categoryId: int.tryParse(widget.categoryId),
+                              cityId: widget.cityId))),
                     ),
                     const SizedBox(height: 16),
-                    if (activities.isEmpty)
+                    if (_loadingClasses)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 32),
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    else if (activities.isEmpty)
                       _buildEmpty(context,
                           icon: Icons.explore_off_rounded,
                           title: l10n.noActivitiesYet,

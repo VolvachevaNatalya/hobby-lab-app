@@ -9,7 +9,8 @@ import '../routing/transitions.dart';
 
 class SeeAllEventsScreen extends StatefulWidget {
   final int? cityId;
-  const SeeAllEventsScreen({super.key, this.cityId});
+  final int? categoryId;
+  const SeeAllEventsScreen({super.key, this.cityId, this.categoryId});
 
   @override
   State<SeeAllEventsScreen> createState() => _SeeAllEventsScreenState();
@@ -41,7 +42,7 @@ class _SeeAllEventsScreenState extends State<SeeAllEventsScreen> {
 
   Future<void> _load() async {
     try {
-      final events = await ApiService.getEvents(cityId: widget.cityId);
+      final events = await ApiService.getEvents(cityId: widget.cityId, categoryId: widget.categoryId);
       if (mounted) setState(() { _events = events; _loading = false; });
     } catch (_) {
       if (mounted) setState(() => _loading = false);

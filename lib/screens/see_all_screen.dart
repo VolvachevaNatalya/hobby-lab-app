@@ -48,8 +48,10 @@ IconData _catIcon(String cat) => switch (cat.toLowerCase()) {
 class SeeAllScreen extends StatefulWidget {
   final String title;
   final String? initialCategory;
+  final int? categoryId;
+  final int? cityId;
 
-  const SeeAllScreen({super.key, required this.title, this.initialCategory});
+  const SeeAllScreen({super.key, required this.title, this.initialCategory, this.categoryId, this.cityId});
 
   @override
   State<SeeAllScreen> createState() => _SeeAllScreenState();
@@ -78,7 +80,7 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
 
   Future<void> _loadData() async {
     try {
-      final classesF = ApiService.getClasses();
+      final classesF = ApiService.getClasses(categoryId: widget.categoryId, cityId: widget.cityId);
       final catsF = ApiService.getCategories();
       final classes = await classesF;
       final cats = await catsF;

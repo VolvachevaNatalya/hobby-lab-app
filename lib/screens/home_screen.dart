@@ -183,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final cityId = _selectedCity?.id;
     try {
       final results = await Future.wait([
-        ApiService.getClasses(userLat: userLat, userLng: userLng),
+        ApiService.getClasses(cityId: cityId, userLat: userLat, userLng: userLng,),
         ApiService.getEvents(cityId: cityId, userLat: userLat, userLng: userLng),
         ApiService.getCategories(),
         ApiService.getNotifications(),

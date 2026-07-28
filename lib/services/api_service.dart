@@ -287,8 +287,10 @@ class ApiService {
     return [];
   }
 
-  static Future<List<AppClass>> getClasses({double? userLat, double? userLng}) async {
+  static Future<List<AppClass>> getClasses({int? categoryId, int? cityId, double? userLat, double? userLng}) async {
     final params = <String, String>{};
+    if (categoryId != null) params['category_id'] = categoryId.toString();
+    if (cityId != null) params['city_id'] = cityId.toString();
     if (userLat != null && userLng != null) {
       params['user_latitude'] = userLat.toString();
       params['user_longitude'] = userLng.toString();
@@ -365,9 +367,10 @@ class ApiService {
 
   // ── Events ─────────────────────────────────────────────────────────────────
 
-  static Future<List<AppEvent>> getEvents({int? cityId, double? userLat, double? userLng}) async {
+  static Future<List<AppEvent>> getEvents({int? cityId, int? categoryId, double? userLat, double? userLng}) async {
     final params = <String, String>{};
     if (cityId != null) params['city_id'] = cityId.toString();
+    if (categoryId != null) params['category_id'] = categoryId.toString();
     if (userLat != null && userLng != null) {
       params['user_latitude'] = userLat.toString();
       params['user_longitude'] = userLng.toString();
