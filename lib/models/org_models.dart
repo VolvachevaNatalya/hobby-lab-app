@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'event_recurrence.dart';
 
 // ─── Data models ─────────────────────────────────────────────────────────────
 
@@ -69,6 +70,9 @@ class OrgEvent {
   double price;
   String? priceComment;
   bool isNationwide;
+  int? seriesId;
+  int? occurrenceIndex;
+  EventRecurrence? recurrence;
 
   OrgEvent({
     required this.id,
@@ -89,48 +93,61 @@ class OrgEvent {
     this.price = 0,
     this.priceComment,
     this.isNationwide = false,
+    this.seriesId,
+    this.occurrenceIndex,
+    this.recurrence,
   });
 }
 
 // ─── Category helpers ─────────────────────────────────────────────────────────
 
 Color catColorStart(String cat) => switch (cat) {
-      'Sport' => const Color(0xFF059669),
-      'Art' => const Color(0xFFFF9100),
-      'Music' => const Color(0xFFEC4899),
-      'Education' => const Color(0xFF3B82F6),
-      'Theater' => const Color(0xFF9333EA),
-      'Master Class' => const Color(0xFFFFD700),
-      _ => const Color(0xFF7C3AED),
-    };
+  'Sport' => const Color(0xFF059669),
+  'Art' => const Color(0xFFFF9100),
+  'Music' => const Color(0xFFEC4899),
+  'Education' => const Color(0xFF3B82F6),
+  'Theater' => const Color(0xFF9333EA),
+  'Master Class' => const Color(0xFFFFD700),
+  _ => const Color(0xFF7C3AED),
+};
 
 Color catColorEnd(String cat) => switch (cat) {
-      'Sport' => const Color(0xFF0EA5E9),
-      'Art' => const Color(0xFFEC4899),
-      'Music' => const Color(0xFF7C3AED),
-      'Education' => const Color(0xFF7C3AED),
-      'Theater' => const Color(0xFFEC4899),
-      'Master Class' => const Color(0xFFFF9100),
-      _ => const Color(0xFFEC4899),
-    };
+  'Sport' => const Color(0xFF0EA5E9),
+  'Art' => const Color(0xFFEC4899),
+  'Music' => const Color(0xFF7C3AED),
+  'Education' => const Color(0xFF7C3AED),
+  'Theater' => const Color(0xFFEC4899),
+  'Master Class' => const Color(0xFFFF9100),
+  _ => const Color(0xFFEC4899),
+};
 
 IconData catIcon(String cat) => switch (cat) {
-      'Sport' => Icons.sports_soccer_rounded,
-      'Art' => Icons.brush_rounded,
-      'Music' => Icons.music_note_rounded,
-      'Education' => Icons.school_rounded,
-      'Theater' => Icons.theater_comedy_rounded,
-      'Master Class' => Icons.star_rounded,
-      _ => Icons.category_rounded,
-    };
+  'Sport' => Icons.sports_soccer_rounded,
+  'Art' => Icons.brush_rounded,
+  'Music' => Icons.music_note_rounded,
+  'Education' => Icons.school_rounded,
+  'Theater' => Icons.theater_comedy_rounded,
+  'Master Class' => Icons.star_rounded,
+  _ => Icons.category_rounded,
+};
 
 String fmtTime(TimeOfDay t) =>
     '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
 String fmtDate(DateTime d) {
   const months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   return '${d.day} ${months[d.month - 1]} ${d.year}';
 }
@@ -138,15 +155,15 @@ String fmtDate(DateTime d) {
 String genId() => DateTime.now().millisecondsSinceEpoch.toString();
 
 int dayToInt(String day) => switch (day) {
-      'Sun' => 0,
-      'Mon' => 1,
-      'Tue' => 2,
-      'Wed' => 3,
-      'Thu' => 4,
-      'Fri' => 5,
-      'Sat' => 6,
-      _ => 0,
-    };
+  'Sun' => 0,
+  'Mon' => 1,
+  'Tue' => 2,
+  'Wed' => 3,
+  'Thu' => 4,
+  'Fri' => 5,
+  'Sat' => 6,
+  _ => 0,
+};
 
 String fmtApiTime(TimeOfDay t) =>
     '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}:00';

@@ -796,4 +796,113 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get nationwideLabel => 'По всей стране';
+
+  @override
+  String get repeatSection => 'Повтор';
+
+  @override
+  String get doesNotRepeat => 'Без повтора';
+
+  @override
+  String get repeatPickerDaily => 'Ежедневно';
+
+  @override
+  String get repeatPickerWeekly => 'Еженедельно';
+
+  @override
+  String get repeatPickerMonthly => 'Ежемесячно';
+
+  @override
+  String get repeatPickerYearly => 'Ежегодно';
+
+  @override
+  String get repeatPickerCustom => 'Настроить';
+
+  @override
+  String get repeatEveryLabel => 'Повторять каждые';
+
+  @override
+  String get repeatUnitDay => 'день';
+
+  @override
+  String get repeatUnitWeek => 'неделю';
+
+  @override
+  String get repeatUnitMonth => 'месяц';
+
+  @override
+  String get repeatUnitYear => 'год';
+
+  @override
+  String get repeatEndsLabel => 'Завершение';
+
+  @override
+  String get repeatAfterEventsOption => 'После';
+
+  @override
+  String get repeatOnDateOption => 'По дате';
+
+  @override
+  String get repeatNeverOption => 'Никогда';
+
+  @override
+  String get numberOfEventsHint => 'Количество событий';
+
+  @override
+  String get firstEventIncludedNote => 'Первое событие включено в счёт';
+
+  @override
+  String get repeatMinCountError => 'Минимум 2 события';
+
+  @override
+  String get repeatEndDateError =>
+      'Дата окончания должна быть позже даты начала';
+
+  @override
+  String get repeatsDaily => 'Повторяется ежедневно';
+
+  @override
+  String get repeatsWeekly => 'Повторяется еженедельно';
+
+  @override
+  String get repeatsMonthly => 'Повторяется ежемесячно';
+
+  @override
+  String get repeatsYearly => 'Повторяется ежегодно';
+
+  @override
+  String repeatsEveryNDays(int n) => 'Каждые $n дней';
+
+  @override
+  String repeatsEveryNWeeks(int n) => 'Каждые $n недель';
+
+  @override
+  String repeatsEveryNMonths(int n) => 'Каждые $n месяцев';
+
+  @override
+  String repeatsEveryNYears(int n) => 'Каждые $n лет';
+
+  @override
+  String repeatCountSummary(int count) => '$count событий';
+
+  @override
+  String repeatUntilDate(String date) => 'До $date';
+
+  @override
+  String get repeatNoEndDate => 'Без даты окончания';
+
+  @override
+  String get editEventScopeTitle => 'Редактировать событие';
+
+  @override
+  String get deleteEventScopeTitle => 'Удалить событие';
+
+  @override
+  String get scopeOnlyThisEvent => 'Только это событие';
+
+  @override
+  String get scopeThisAndFollowing => 'Это и следующие события';
+
+  @override
+  String get scopeEntireSeries => 'Вся серия';
 }

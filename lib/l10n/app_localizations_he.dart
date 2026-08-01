@@ -781,4 +781,112 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get nationwideLabel => 'ארצי';
+
+  @override
+  String get repeatSection => 'חזרה';
+
+  @override
+  String get doesNotRepeat => 'לא חוזר';
+
+  @override
+  String get repeatPickerDaily => 'יומי';
+
+  @override
+  String get repeatPickerWeekly => 'שבועי';
+
+  @override
+  String get repeatPickerMonthly => 'חודשי';
+
+  @override
+  String get repeatPickerYearly => 'שנתי';
+
+  @override
+  String get repeatPickerCustom => 'מותאם אישית';
+
+  @override
+  String get repeatEveryLabel => 'חזור כל';
+
+  @override
+  String get repeatUnitDay => 'יום';
+
+  @override
+  String get repeatUnitWeek => 'שבוע';
+
+  @override
+  String get repeatUnitMonth => 'חודש';
+
+  @override
+  String get repeatUnitYear => 'שנה';
+
+  @override
+  String get repeatEndsLabel => 'מסתיים';
+
+  @override
+  String get repeatAfterEventsOption => 'אחרי';
+
+  @override
+  String get repeatOnDateOption => 'בתאריך';
+
+  @override
+  String get repeatNeverOption => 'אף פעם';
+
+  @override
+  String get numberOfEventsHint => 'מספר אירועים';
+
+  @override
+  String get firstEventIncludedNote => 'האירוע הראשון נכלל בספירה';
+
+  @override
+  String get repeatMinCountError => 'מינימום 2 אירועים';
+
+  @override
+  String get repeatEndDateError => 'תאריך הסיום חייב להיות אחרי תאריך ההתחלה';
+
+  @override
+  String get repeatsDaily => 'חוזר יומי';
+
+  @override
+  String get repeatsWeekly => 'חוזר שבועי';
+
+  @override
+  String get repeatsMonthly => 'חוזר חודשי';
+
+  @override
+  String get repeatsYearly => 'חוזר שנתי';
+
+  @override
+  String repeatsEveryNDays(int n) => 'כל $n ימים';
+
+  @override
+  String repeatsEveryNWeeks(int n) => 'כל $n שבועות';
+
+  @override
+  String repeatsEveryNMonths(int n) => 'כל $n חודשים';
+
+  @override
+  String repeatsEveryNYears(int n) => 'כל $n שנים';
+
+  @override
+  String repeatCountSummary(int count) => '$count אירועים';
+
+  @override
+  String repeatUntilDate(String date) => 'עד $date';
+
+  @override
+  String get repeatNoEndDate => 'ללא תאריך סיום';
+
+  @override
+  String get editEventScopeTitle => 'עריכת אירוע חוזר';
+
+  @override
+  String get deleteEventScopeTitle => 'מחיקת אירוע חוזר';
+
+  @override
+  String get scopeOnlyThisEvent => 'רק אירוע זה';
+
+  @override
+  String get scopeThisAndFollowing => 'זה ואירועים הבאים';
+
+  @override
+  String get scopeEntireSeries => 'כל הסדרה';
 }

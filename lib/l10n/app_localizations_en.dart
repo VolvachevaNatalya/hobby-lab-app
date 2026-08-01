@@ -793,4 +793,113 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nationwideLabel => 'Nationwide';
+
+  @override
+  String get repeatSection => 'Repeat';
+
+  @override
+  String get doesNotRepeat => 'Does not repeat';
+
+  @override
+  String get repeatPickerDaily => 'Daily';
+
+  @override
+  String get repeatPickerWeekly => 'Weekly';
+
+  @override
+  String get repeatPickerMonthly => 'Monthly';
+
+  @override
+  String get repeatPickerYearly => 'Yearly';
+
+  @override
+  String get repeatPickerCustom => 'Custom';
+
+  @override
+  String get repeatEveryLabel => 'Repeat every';
+
+  @override
+  String get repeatUnitDay => 'day';
+
+  @override
+  String get repeatUnitWeek => 'week';
+
+  @override
+  String get repeatUnitMonth => 'month';
+
+  @override
+  String get repeatUnitYear => 'year';
+
+  @override
+  String get repeatEndsLabel => 'Ends';
+
+  @override
+  String get repeatAfterEventsOption => 'After';
+
+  @override
+  String get repeatOnDateOption => 'On date';
+
+  @override
+  String get repeatNeverOption => 'Never';
+
+  @override
+  String get numberOfEventsHint => 'Number of events';
+
+  @override
+  String get firstEventIncludedNote =>
+      'The first event is included in the count';
+
+  @override
+  String get repeatMinCountError => 'Minimum 2 events';
+
+  @override
+  String get repeatEndDateError => 'End date must be after the start date';
+
+  @override
+  String get repeatsDaily => 'Repeats daily';
+
+  @override
+  String get repeatsWeekly => 'Repeats weekly';
+
+  @override
+  String get repeatsMonthly => 'Repeats monthly';
+
+  @override
+  String get repeatsYearly => 'Repeats yearly';
+
+  @override
+  String repeatsEveryNDays(int n) => 'Every $n days';
+
+  @override
+  String repeatsEveryNWeeks(int n) => 'Every $n weeks';
+
+  @override
+  String repeatsEveryNMonths(int n) => 'Every $n months';
+
+  @override
+  String repeatsEveryNYears(int n) => 'Every $n years';
+
+  @override
+  String repeatCountSummary(int count) => '$count events';
+
+  @override
+  String repeatUntilDate(String date) => 'Until $date';
+
+  @override
+  String get repeatNoEndDate => 'No end date';
+
+  @override
+  String get editEventScopeTitle => 'Edit recurring event';
+
+  @override
+  String get deleteEventScopeTitle => 'Delete recurring event';
+
+  @override
+  String get scopeOnlyThisEvent => 'Only this event';
+
+  @override
+  String get scopeThisAndFollowing => 'This and following events';
+
+  @override
+  String get scopeEntireSeries => 'Entire series';
 }

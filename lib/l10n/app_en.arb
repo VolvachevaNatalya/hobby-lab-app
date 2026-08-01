@@ -312,5 +312,72 @@
   "selectCategories": "Select Categories",
   "maxCategoriesReached": "Maximum 10 categories",
 
-  "nationwideLabel": "Nationwide"
+  "nationwideLabel": "Nationwide",
+
+  "repeatSection": "Repeat",
+  "doesNotRepeat": "Does not repeat",
+  "repeatPickerDaily": "Daily",
+  "repeatPickerWeekly": "Weekly",
+  "repeatPickerMonthly": "Monthly",
+  "repeatPickerYearly": "Yearly",
+  "repeatPickerCustom": "Custom",
+  "repeatEveryLabel": "Repeat every",
+  "repeatUnitDay": "day",
+  "repeatUnitWeek": "week",
+  "repeatUnitMonth": "month",
+  "repeatUnitYear": "year",
+  "repeatEndsLabel": "Ends",
+  "repeatAfterEventsOption": "After",
+  "repeatOnDateOption": "On date",
+  "repeatNeverOption": "Never",
+  "numberOfEventsHint": "Number of events",
+  "firstEventIncludedNote": "The first event is included in the count",
+  "repeatMinCountError": "Minimum 2 events",
+  "repeatEndDateError": "End date must be after the start date",
+  "repeatsDaily": "Repeats daily",
+  "repeatsWeekly": "Repeats weekly",
+  "repeatsMonthly": "Repeats monthly",
+  "repeatsYearly": "Repeats yearly",
+  "repeatsEveryNDays": "Every {n} days",
+  "@repeatsEveryNDays": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "repeatsEveryNWeeks": "Every {n} weeks",
+  "@repeatsEveryNWeeks": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "repeatsEveryNMonths": "Every {n} months",
+  "@repeatsEveryNMonths": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "repeatsEveryNYears": "Every {n} years",
+  "@repeatsEveryNYears": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "repeatCountSummary": "{count} events",
+  "@repeatCountSummary": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "repeatUntilDate": "Until {date}",
+  "@repeatUntilDate": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "repeatNoEndDate": "No end date",
+  "editEventScopeTitle": "Edit recurring event",
+  "deleteEventScopeTitle": "Delete recurring event",
+  "scopeOnlyThisEvent": "Only this event",
+  "scopeThisAndFollowing": "This and following events",
+  "scopeEntireSeries": "Entire series"
 }

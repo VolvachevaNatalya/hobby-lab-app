@@ -7,9 +7,12 @@ import '../theme/app_theme.dart';
 import '../models/app_city.dart';
 import '../models/org_models.dart';
 import '../models/app_category.dart';
+import '../models/event_recurrence.dart';
 import '../routing/transitions.dart';
 import '../services/api_service.dart';
 import '../l10n/app_localizations.dart';
+import '../widgets/recurrence_picker.dart';
+import '../widgets/event_scope_dialog.dart';
 import 'city_picker_screen.dart';
 
 class OrgEventFormScreen extends StatefulWidget {
@@ -17,7 +20,12 @@ class OrgEventFormScreen extends StatefulWidget {
   final String? orgId;
   final AppCity? initialCity;
 
-  const OrgEventFormScreen({super.key, this.event, this.orgId, this.initialCity});
+  const OrgEventFormScreen({
+    super.key,
+    this.event,
+    this.orgId,
+    this.initialCity,
+  });
 
   @override
   State<OrgEventFormScreen> createState() => _OrgEventFormScreenState();
@@ -52,6 +60,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
   bool _isNationwide = false;
   bool _submitted = false;
   AppCity? _selectedCity;
+  RecurrenceInput? _recurrence;
 
   bool get _isEdit => widget.event != null;
 
@@ -74,6 +83,16 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
       _date = e.date;
       _time = e.time;
       _isNationwide = e.isNationwide;
+      final r = e.recurrence;
+      if (r != null) {
+        _recurrence = RecurrenceInput(
+          frequency: r.frequency,
+          interval: r.interval,
+          endType: r.endType,
+          totalCount: r.totalCount,
+          endDate: r.endDate,
+        );
+      }
     } else {
       _selectedCity = widget.initialCity;
     }
@@ -94,8 +113,9 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                   .toList();
             } else if (_initialCategoryName.isNotEmpty &&
                 _initialCategoryName != 'Other') {
-              final match =
-                  cats.where((c) => c.name == _initialCategoryName).firstOrNull;
+              final match = cats
+                  .where((c) => c.name == _initialCategoryName)
+                  .firstOrNull;
               if (match != null) _selectedCategories = [match];
             }
           }
@@ -162,7 +182,9 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
 
   Future<void> _pickAndUploadImage() async {
     final xfile = await ImagePicker().pickImage(
-        source: ImageSource.gallery, imageQuality: 85);
+      source: ImageSource.gallery,
+      imageQuality: 85,
+    );
     if (xfile == null || !mounted) return;
     setState(() {
       _imageLocalPath = xfile.path;
@@ -198,20 +220,26 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
           void toggle(AppCategory cat) {
             final isSelected = _selectedCategories.any((c) => c.id == cat.id);
             if (isSelected) {
-              setState(() =>
-                  _selectedCategories.removeWhere((c) => c.id == cat.id));
+              setState(
+                () => _selectedCategories.removeWhere((c) => c.id == cat.id),
+              );
               setModalState(() {});
             } else {
               if (_selectedCategories.length >= 10) {
-                messenger.showSnackBar(SnackBar(
-                  content: Text(l10n.maxCategoriesReached,
-                      style: GoogleFonts.poppins(fontSize: 13)),
-                  backgroundColor: const Color(0xFFEF4444),
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  margin: const EdgeInsets.all(16),
-                ));
+                messenger.showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      l10n.maxCategoriesReached,
+                      style: GoogleFonts.poppins(fontSize: 13),
+                    ),
+                    backgroundColor: const Color(0xFFEF4444),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    margin: const EdgeInsets.all(16),
+                  ),
+                );
                 return;
               }
               setState(() => _selectedCategories.add(cat));
@@ -237,7 +265,8 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                       children: [
                         Center(
                           child: Container(
-                            width: 40, height: 4,
+                            width: 40,
+                            height: 4,
                             decoration: BoxDecoration(
                               color: AppColors.divider,
                               borderRadius: BorderRadius.circular(2),
@@ -251,14 +280,17 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                               child: Text(
                                 l10n.selectCategories,
                                 style: GoogleFonts.poppins(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.textPrimary),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textPrimary,
+                                ),
                               ),
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 4),
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppColors.purple.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(20),
@@ -266,9 +298,10 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                               child: Text(
                                 '${_selectedCategories.length}/10',
                                 style: GoogleFonts.poppins(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.purpleLight),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.purpleLight,
+                                ),
                               ),
                             ),
                           ],
@@ -285,14 +318,17 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                       itemCount: _categories.length,
                       itemBuilder: (_, i) {
                         final cat = _categories[i];
-                        final sel =
-                            _selectedCategories.any((c) => c.id == cat.id);
+                        final sel = _selectedCategories.any(
+                          (c) => c.id == cat.id,
+                        );
                         return GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onTap: () => toggle(cat),
                           child: Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                             margin: const EdgeInsets.only(bottom: 4),
                             decoration: BoxDecoration(
                               color: sel
@@ -303,40 +339,51 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                             child: Row(
                               children: [
                                 Container(
-                                  width: 32, height: 32,
+                                  width: 32,
+                                  height: 32,
                                   decoration: BoxDecoration(
                                     gradient: sel
-                                        ? LinearGradient(colors: [
-                                            catColorStart(cat.name),
-                                            catColorEnd(cat.name),
-                                          ])
+                                        ? LinearGradient(
+                                            colors: [
+                                              catColorStart(cat.name),
+                                              catColorEnd(cat.name),
+                                            ],
+                                          )
                                         : null,
                                     color: sel
                                         ? null
                                         : AppColors.surfaceElevated,
                                     shape: BoxShape.circle,
                                   ),
-                                  child: Icon(catIcon(cat.name),
-                                      size: 16,
-                                      color: sel
-                                          ? Colors.white
-                                          : AppColors.textMuted),
+                                  child: Icon(
+                                    catIcon(cat.name),
+                                    size: 16,
+                                    color: sel
+                                        ? Colors.white
+                                        : AppColors.textMuted,
+                                  ),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
-                                  child: Text(cat.name,
-                                      style: GoogleFonts.poppins(
-                                          fontSize: 14,
-                                          color: sel
-                                              ? AppColors.purpleLight
-                                              : AppColors.textPrimary,
-                                          fontWeight: sel
-                                              ? FontWeight.w600
-                                              : FontWeight.w400)),
+                                  child: Text(
+                                    cat.name,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: sel
+                                          ? AppColors.purpleLight
+                                          : AppColors.textPrimary,
+                                      fontWeight: sel
+                                          ? FontWeight.w600
+                                          : FontWeight.w400,
+                                    ),
+                                  ),
                                 ),
                                 if (sel)
-                                  const Icon(Icons.check_rounded,
-                                      color: AppColors.purple, size: 18),
+                                  const Icon(
+                                    Icons.check_rounded,
+                                    color: AppColors.purple,
+                                    size: 18,
+                                  ),
                               ],
                             ),
                           ),
@@ -356,11 +403,14 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Center(
-                          child: Text('Done',
-                              style: GoogleFonts.poppins(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white)),
+                          child: Text(
+                            'Done',
+                            style: GoogleFonts.poppins(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -381,8 +431,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 730)),
       locale: const Locale('en'),
-      builder: (ctx, child) =>
-          Theme(data: darkPickerTheme(ctx), child: child!),
+      builder: (ctx, child) => Theme(data: darkPickerTheme(ctx), child: child!),
     );
     if (picked != null && mounted) setState(() => _date = picked);
   }
@@ -391,20 +440,21 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
     final picked = await showTimePicker(
       context: context,
       initialTime: _time ?? const TimeOfDay(hour: 10, minute: 0),
-      builder: (ctx, child) =>
-          Theme(data: darkPickerTheme(ctx), child: child!),
+      builder: (ctx, child) => Theme(data: darkPickerTheme(ctx), child: child!),
     );
     if (picked != null && mounted) setState(() => _time = picked);
   }
 
   void _showSnack(String msg, Color color) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(msg, style: GoogleFonts.poppins(fontSize: 13)),
-      backgroundColor: color,
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      margin: const EdgeInsets.all(16),
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg, style: GoogleFonts.poppins(fontSize: 13)),
+        backgroundColor: color,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        margin: const EdgeInsets.all(16),
+      ),
+    );
   }
 
   Future<void> _save() async {
@@ -421,11 +471,22 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
 
     // Edit mode: persist to API then return updated event to parent
     if (_isEdit) {
+      // Show scope dialog for recurring events before saving
+      String? scope;
+      if (widget.event!.seriesId != null) {
+        final title = AppLocalizations.of(context)!.editEventScopeTitle;
+        scope = await showEventScopeDialog(context, title: title);
+        if (scope == null || !mounted) return;
+      }
+
       setState(() => _saving = true);
       final eventTime = _time ?? const TimeOfDay(hour: 10, minute: 0);
       final startDt = DateTime(
-        _date!.year, _date!.month, _date!.day,
-        eventTime.hour, eventTime.minute,
+        _date!.year,
+        _date!.month,
+        _date!.day,
+        eventTime.hour,
+        eventTime.minute,
       );
       final parsedPrice = double.tryParse(_priceCtrl.text.trim());
       final commentText = _priceCommentCtrl.text.trim();
@@ -439,23 +500,36 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
           await ApiService.updateEvent(
             id,
             title: _nameCtrl.text.trim(),
-            description: _descCtrl.text.trim().isNotEmpty ? _descCtrl.text.trim() : null,
+            description: _descCtrl.text.trim().isNotEmpty
+                ? _descCtrl.text.trim()
+                : null,
             startDatetime: startDt.toIso8601String(),
             categoryIds: catIds.isNotEmpty ? catIds : null,
             minAge: int.tryParse(_minAgeCtrl.text),
             maxAge: int.tryParse(_maxAgeCtrl.text),
             capacity: int.tryParse(_capacityCtrl.text),
-            address: _locationCtrl.text.trim().isNotEmpty ? _locationCtrl.text.trim() : null,
+            address: _locationCtrl.text.trim().isNotEmpty
+                ? _locationCtrl.text.trim()
+                : null,
             cityId: _selectedCity?.id,
             isNationwide: _isNationwide,
             price: parsedPrice,
             priceComment: commentText.isNotEmpty ? commentText : null,
             imageUrl: _imageUrl,
+            scope: scope,
+            recurrence: scope != 'single' ? _recurrence : null,
           );
         } catch (_) {}
       }
       if (!mounted) return;
       setState(() => _saving = false);
+
+      // future/series scope: parent will reload the full list
+      if (scope != null && scope != 'single') {
+        Navigator.of(context).pop(null);
+        return;
+      }
+
       final event = OrgEvent(
         id: widget.event!.id,
         name: _nameCtrl.text.trim(),
@@ -473,6 +547,9 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
         price: parsedPrice ?? 0,
         priceComment: commentText.isNotEmpty ? commentText : null,
         isNationwide: _isNationwide,
+        seriesId: widget.event!.seriesId,
+        occurrenceIndex: widget.event!.occurrenceIndex,
+        recurrence: widget.event!.recurrence,
       );
       Navigator.of(context).pop(event);
       return;
@@ -484,8 +561,11 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
       final orgIdInt = int.tryParse(widget.orgId ?? '') ?? 0;
       final eventTime = _time ?? const TimeOfDay(hour: 10, minute: 0);
       final startDt = DateTime(
-        _date!.year, _date!.month, _date!.day,
-        eventTime.hour, eventTime.minute,
+        _date!.year,
+        _date!.month,
+        _date!.day,
+        eventTime.hour,
+        eventTime.minute,
       );
       final createCatIds = _selectedCategories
           .map((c) => int.tryParse(c.id))
@@ -512,14 +592,17 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
             ? _priceCommentCtrl.text.trim()
             : null,
         imageUrl: _imageUrl,
+        recurrence: _recurrence,
       );
       if (!mounted) return;
       _showSnack('Event created successfully', const Color(0xFF059669));
       Navigator.of(context).pop();
     } catch (_) {
       if (!mounted) return;
-      _showSnack('Failed to create event. Please try again.',
-          const Color(0xFFEF4444));
+      _showSnack(
+        'Failed to create event. Please try again.',
+        const Color(0xFFEF4444),
+      );
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -534,133 +617,158 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
         onTap: () => FocusScope.of(context).unfocus(),
         behavior: HitTestBehavior.translucent,
         child: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(),
-            const Divider(height: 1, color: AppColors.divider),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildImageUpload(),
-                    const SizedBox(height: 24),
-                    _sectionLabel('Event Details'),
-                    const SizedBox(height: 12),
-                    _buildFieldCard(
-                      key: _detailsCardKey,
-                      hasError: _submitted &&
-                          (_nameCtrl.text.trim().isEmpty ||
-                              _selectedCategories.isEmpty),
-                      children: [
-                        _inlineField(
-                          ctrl: _nameCtrl,
-                          hint: 'Event name',
-                          icon: Icons.event_rounded,
-                          isRequired: true,
-                          error: _submitted && _nameCtrl.text.trim().isEmpty,
-                        ),
-                        _divider(),
-                        _categoryField(
-                          isRequired: true,
-                          error: _submitted && _selectedCategories.isEmpty,
-                        ),
-                        _divider(),
-                        _buildDescField(),
-                      ],
-                    ),
-                    if (_submitted && _nameCtrl.text.trim().isEmpty)
-                      _errorLabel(l10n.fieldRequired),
-                    if (_submitted && _selectedCategories.isEmpty)
-                      _errorLabel(l10n.fieldRequired),
-                    const SizedBox(height: 20),
-                    _sectionLabel('Date & Time'),
-                    const SizedBox(height: 12),
-                    _buildFieldCard(
-                      key: _dateCardKey,
-                      hasError: _submitted && _date == null,
-                      children: [
-                        _tapField(
-                          icon: Icons.calendar_today_rounded,
-                          label: _date != null ? fmtDate(_date!) : 'Select date',
-                          isEmpty: _date == null,
-                          onTap: _pickDate,
-                          isRequired: true,
-                          error: _submitted && _date == null,
-                        ),
-                        _divider(),
-                        _tapField(
-                          icon: Icons.access_time_rounded,
-                          label: _time != null ? fmtTime(_time!) : 'Select time',
-                          isEmpty: _time == null,
-                          onTap: _pickTime,
-                        ),
-                      ],
-                    ),
-                    if (_submitted && _date == null)
-                      _errorLabel(l10n.fieldRequired),
-                    const SizedBox(height: 20),
-                    _sectionLabel('Location'),
-                    const SizedBox(height: 12),
-                    _buildFieldCard(
-                      key: _locationCardKey,
-                      hasError: _submitted && _selectedCity == null && !_isNationwide,
-                      children: [
-                        _inlineField(
-                          ctrl: _locationCtrl,
-                          hint: 'Address / venue name',
-                          icon: Icons.location_on_rounded,
-                        ),
-                        _divider(),
-                        _buildCityPickerRow(
-                          error: _submitted && _selectedCity == null && !_isNationwide,
-                        ),
-                      ],
-                    ),
-                    if (_submitted && _selectedCity == null && !_isNationwide)
-                      _errorLabel(l10n.fieldRequired),
-                    const SizedBox(height: 20),
-                    _buildNationwideRow(),
-                    const SizedBox(height: 20),
-                    _sectionLabel('Participants'),
-                    const SizedBox(height: 12),
-                    _buildFieldCard(children: [
-                      _ageRangeRow(),
-                      _divider(),
-                      _inlineField(
-                        ctrl: _capacityCtrl,
-                        hint: 'Max capacity',
-                        icon: Icons.group_rounded,
-                        type: TextInputType.number,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          child: Column(
+            children: [
+              _buildHeader(),
+              const Divider(height: 1, color: AppColors.divider),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildImageUpload(),
+                      const SizedBox(height: 24),
+                      _sectionLabel('Event Details'),
+                      const SizedBox(height: 12),
+                      _buildFieldCard(
+                        key: _detailsCardKey,
+                        hasError:
+                            _submitted &&
+                            (_nameCtrl.text.trim().isEmpty ||
+                                _selectedCategories.isEmpty),
+                        children: [
+                          _inlineField(
+                            ctrl: _nameCtrl,
+                            hint: 'Event name',
+                            icon: Icons.event_rounded,
+                            isRequired: true,
+                            error: _submitted && _nameCtrl.text.trim().isEmpty,
+                          ),
+                          _divider(),
+                          _categoryField(
+                            isRequired: true,
+                            error: _submitted && _selectedCategories.isEmpty,
+                          ),
+                          _divider(),
+                          _buildDescField(),
+                        ],
                       ),
-                      _divider(),
-                      _inlineField(
-                        ctrl: _priceCtrl,
-                        hint: 'Price (₪) — leave blank if free',
-                        icon: Icons.payments_rounded,
-                        type: const TextInputType.numberWithOptions(decimal: true),
-                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))],
+                      if (_submitted && _nameCtrl.text.trim().isEmpty)
+                        _errorLabel(l10n.fieldRequired),
+                      if (_submitted && _selectedCategories.isEmpty)
+                        _errorLabel(l10n.fieldRequired),
+                      const SizedBox(height: 20),
+                      _sectionLabel('Date & Time'),
+                      const SizedBox(height: 12),
+                      _buildFieldCard(
+                        key: _dateCardKey,
+                        hasError: _submitted && _date == null,
+                        children: [
+                          _tapField(
+                            icon: Icons.calendar_today_rounded,
+                            label: _date != null
+                                ? fmtDate(_date!)
+                                : 'Select date',
+                            isEmpty: _date == null,
+                            onTap: _pickDate,
+                            isRequired: true,
+                            error: _submitted && _date == null,
+                          ),
+                          _divider(),
+                          _tapField(
+                            icon: Icons.access_time_rounded,
+                            label: _time != null
+                                ? fmtTime(_time!)
+                                : 'Select time',
+                            isEmpty: _time == null,
+                            onTap: _pickTime,
+                          ),
+                        ],
                       ),
-                      _divider(),
-                      _inlineField(
-                        ctrl: _priceCommentCtrl,
-                        hint: 'Price comment (optional)',
-                        icon: Icons.comment_rounded,
-                        action: TextInputAction.done,
+                      if (_submitted && _date == null)
+                        _errorLabel(l10n.fieldRequired),
+                      const SizedBox(height: 20),
+                      _sectionLabel('Location'),
+                      const SizedBox(height: 12),
+                      _buildFieldCard(
+                        key: _locationCardKey,
+                        hasError:
+                            _submitted &&
+                            _selectedCity == null &&
+                            !_isNationwide,
+                        children: [
+                          _inlineField(
+                            ctrl: _locationCtrl,
+                            hint: 'Address / venue name',
+                            icon: Icons.location_on_rounded,
+                          ),
+                          _divider(),
+                          _buildCityPickerRow(
+                            error:
+                                _submitted &&
+                                _selectedCity == null &&
+                                !_isNationwide,
+                          ),
+                        ],
                       ),
-                    ]),
-                    const SizedBox(height: 36),
-                    _buildSaveBtn(),
-                    const SizedBox(height: 20),
-                  ],
+                      if (_submitted && _selectedCity == null && !_isNationwide)
+                        _errorLabel(l10n.fieldRequired),
+                      const SizedBox(height: 20),
+                      _buildNationwideRow(),
+                      const SizedBox(height: 20),
+                      _sectionLabel(l10n.repeatSection),
+                      const SizedBox(height: 12),
+                      _buildRepeatRow(),
+                      const SizedBox(height: 20),
+                      _sectionLabel('Participants'),
+                      const SizedBox(height: 12),
+                      _buildFieldCard(
+                        children: [
+                          _ageRangeRow(),
+                          _divider(),
+                          _inlineField(
+                            ctrl: _capacityCtrl,
+                            hint: 'Max capacity',
+                            icon: Icons.group_rounded,
+                            type: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                          ),
+                          _divider(),
+                          _inlineField(
+                            ctrl: _priceCtrl,
+                            hint: 'Price (₪) — leave blank if free',
+                            icon: Icons.payments_rounded,
+                            type: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                RegExp(r'[\d.]'),
+                              ),
+                            ],
+                          ),
+                          _divider(),
+                          _inlineField(
+                            ctrl: _priceCommentCtrl,
+                            hint: 'Price comment (optional)',
+                            icon: Icons.comment_rounded,
+                            action: TextInputAction.done,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 36),
+                      _buildSaveBtn(),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
       ),
     );
   }
@@ -673,22 +781,28 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
           GestureDetector(
             onTap: () => Navigator.of(context).pop(),
             child: Container(
-              width: 42, height: 42,
+              width: 42,
+              height: 42,
               decoration: BoxDecoration(
                 color: AppColors.surfaceElevated,
                 borderRadius: BorderRadius.circular(13),
                 border: Border.all(color: AppColors.divider),
               ),
-              child: const Icon(Icons.arrow_back_ios_new_rounded,
-                  color: AppColors.textPrimary, size: 18),
+              child: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: AppColors.textPrimary,
+                size: 18,
+              ),
             ),
           ),
           const SizedBox(width: 12),
           Text(
             _isEdit ? 'Edit Event' : 'New Event',
             style: GoogleFonts.poppins(
-                fontSize: 18, fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary),
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
           ),
         ],
       ),
@@ -705,93 +819,116 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
           color: AppColors.surfaceElevated,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-              color: AppColors.purple.withValues(alpha: 0.4), width: 1.5),
+            color: AppColors.purple.withValues(alpha: 0.4),
+            width: 1.5,
+          ),
         ),
         child: _imageUploading
             ? const Center(
-                child: CircularProgressIndicator(color: AppColors.purple))
+                child: CircularProgressIndicator(color: AppColors.purple),
+              )
             : hasImage
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        _imageLocalPath != null
-                            ? Image.file(File(_imageLocalPath!),
-                                fit: BoxFit.cover)
-                            : Image.network(_imageUrl!, fit: BoxFit.cover),
-                        Positioned(
-                          right: 8,
-                          bottom: 8,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
-                            decoration: BoxDecoration(
-                              color: Colors.black54,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text('Tap to change',
-                                style: GoogleFonts.poppins(
-                                    fontSize: 11, color: Colors.white)),
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    _imageLocalPath != null
+                        ? Image.file(File(_imageLocalPath!), fit: BoxFit.cover)
+                        : Image.network(_imageUrl!, fit: BoxFit.cover),
+                    Positioned(
+                      right: 8,
+                      bottom: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          'Tap to change',
+                          style: GoogleFonts.poppins(
+                            fontSize: 11,
+                            color: Colors.white,
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  )
-                : Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ShaderMask(
-                          shaderCallback: (b) =>
-                              AppColors.brandGradient.createShader(b),
-                          child: const Icon(Icons.add_photo_alternate_rounded,
-                              color: Colors.white, size: 34),
-                        ),
-                        const SizedBox(height: 8),
-                        Text('Upload Event Image',
-                            style: GoogleFonts.poppins(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.textMuted)),
-                      ],
+                  ],
+                ),
+              )
+            : Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ShaderMask(
+                      shaderCallback: (b) =>
+                          AppColors.brandGradient.createShader(b),
+                      child: const Icon(
+                        Icons.add_photo_alternate_rounded,
+                        color: Colors.white,
+                        size: 34,
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Upload Event Image',
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
       ),
     );
   }
 
-  Widget _sectionLabel(String text) => Text(text,
-      style: GoogleFonts.poppins(
-          fontSize: 13, fontWeight: FontWeight.w600,
-          color: AppColors.textMuted, letterSpacing: 0.5));
+  Widget _sectionLabel(String text) => Text(
+    text,
+    style: GoogleFonts.poppins(
+      fontSize: 13,
+      fontWeight: FontWeight.w600,
+      color: AppColors.textMuted,
+      letterSpacing: 0.5,
+    ),
+  );
 
   Widget _buildFieldCard({
     required List<Widget> children,
     bool hasError = false,
     Key? key,
-  }) =>
-      Container(
-        key: key,
-        decoration: BoxDecoration(
-          color: AppColors.surfaceElevated,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: hasError ? const Color(0xFFEF4444) : AppColors.divider,
-          ),
-        ),
-        child: Column(children: children),
-      );
+  }) => Container(
+    key: key,
+    decoration: BoxDecoration(
+      color: AppColors.surfaceElevated,
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(
+        color: hasError ? const Color(0xFFEF4444) : AppColors.divider,
+      ),
+    ),
+    child: Column(children: children),
+  );
 
   Widget _errorLabel(String text) => Padding(
-        padding: const EdgeInsets.only(left: 4, top: 4),
-        child: Text(text,
-            style: GoogleFonts.poppins(
-                fontSize: 11, color: const Color(0xFFEF4444))),
-      );
+    padding: const EdgeInsets.only(left: 4, top: 4),
+    child: Text(
+      text,
+      style: GoogleFonts.poppins(fontSize: 11, color: const Color(0xFFEF4444)),
+    ),
+  );
 
   Widget _divider() => const Divider(
-      height: 1, thickness: 1, color: AppColors.divider, indent: 52);
+    height: 1,
+    thickness: 1,
+    color: AppColors.divider,
+    indent: 52,
+  );
 
   static const _requiredStyle = TextStyle(
     color: Color(0xFFEF4444),
@@ -813,8 +950,11 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          Icon(icon, size: 20,
-              color: error ? const Color(0xFFEF4444) : AppColors.textMuted),
+          Icon(
+            icon,
+            size: 20,
+            color: error ? const Color(0xFFEF4444) : AppColors.textMuted,
+          ),
           const SizedBox(width: 14),
           Expanded(
             child: TextField(
@@ -823,12 +963,16 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
               textInputAction: action,
               inputFormatters: inputFormatters,
               style: GoogleFonts.poppins(
-                  color: AppColors.textPrimary, fontSize: 14),
+                color: AppColors.textPrimary,
+                fontSize: 14,
+              ),
               cursorColor: AppColors.purple,
               decoration: InputDecoration(
                 hintText: hint,
                 hintStyle: GoogleFonts.poppins(
-                    color: AppColors.textMuted, fontSize: 14),
+                  color: AppColors.textMuted,
+                  fontSize: 14,
+                ),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(vertical: 16),
               ),
@@ -862,11 +1006,13 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 4),
-              child: Icon(Icons.category_rounded,
-                  size: 20,
-                  color: showError
-                      ? const Color(0xFFEF4444)
-                      : AppColors.textMuted),
+              child: Icon(
+                Icons.category_rounded,
+                size: 20,
+                color: showError
+                    ? const Color(0xFFEF4444)
+                    : AppColors.textMuted,
+              ),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -901,8 +1047,11 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
               ),
             Padding(
               padding: const EdgeInsets.only(top: 4),
-              child: const Icon(Icons.keyboard_arrow_down_rounded,
-                  color: AppColors.textMuted, size: 22),
+              child: const Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: AppColors.textMuted,
+                size: 22,
+              ),
             ),
           ],
         ),
@@ -928,22 +1077,26 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(catIcon(cat.name),
-              size: 11, color: catColorStart(cat.name)),
+          Icon(catIcon(cat.name), size: 11, color: catColorStart(cat.name)),
           const SizedBox(width: 4),
           Text(
             cat.name,
             style: GoogleFonts.poppins(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textPrimary),
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textPrimary,
+            ),
           ),
           const SizedBox(width: 4),
           GestureDetector(
-            onTap: () => setState(() =>
-                _selectedCategories.removeWhere((c) => c.id == cat.id)),
-            child: const Icon(Icons.close,
-                size: 12, color: AppColors.textMuted),
+            onTap: () => setState(
+              () => _selectedCategories.removeWhere((c) => c.id == cat.id),
+            ),
+            child: const Icon(
+              Icons.close,
+              size: 12,
+              color: AppColors.textMuted,
+            ),
           ),
         ],
       ),
@@ -958,8 +1111,11 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 17),
-            child: Icon(Icons.notes_rounded,
-                size: 20, color: AppColors.textMuted),
+            child: Icon(
+              Icons.notes_rounded,
+              size: 20,
+              color: AppColors.textMuted,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -970,12 +1126,16 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
               keyboardType: TextInputType.multiline,
               textInputAction: TextInputAction.newline,
               style: GoogleFonts.poppins(
-                  color: AppColors.textPrimary, fontSize: 14),
+                color: AppColors.textPrimary,
+                fontSize: 14,
+              ),
               cursorColor: AppColors.purple,
               decoration: InputDecoration(
                 hintText: 'Description',
                 hintStyle: GoogleFonts.poppins(
-                    color: AppColors.textMuted, fontSize: 14),
+                  color: AppColors.textMuted,
+                  fontSize: 14,
+                ),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(vertical: 16),
               ),
@@ -1002,11 +1162,11 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
           children: [
-            Icon(icon,
-                size: 20,
-                color: showError
-                    ? const Color(0xFFEF4444)
-                    : AppColors.textMuted),
+            Icon(
+              icon,
+              size: 20,
+              color: showError ? const Color(0xFFEF4444) : AppColors.textMuted,
+            ),
             const SizedBox(width: 14),
             Expanded(
               child: Text(
@@ -1015,9 +1175,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                   fontSize: 14,
                   color: showError
                       ? const Color(0xFFEF4444)
-                      : (isEmpty
-                          ? AppColors.textMuted
-                          : AppColors.textPrimary),
+                      : (isEmpty ? AppColors.textMuted : AppColors.textPrimary),
                 ),
               ),
             ),
@@ -1026,8 +1184,11 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                 padding: EdgeInsets.only(right: 4),
                 child: Text('*', style: _requiredStyle),
               ),
-            const Icon(Icons.chevron_right_rounded,
-                color: AppColors.textMuted, size: 20),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: AppColors.textMuted,
+              size: 20,
+            ),
           ],
         ),
       ),
@@ -1048,20 +1209,28 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
               textInputAction: TextInputAction.next,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               style: GoogleFonts.poppins(
-                  color: AppColors.textPrimary, fontSize: 14),
+                color: AppColors.textPrimary,
+                fontSize: 14,
+              ),
               cursorColor: AppColors.purple,
               decoration: InputDecoration(
                 hintText: 'Min age',
                 hintStyle: GoogleFonts.poppins(
-                    color: AppColors.textMuted, fontSize: 14),
+                  color: AppColors.textMuted,
+                  fontSize: 14,
+                ),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(vertical: 16),
               ),
             ),
           ),
-          Text(' — ',
-              style: GoogleFonts.poppins(
-                  color: AppColors.textMuted, fontSize: 14)),
+          Text(
+            ' — ',
+            style: GoogleFonts.poppins(
+              color: AppColors.textMuted,
+              fontSize: 14,
+            ),
+          ),
           Expanded(
             child: TextField(
               controller: _maxAgeCtrl,
@@ -1069,12 +1238,16 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
               textInputAction: TextInputAction.next,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               style: GoogleFonts.poppins(
-                  color: AppColors.textPrimary, fontSize: 14),
+                color: AppColors.textPrimary,
+                fontSize: 14,
+              ),
               cursorColor: AppColors.purple,
               decoration: InputDecoration(
                 hintText: 'Max age',
                 hintStyle: GoogleFonts.poppins(
-                    color: AppColors.textMuted, fontSize: 14),
+                  color: AppColors.textMuted,
+                  fontSize: 14,
+                ),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(vertical: 16),
               ),
@@ -1085,53 +1258,100 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
     );
   }
 
+  Widget _buildRepeatRow() {
+    final l10n = AppLocalizations.of(context)!;
+    final label = _recurrence == null
+        ? l10n.doesNotRepeat
+        : recurrenceInputSummary(_recurrence!, l10n);
+    return _buildFieldCard(
+      children: [
+        _tapField(
+          icon: Icons.repeat_rounded,
+          label: label,
+          isEmpty: _recurrence == null,
+          onTap: _openRecurrencePicker,
+        ),
+      ],
+    );
+  }
+
+  Future<void> _openRecurrencePicker() async {
+    await showRecurrencePicker(
+      context,
+      current: _recurrence,
+      eventDate: _date,
+      onClear: () {
+        if (mounted) setState(() => _recurrence = null);
+      },
+      onSelect: (r) {
+        if (mounted) setState(() => _recurrence = r);
+      },
+    );
+  }
+
   Widget _buildNationwideRow() {
     final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildFieldCard(children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                const Icon(Icons.public_rounded,
-                    size: 20, color: AppColors.textMuted),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Text(l10n.showNationwide,
+        _buildFieldCard(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.public_rounded,
+                    size: 20,
+                    color: AppColors.textMuted,
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      l10n.showNationwide,
                       style: GoogleFonts.poppins(
-                          fontSize: 14, color: AppColors.textPrimary)),
-                ),
-                Checkbox(
-                  value: _isNationwide,
-                  onChanged: (v) =>
-                      setState(() => _isNationwide = v ?? false),
-                  activeColor: AppColors.purple,
-                  side: const BorderSide(
-                      color: AppColors.textMuted, width: 1.5),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4)),
-                ),
-              ],
+                        fontSize: 14,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ),
+                  Checkbox(
+                    value: _isNationwide,
+                    onChanged: (v) =>
+                        setState(() => _isNationwide = v ?? false),
+                    activeColor: AppColors.purple,
+                    side: const BorderSide(
+                      color: AppColors.textMuted,
+                      width: 1.5,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ]),
+          ],
+        ),
         const SizedBox(height: 8),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Text(l10n.showNationwideHint,
-              style: GoogleFonts.poppins(
-                  fontSize: 11, color: AppColors.textMuted)),
+          child: Text(
+            l10n.showNationwideHint,
+            style: GoogleFonts.poppins(
+              fontSize: 11,
+              color: AppColors.textMuted,
+            ),
+          ),
         ),
       ],
     );
   }
 
   Future<void> _openCityPicker() async {
-    final city = await Navigator.of(context).push<AppCity>(
-      modalRoute(builder: (_) => const CityPickerScreen()),
-    );
+    final city = await Navigator.of(
+      context,
+    ).push<AppCity>(modalRoute(builder: (_) => const CityPickerScreen()));
     if (city != null && mounted) {
       setState(() => _selectedCity = city);
     }
@@ -1148,8 +1368,11 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
           children: [
-            Icon(Icons.location_city_rounded, size: 20,
-                color: error ? const Color(0xFFEF4444) : AppColors.textMuted),
+            Icon(
+              Icons.location_city_rounded,
+              size: 20,
+              color: error ? const Color(0xFFEF4444) : AppColors.textMuted,
+            ),
             const SizedBox(width: 14),
             Expanded(
               child: Text(
@@ -1158,7 +1381,9 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                   fontSize: 14,
                   color: error
                       ? const Color(0xFFEF4444)
-                      : (hasLabel ? AppColors.textPrimary : AppColors.textMuted),
+                      : (hasLabel
+                            ? AppColors.textPrimary
+                            : AppColors.textMuted),
                 ),
               ),
             ),
@@ -1167,7 +1392,11 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                 padding: EdgeInsets.only(right: 4),
                 child: Text('*', style: _requiredStyle),
               ),
-            const Icon(Icons.chevron_right_rounded, size: 20, color: AppColors.textMuted),
+            const Icon(
+              Icons.chevron_right_rounded,
+              size: 20,
+              color: AppColors.textMuted,
+            ),
           ],
         ),
       ),
@@ -1182,10 +1411,9 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
         height: 56,
         decoration: BoxDecoration(
           gradient: _saving
-              ? const LinearGradient(colors: [
-                  Color(0xFF9CA3AF),
-                  Color(0xFF6B7280),
-                ])
+              ? const LinearGradient(
+                  colors: [Color(0xFF9CA3AF), Color(0xFF6B7280)],
+                )
               : AppColors.brandGradient,
           borderRadius: BorderRadius.circular(16),
           boxShadow: _saving
@@ -1201,15 +1429,20 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
         child: Center(
           child: _saving
               ? const SizedBox(
-                  width: 22, height: 22,
+                  width: 22,
+                  height: 22,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2.5, color: Colors.white),
+                    strokeWidth: 2.5,
+                    color: Colors.white,
+                  ),
                 )
               : Text(
                   _isEdit ? 'Save Changes' : 'Create Event',
                   style: GoogleFonts.poppins(
-                      fontSize: 16, fontWeight: FontWeight.w600,
-                      color: Colors.white),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
                 ),
         ),
       ),

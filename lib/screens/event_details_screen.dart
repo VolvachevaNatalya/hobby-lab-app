@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import '../theme/app_theme.dart';
 import '../models/app_event.dart';
+import '../models/event_recurrence.dart';
 import '../services/api_service.dart';
 import '../services/saved_activities.dart';
 import '../l10n/app_localizations.dart';
@@ -130,10 +131,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.purple))
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.purple),
+            )
           : _error != null
-              ? _buildError()
-              : _buildContent(),
+          ? _buildError()
+          : _buildContent(),
     );
   }
 
@@ -146,7 +149,10 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             child: Center(
               child: Text(
                 _error!,
-                style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textMuted),
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: AppColors.textMuted,
+                ),
               ),
             ),
           ),
@@ -199,7 +205,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     _divider(),
                     const SizedBox(height: 24),
                     // ── Details chips ──
-                    if (event.minAge != null || event.maxAge != null || event.capacity != null) ...[
+                    if (event.minAge != null ||
+                        event.maxAge != null ||
+                        event.capacity != null) ...[
                       _buildDetailsSection(event),
                       const SizedBox(height: 24),
                       _divider(),
@@ -298,9 +306,16 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white.withValues(alpha: 0.2),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 2),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.3),
+                  width: 2,
+                ),
               ),
-              child: Icon(widget.icon, color: Colors.white.withValues(alpha: 0.9), size: 54),
+              child: Icon(
+                widget.icon,
+                color: Colors.white.withValues(alpha: 0.9),
+                size: 54,
+              ),
             ),
           ),
         ],
@@ -329,7 +344,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         ),
         const SizedBox(width: 8),
         _HeaderBtn(
-          icon: _isSaved ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+          icon: _isSaved
+              ? Icons.favorite_rounded
+              : Icons.favorite_border_rounded,
           onTap: _toggleSave,
           activeColor: _isSaved ? AppColors.pink : null,
         ),
@@ -348,7 +365,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             decoration: BoxDecoration(
               color: AppColors.purple.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.purple.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: AppColors.purple.withValues(alpha: 0.3),
+              ),
             ),
             child: Text(
               event.badge,
@@ -365,7 +384,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           decoration: BoxDecoration(
             color: const Color(0xFF10B981).withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.3)),
+            border: Border.all(
+              color: const Color(0xFF10B981).withValues(alpha: 0.3),
+            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -402,18 +423,22 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     if (event.startDatetime != null) {
       final dt = DateTime.tryParse(event.startDatetime!);
       if (dt != null) {
-        items.add(_InfoItem(
-          icon: Icons.calendar_today_rounded,
-          label: 'Date',
-          value: _fmtDate(dt),
-          color: const Color(0xFF0EA5E9),
-        ));
-        items.add(_InfoItem(
-          icon: Icons.access_time_rounded,
-          label: 'Time',
-          value: _fmtTime(dt),
-          color: AppColors.purple,
-        ));
+        items.add(
+          _InfoItem(
+            icon: Icons.calendar_today_rounded,
+            label: 'Date',
+            value: _fmtDate(dt),
+            color: const Color(0xFF0EA5E9),
+          ),
+        );
+        items.add(
+          _InfoItem(
+            icon: Icons.access_time_rounded,
+            label: 'Time',
+            value: _fmtTime(dt),
+            color: AppColors.purple,
+          ),
+        );
       }
     }
 
@@ -432,66 +457,85 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       if (cityLabel == null || cityLabel.isEmpty) cityLabel = event.city;
     }
     if (hasAddress || (cityLabel != null && cityLabel.isNotEmpty)) {
-      final loc = [event.address, cityLabel]
-          .where((s) => s != null && s.isNotEmpty)
-          .join(', ');
-      items.add(_InfoItem(
-        icon: Icons.location_on_rounded,
-        label: 'Location',
-        value: loc,
-        color: const Color(0xFFEC4899),
-      ));
+      final loc = [
+        event.address,
+        cityLabel,
+      ].where((s) => s != null && s.isNotEmpty).join(', ');
+      items.add(
+        _InfoItem(
+          icon: Icons.location_on_rounded,
+          label: 'Location',
+          value: loc,
+          color: const Color(0xFFEC4899),
+        ),
+      );
+    }
+
+    if (event.seriesId != null && event.recurrence != null) {
+      final r = event.recurrence!;
+      final freqText = recurrenceFrequencyText(r, l10n);
+      final endText = recurrenceEndText(r, l10n);
+      items.add(
+        _InfoItem(
+          icon: Icons.repeat_rounded,
+          label: l10n.repeatSection,
+          value: '$freqText · $endText',
+          color: AppColors.purple,
+        ),
+      );
     }
 
     if (items.isEmpty) return const SizedBox.shrink();
 
     return Column(
       children: items
-          .map((item) => Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceElevated,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppColors.divider),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: item.color.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(item.icon, color: item.color, size: 20),
+          .map(
+            (item) => Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceElevated,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.divider),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: item.color.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.label,
-                            style: GoogleFonts.poppins(
-                              fontSize: 11,
-                              color: AppColors.textMuted,
-                            ),
+                    child: Icon(item.icon, color: item.color, size: 20),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.label,
+                          style: GoogleFonts.poppins(
+                            fontSize: 11,
+                            color: AppColors.textMuted,
                           ),
-                          Text(
-                            item.value,
-                            style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
-                            ),
+                        ),
+                        Text(
+                          item.value,
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ))
+                  ),
+                ],
+              ),
+            ),
+          )
           .toList(),
     );
   }
@@ -520,7 +564,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               gradient: AppColors.brandGradient,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.payments_rounded, color: Colors.white, size: 22),
+            child: const Icon(
+              Icons.payments_rounded,
+              color: Colors.white,
+              size: 22,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -528,7 +576,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isFree ? l10n.eventFree : '₪${price.toStringAsFixed(price.truncateToDouble() == price ? 0 : 2)}',
+                  isFree
+                      ? l10n.eventFree
+                      : '₪${price.toStringAsFixed(price.truncateToDouble() == price ? 0 : 2)}',
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
@@ -573,11 +623,17 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           runSpacing: 8,
           children: [
             if (event.minAge != null && event.maxAge != null)
-              _chip('Ages ${event.minAge}–${event.maxAge}',
-                  AppColors.purple.withValues(alpha: 0.12), AppColors.purpleLight),
+              _chip(
+                'Ages ${event.minAge}–${event.maxAge}',
+                AppColors.purple.withValues(alpha: 0.12),
+                AppColors.purpleLight,
+              ),
             if (event.capacity != null)
-              _chip('${event.capacity} spots',
-                  const Color(0xFF059669).withValues(alpha: 0.12), const Color(0xFF059669)),
+              _chip(
+                '${event.capacity} spots',
+                const Color(0xFF059669).withValues(alpha: 0.12),
+                const Color(0xFF059669),
+              ),
           ],
         ),
       ],
@@ -613,22 +669,29 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               ),
               child: logoUrl != null && logoUrl.isNotEmpty
                   ? ClipOval(
-                      child: Image.network(logoUrl, fit: BoxFit.cover,
-                          errorBuilder: (ctx, e, st) => Center(
-                                child: Text(
-                                  _initials(name),
-                                  style: GoogleFonts.poppins(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white),
-                                ),
-                              )),
+                      child: Image.network(
+                        logoUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (ctx, e, st) => Center(
+                          child: Text(
+                            _initials(name),
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
                     )
                   : Center(
                       child: Text(
                         _initials(name),
                         style: GoogleFonts.poppins(
-                            fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
             ),
@@ -640,13 +703,17 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   Text(
                     name,
                     style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   Text(
                     AppLocalizations.of(context)!.organizationLabel,
-                    style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textMuted),
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      color: AppColors.textMuted,
+                    ),
                   ),
                 ],
               ),
@@ -654,16 +721,24 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             GestureDetector(
               onTap: () => _openOrgProfile(orgId),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.purple.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.purple.withValues(alpha: 0.3)),
+                  border: Border.all(
+                    color: AppColors.purple.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Text(
                   AppLocalizations.of(context)!.btnView,
                   style: GoogleFonts.poppins(
-                      fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.purpleLight),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.purpleLight,
+                  ),
                 ),
               ),
             ),
@@ -675,13 +750,17 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
   void _openOrgProfile(int orgId) {
     final name = _orgName.isNotEmpty ? _orgName : 'Organization';
-    Navigator.of(context).push(slideRoute(builder: (_) => OrgProfileScreen(
-      orgId: orgId.toString(),
-      name: name,
-      colorStart: widget.colorStart,
-      colorEnd: widget.colorEnd,
-      category: _event?.badge ?? '',
-    )));
+    Navigator.of(context).push(
+      slideRoute(
+        builder: (_) => OrgProfileScreen(
+          orgId: orgId.toString(),
+          name: name,
+          colorStart: widget.colorStart,
+          colorEnd: widget.colorEnd,
+          category: _event?.badge ?? '',
+        ),
+      ),
+    );
   }
 
   // ── Other events ─────────────────────────────────────────────────────────────
@@ -694,11 +773,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         const SizedBox(height: 24),
         _sectionTitle('Other Events'),
         const SizedBox(height: 14),
-        ..._otherEvents.map((e) => _OtherEventCard(
-              event: e,
-              colorStart: widget.colorStart,
-              colorEnd: widget.colorEnd,
-            )),
+        ..._otherEvents.map(
+          (e) => _OtherEventCard(
+            event: e,
+            colorStart: widget.colorStart,
+            colorEnd: widget.colorEnd,
+          ),
+        ),
       ],
     );
   }
@@ -708,22 +789,48 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   Widget _divider() => Container(height: 1, color: AppColors.divider);
 
   Widget _sectionTitle(String text) => Text(
-        text,
-        style: GoogleFonts.poppins(
-            fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
-      );
+    text,
+    style: GoogleFonts.poppins(
+      fontSize: 18,
+      fontWeight: FontWeight.w700,
+      color: AppColors.textPrimary,
+    ),
+  );
 
   Widget _chip(String label, Color bg, Color text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(20)),
-      child: Text(label,
-          style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w600, color: text)),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        label,
+        style: GoogleFonts.poppins(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: text,
+        ),
+      ),
     );
   }
 
   String _fmtDate(DateTime dt) {
-    const months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      '',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     return '${dt.day} ${months[dt.month]} ${dt.year}';
   }
 
@@ -783,13 +890,18 @@ class _ExpandableAboutState extends State<_ExpandableAbout> {
         Text(
           l10n.aboutSection,
           style: GoogleFonts.poppins(
-              fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
         ),
         const SizedBox(height: 12),
         Text(
           isEmpty ? l10n.noDescriptionAvailable : widget.description,
           maxLines: isEmpty || _expanded ? null : 3,
-          overflow: isEmpty || _expanded ? TextOverflow.visible : TextOverflow.ellipsis,
+          overflow: isEmpty || _expanded
+              ? TextOverflow.visible
+              : TextOverflow.ellipsis,
           style: GoogleFonts.poppins(
             fontSize: 14,
             color: isEmpty ? AppColors.textMuted : AppColors.textSecondary,
@@ -805,7 +917,10 @@ class _ExpandableAboutState extends State<_ExpandableAbout> {
               child: Text(
                 _expanded ? l10n.showLess : l10n.showMore,
                 style: GoogleFonts.poppins(
-                    fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
@@ -832,7 +947,21 @@ class _OtherEventCard extends StatelessWidget {
     if (iso == null) return '';
     try {
       final dt = DateTime.parse(iso);
-      const months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const months = [
+        '',
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ];
       return '${dt.day} ${months[dt.month]}';
     } catch (_) {
       return '';
@@ -844,17 +973,23 @@ class _OtherEventCard extends StatelessWidget {
     final title = (event['title'] ?? event['name'] ?? '').toString();
     final dateStr = _fmtDate(event['start_datetime']?.toString());
     final city = (event['city'] ?? '').toString();
-    final badge = (event['badge'] ?? event['status'] ?? '').toString().toUpperCase();
+    final badge = (event['badge'] ?? event['status'] ?? '')
+        .toString()
+        .toUpperCase();
 
     return GestureDetector(
       onTap: () {
         final id = event['id']?.toString() ?? '';
         if (id.isEmpty) return;
-        Navigator.of(context).push(slideRoute(builder: (_) => EventDetailsScreen(
-          eventId: id,
-          colorStart: colorStart,
-          colorEnd: colorEnd,
-        )));
+        Navigator.of(context).push(
+          slideRoute(
+            builder: (_) => EventDetailsScreen(
+              eventId: id,
+              colorStart: colorStart,
+              colorEnd: colorEnd,
+            ),
+          ),
+        );
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
@@ -877,7 +1012,11 @@ class _OtherEventCard extends StatelessWidget {
                   end: Alignment.bottomRight,
                 ),
               ),
-              child: const Icon(Icons.event_rounded, color: Colors.white, size: 22),
+              child: const Icon(
+                Icons.event_rounded,
+                color: Colors.white,
+                size: 22,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -889,23 +1028,45 @@ class _OtherEventCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.poppins(
-                        fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   const SizedBox(height: 3),
                   Row(
                     children: [
                       if (dateStr.isNotEmpty) ...[
-                        const Icon(Icons.calendar_today_rounded, size: 11, color: AppColors.textMuted),
+                        const Icon(
+                          Icons.calendar_today_rounded,
+                          size: 11,
+                          color: AppColors.textMuted,
+                        ),
                         const SizedBox(width: 3),
-                        Text(dateStr,
-                            style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textMuted)),
+                        Text(
+                          dateStr,
+                          style: GoogleFonts.poppins(
+                            fontSize: 11,
+                            color: AppColors.textMuted,
+                          ),
+                        ),
                       ],
                       if (dateStr.isNotEmpty && city.isNotEmpty)
-                        Text('  ·  ',
-                            style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textMuted)),
+                        Text(
+                          '  ·  ',
+                          style: GoogleFonts.poppins(
+                            fontSize: 11,
+                            color: AppColors.textMuted,
+                          ),
+                        ),
                       if (city.isNotEmpty)
-                        Text(city,
-                            style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textMuted)),
+                        Text(
+                          city,
+                          style: GoogleFonts.poppins(
+                            fontSize: 11,
+                            color: AppColors.textMuted,
+                          ),
+                        ),
                     ],
                   ),
                 ],
@@ -919,9 +1080,14 @@ class _OtherEventCard extends StatelessWidget {
                   color: AppColors.purple.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text(badge,
-                    style: GoogleFonts.poppins(
-                        fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.purpleLight)),
+                child: Text(
+                  badge,
+                  style: GoogleFonts.poppins(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.purpleLight,
+                  ),
+                ),
               ),
             ],
           ],
@@ -954,7 +1120,9 @@ class _ContactBarState extends State<_ContactBar> {
   String get _abbr {
     final words = widget.orgName.trim().split(RegExp(r'\s+'));
     if (words.length >= 2) return '${words[0][0]}${words[1][0]}'.toUpperCase();
-    return widget.orgName.substring(0, widget.orgName.length.clamp(0, 2)).toUpperCase();
+    return widget.orgName
+        .substring(0, widget.orgName.length.clamp(0, 2))
+        .toUpperCase();
   }
 
   Future<void> _contact() async {
@@ -967,12 +1135,16 @@ class _ContactBarState extends State<_ContactBar> {
     } catch (_) {}
     if (!mounted) return;
     setState(() => _loading = false);
-    Navigator.of(context).push(slideRoute(builder: (_) => ChatScreen(
-      conversationId: conversationId,
-      name: widget.orgName.isNotEmpty ? widget.orgName : 'Organization',
-      initials: _abbr.isNotEmpty ? _abbr : '?',
-      avatarColor: widget.colorStart,
-    )));
+    Navigator.of(context).push(
+      slideRoute(
+        builder: (_) => ChatScreen(
+          conversationId: conversationId,
+          name: widget.orgName.isNotEmpty ? widget.orgName : 'Organization',
+          initials: _abbr.isNotEmpty ? _abbr : '?',
+          avatarColor: widget.colorStart,
+        ),
+      ),
+    );
   }
 
   @override
@@ -981,7 +1153,9 @@ class _ContactBarState extends State<_ContactBar> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        border: const Border(top: BorderSide(color: AppColors.divider, width: 1)),
+        border: const Border(
+          top: BorderSide(color: AppColors.divider, width: 1),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.3),
@@ -1015,12 +1189,19 @@ class _ContactBarState extends State<_ContactBar> {
                     ? const SizedBox(
                         width: 22,
                         height: 22,
-                        child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: Colors.white,
+                        ),
                       )
                     : Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.chat_bubble_rounded, color: Colors.white, size: 18),
+                          const Icon(
+                            Icons.chat_bubble_rounded,
+                            color: Colors.white,
+                            size: 18,
+                          ),
                           const SizedBox(width: 8),
                           Text(
                             l10n.btnContact,
@@ -1049,5 +1230,10 @@ class _InfoItem {
   final String label;
   final String value;
   final Color color;
-  const _InfoItem({required this.icon, required this.label, required this.value, required this.color});
+  const _InfoItem({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
 }

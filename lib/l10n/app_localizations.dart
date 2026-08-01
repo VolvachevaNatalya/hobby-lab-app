@@ -1611,6 +1611,43 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Nationwide'**
   String get nationwideLabel;
+
+  String get repeatSection;
+  String get doesNotRepeat;
+  String get repeatPickerDaily;
+  String get repeatPickerWeekly;
+  String get repeatPickerMonthly;
+  String get repeatPickerYearly;
+  String get repeatPickerCustom;
+  String get repeatEveryLabel;
+  String get repeatUnitDay;
+  String get repeatUnitWeek;
+  String get repeatUnitMonth;
+  String get repeatUnitYear;
+  String get repeatEndsLabel;
+  String get repeatAfterEventsOption;
+  String get repeatOnDateOption;
+  String get repeatNeverOption;
+  String get numberOfEventsHint;
+  String get firstEventIncludedNote;
+  String get repeatMinCountError;
+  String get repeatEndDateError;
+  String get repeatsDaily;
+  String get repeatsWeekly;
+  String get repeatsMonthly;
+  String get repeatsYearly;
+  String repeatsEveryNDays(int n);
+  String repeatsEveryNWeeks(int n);
+  String repeatsEveryNMonths(int n);
+  String repeatsEveryNYears(int n);
+  String repeatCountSummary(int count);
+  String repeatUntilDate(String date);
+  String get repeatNoEndDate;
+  String get editEventScopeTitle;
+  String get deleteEventScopeTitle;
+  String get scopeOnlyThisEvent;
+  String get scopeThisAndFollowing;
+  String get scopeEntireSeries;
 }
 
 class _AppLocalizationsDelegate

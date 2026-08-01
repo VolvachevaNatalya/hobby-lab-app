@@ -312,5 +312,72 @@
   "selectCategories": "בחר קטגוריות",
   "maxCategoriesReached": "מקסימום 10 קטגוריות",
 
-  "nationwideLabel": "ארצי"
+  "nationwideLabel": "ארצי",
+
+  "repeatSection": "חזרה",
+  "doesNotRepeat": "לא חוזר",
+  "repeatPickerDaily": "יומי",
+  "repeatPickerWeekly": "שבועי",
+  "repeatPickerMonthly": "חודשי",
+  "repeatPickerYearly": "שנתי",
+  "repeatPickerCustom": "מותאם אישית",
+  "repeatEveryLabel": "חזור כל",
+  "repeatUnitDay": "יום",
+  "repeatUnitWeek": "שבוע",
+  "repeatUnitMonth": "חודש",
+  "repeatUnitYear": "שנה",
+  "repeatEndsLabel": "מסתיים",
+  "repeatAfterEventsOption": "אחרי",
+  "repeatOnDateOption": "בתאריך",
+  "repeatNeverOption": "אף פעם",
+  "numberOfEventsHint": "מספר אירועים",
+  "firstEventIncludedNote": "האירוע הראשון נכלל בספירה",
+  "repeatMinCountError": "מינימום 2 אירועים",
+  "repeatEndDateError": "תאריך הסיום חייב להיות אחרי תאריך ההתחלה",
+  "repeatsDaily": "חוזר יומי",
+  "repeatsWeekly": "חוזר שבועי",
+  "repeatsMonthly": "חוזר חודשי",
+  "repeatsYearly": "חוזר שנתי",
+  "repeatsEveryNDays": "כל {n} ימים",
+  "@repeatsEveryNDays": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "repeatsEveryNWeeks": "כל {n} שבועות",
+  "@repeatsEveryNWeeks": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "repeatsEveryNMonths": "כל {n} חודשים",
+  "@repeatsEveryNMonths": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "repeatsEveryNYears": "כל {n} שנים",
+  "@repeatsEveryNYears": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "repeatCountSummary": "{count} אירועים",
+  "@repeatCountSummary": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "repeatUntilDate": "עד {date}",
+  "@repeatUntilDate": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "repeatNoEndDate": "ללא תאריך סיום",
+  "editEventScopeTitle": "עריכת אירוע חוזר",
+  "deleteEventScopeTitle": "מחיקת אירוע חוזר",
+  "scopeOnlyThisEvent": "רק אירוע זה",
+  "scopeThisAndFollowing": "זה ואירועים הבאים",
+  "scopeEntireSeries": "כל הסדרה"
 }

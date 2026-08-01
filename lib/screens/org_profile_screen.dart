@@ -7,6 +7,7 @@ import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../models/organization.dart';
 import '../models/org_photo.dart';
+import '../models/event_recurrence.dart';
 import '../services/api_service.dart';
 import '../services/saved_activities.dart';
 import 'activity_details_screen.dart';
@@ -32,8 +33,8 @@ Widget _stars(double rating, {double size = 16}) {
       final icon = i < rating.floor()
           ? Icons.star_rounded
           : (rating - i >= 0.5)
-              ? Icons.star_half_rounded
-              : Icons.star_outline_rounded;
+          ? Icons.star_half_rounded
+          : Icons.star_outline_rounded;
       return Icon(icon, color: const Color(0xFFFFD700), size: size);
     }),
   );
@@ -153,13 +154,12 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
         ApiService.getOrgEvents(widget.orgId!),
       ];
       final results = await Future.wait(
-          futures.map((f) => f.catchError((_) => null)));
+        futures.map((f) => f.catchError((_) => null)),
+      );
       if (!mounted) return;
       final org = results[0] as Map<String, dynamic>?;
-      final classes =
-          (results[1] as List?)?.cast<Map<String, dynamic>>() ?? [];
-      final events =
-          (results[2] as List?)?.cast<Map<String, dynamic>>() ?? [];
+      final classes = (results[1] as List?)?.cast<Map<String, dynamic>>() ?? [];
+      final events = (results[2] as List?)?.cast<Map<String, dynamic>>() ?? [];
       setState(() {
         if (org != null) _orgData = org;
         _classes = classes;
@@ -183,8 +183,11 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
         if (!mounted) return;
         double avgRating = _avgRating;
         if (reviews.isNotEmpty) {
-          avgRating = reviews.fold<double>(
-                  0, (s, r) => s + ((r['rating'] ?? 0) as num).toDouble()) /
+          avgRating =
+              reviews.fold<double>(
+                0,
+                (s, r) => s + ((r['rating'] ?? 0) as num).toDouble(),
+              ) /
               reviews.length;
         }
         setState(() {
@@ -204,8 +207,11 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
       if (!mounted) return;
       double avgRating = _avgRating;
       if (reviews.isNotEmpty) {
-        avgRating = reviews.fold<double>(
-                0, (s, r) => s + ((r['rating'] ?? 0) as num).toDouble()) /
+        avgRating =
+            reviews.fold<double>(
+              0,
+              (s, r) => s + ((r['rating'] ?? 0) as num).toDouble(),
+            ) /
             reviews.length;
       }
       setState(() {
@@ -236,6 +242,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
     if (addr == null && (city == null || city.isEmpty)) return null;
     return [addr, city].where((s) => s != null && s.isNotEmpty).join(', ');
   }
+
   String? get _description => _orgData?['description'] as String?;
   String? get _instagramUrl => _orgData?['instagram_url'] as String?;
   String? get _facebookUrl => _orgData?['facebook_url'] as String?;
@@ -261,12 +268,14 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
 
   void _goChat(BuildContext context, String? conversationId) {
     Navigator.of(context).push(
-      slideRoute(builder: (_) => ChatScreen(
-        conversationId: conversationId,
-        name: _displayName,
-        initials: _initials.isNotEmpty ? _initials : '?',
-        avatarColor: widget.colorStart,
-      )),
+      slideRoute(
+        builder: (_) => ChatScreen(
+          conversationId: conversationId,
+          name: _displayName,
+          initials: _initials.isNotEmpty ? _initials : '?',
+          avatarColor: widget.colorStart,
+        ),
+      ),
     );
   }
 
@@ -290,10 +299,15 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
           SnackBar(
             backgroundColor: AppColors.surfaceElevated,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             content: Text(
               url,
-              style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textPrimary),
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                color: AppColors.textPrimary,
+              ),
             ),
           ),
         );
@@ -358,7 +372,10 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
             right: 0,
             child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
                 child: Row(
                   children: [
                     _HeaderBtn(
@@ -367,16 +384,10 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                     ),
                     const Spacer(),
                     if (widget.orgId != null) ...[
-                      _HeartBtn(
-                        isSaved: _isSaved,
-                        onTap: _toggleSave,
-                      ),
+                      _HeartBtn(isSaved: _isSaved, onTap: _toggleSave),
                       const SizedBox(width: 8),
                     ],
-                    _HeaderBtn(
-                      icon: Icons.share_rounded,
-                      onTap: () {},
-                    ),
+                    _HeaderBtn(icon: Icons.share_rounded, onTap: () {}),
                   ],
                 ),
               ),
@@ -556,7 +567,8 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
               color: widget.colorStart.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                  color: widget.colorStart.withValues(alpha: 0.3)),
+                color: widget.colorStart.withValues(alpha: 0.3),
+              ),
             ),
             child: Text(
               widget.category,
@@ -585,7 +597,10 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
             const SizedBox(width: 4),
             Text(
               '($_reviewCount reviews)',
-              style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textMuted),
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                color: AppColors.textMuted,
+              ),
             ),
           ],
         ),
@@ -602,15 +617,20 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                   color: AppColors.purple.withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.location_on_rounded,
-                    size: 16, color: AppColors.purple),
+                child: const Icon(
+                  Icons.location_on_rounded,
+                  size: 16,
+                  color: AppColors.purple,
+                ),
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   address,
                   style: GoogleFonts.poppins(
-                      fontSize: 13, color: AppColors.textSecondary),
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ),
             ],
@@ -635,8 +655,13 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                 _SocialIcon(
                   icon: FontAwesomeIcons.instagram,
                   color: const Color(0xFFE1306C),
-                  gradientColors: const [Color(0xFFF58529), Color(0xFFDD2A7B), Color(0xFF8134AF)],
-                  onTap: () => _openSocial(_instagramUrl!, 'https://instagram.com/'),
+                  gradientColors: const [
+                    Color(0xFFF58529),
+                    Color(0xFFDD2A7B),
+                    Color(0xFF8134AF),
+                  ],
+                  onTap: () =>
+                      _openSocial(_instagramUrl!, 'https://instagram.com/'),
                 ),
               if ((_instagramUrl?.isNotEmpty ?? false) &&
                   (_facebookUrl?.isNotEmpty ?? false))
@@ -646,7 +671,8 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                   icon: FontAwesomeIcons.facebookF,
                   color: const Color(0xFF1877F2),
                   gradientColors: const [Color(0xFF1877F2), Color(0xFF0C5FCC)],
-                  onTap: () => _openSocial(_facebookUrl!, 'https://facebook.com/'),
+                  onTap: () =>
+                      _openSocial(_facebookUrl!, 'https://facebook.com/'),
                 ),
             ],
           ),
@@ -667,9 +693,10 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                   height: 60,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                        colors: [widget.colorStart, widget.colorEnd],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight),
+                      colors: [widget.colorStart, widget.colorEnd],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: const Center(
@@ -677,7 +704,9 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white),
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 )
@@ -708,7 +737,8 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
             onTap: _address != null && _address!.isNotEmpty
                 ? () async {
                     final uri = Uri.parse(
-                        'https://maps.google.com/?q=${Uri.encodeComponent(_address!)}');
+                      'https://maps.google.com/?q=${Uri.encodeComponent(_address!)}',
+                    );
                     await launchUrl(uri, mode: LaunchMode.externalApplication);
                   }
                 : null,
@@ -736,12 +766,12 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
             itemBuilder: (ctx, i) {
               final photo = _photos[i];
               return GestureDetector(
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => PhotoViewerScreen(
-                    photoUrls: urls,
-                    initialIndex: i,
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        PhotoViewerScreen(photoUrls: urls, initialIndex: i),
                   ),
-                )),
+                ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: SizedBox(
@@ -788,7 +818,11 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                       gradient: AppColors.brandGradient,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.school_rounded, color: Colors.white, size: 18),
+                    child: const Icon(
+                      Icons.school_rounded,
+                      color: Colors.white,
+                      size: 18,
+                    ),
                   ),
                   const SizedBox(width: 10),
                   Text(
@@ -854,28 +888,35 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
             child: Text(
               'No classes available yet',
               textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textMuted),
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                color: AppColors.textMuted,
+              ),
             ),
           )
         else
           ...List.generate(_classes.length, (i) {
             final cls = _classes[i];
             return Padding(
-              padding: EdgeInsets.only(bottom: i < _classes.length - 1 ? 10 : 0),
+              padding: EdgeInsets.only(
+                bottom: i < _classes.length - 1 ? 10 : 0,
+              ),
               child: GestureDetector(
                 onTap: () {
                   final classId = cls['id']?.toString();
                   if (classId == null) return;
                   Navigator.of(context).push(
-                    slideRoute(builder: (_) => ActivityDetailsScreen(
-                      classId: classId,
-                      name: (cls['name'] ?? '').toString(),
-                      studio: _displayName,
-                      category: widget.category,
-                      colorStart: widget.colorStart,
-                      colorEnd: widget.colorEnd,
-                      heroIcon: Icons.school_rounded,
-                    )),
+                    slideRoute(
+                      builder: (_) => ActivityDetailsScreen(
+                        classId: classId,
+                        name: (cls['name'] ?? '').toString(),
+                        studio: _displayName,
+                        category: widget.category,
+                        colorStart: widget.colorStart,
+                        colorEnd: widget.colorEnd,
+                        heroIcon: Icons.school_rounded,
+                      ),
+                    ),
                   );
                 },
                 child: _ClassTile(
@@ -910,7 +951,10 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
             child: Text(
               'No upcoming events',
               textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textMuted),
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                color: AppColors.textMuted,
+              ),
             ),
           )
         else
@@ -923,11 +967,13 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                   final eventId = ev['id']?.toString();
                   if (eventId == null) return;
                   Navigator.of(context).push(
-                    slideRoute(builder: (_) => EventDetailsScreen(
-                      eventId: eventId,
-                      colorStart: widget.colorStart,
-                      colorEnd: widget.colorEnd,
-                    )),
+                    slideRoute(
+                      builder: (_) => EventDetailsScreen(
+                        eventId: eventId,
+                        colorStart: widget.colorStart,
+                        colorEnd: widget.colorEnd,
+                      ),
+                    ),
                   );
                 },
                 child: _EventTile(event: ev),
@@ -958,15 +1004,17 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
             const Spacer(),
             GestureDetector(
               onTap: () => Navigator.of(context).push(
-                slideRoute(builder: (_) => ReviewsScreen(
-                  activityName: _displayName,
-                  rating: _avgRating,
-                  reviewCount: _reviewCount,
-                  colorStart: widget.colorStart,
-                  colorEnd: widget.colorEnd,
-                  organizationId: orgIdInt,
-                  allowWrite: true,
-                )),
+                slideRoute(
+                  builder: (_) => ReviewsScreen(
+                    activityName: _displayName,
+                    rating: _avgRating,
+                    reviewCount: _reviewCount,
+                    colorStart: widget.colorStart,
+                    colorEnd: widget.colorEnd,
+                    organizationId: orgIdInt,
+                    allowWrite: true,
+                  ),
+                ),
               ),
               child: ShaderMask(
                 shaderCallback: (b) => AppColors.brandGradient.createShader(b),
@@ -988,7 +1036,10 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
           const SizedBox(height: 12),
           Text(
             'No reviews yet',
-            style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textMuted),
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              color: AppColors.textMuted,
+            ),
           ),
         ] else ...[
           const SizedBox(height: 16),
@@ -997,14 +1048,19 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
         const SizedBox(height: 16),
         GestureDetector(
           onTap: () async {
-            final orgIdInt =
-                widget.orgId != null ? int.tryParse(widget.orgId!) : null;
-            await Navigator.of(context).push(modalRoute(builder: (_) => WriteReviewScreen(
-              activityName: _displayName,
-              colorStart: widget.colorStart,
-              colorEnd: widget.colorEnd,
-              organizationId: orgIdInt,
-            )));
+            final orgIdInt = widget.orgId != null
+                ? int.tryParse(widget.orgId!)
+                : null;
+            await Navigator.of(context).push(
+              modalRoute(
+                builder: (_) => WriteReviewScreen(
+                  activityName: _displayName,
+                  colorStart: widget.colorStart,
+                  colorEnd: widget.colorEnd,
+                  organizationId: orgIdInt,
+                ),
+              ),
+            );
             _reloadReviews();
           },
           child: Container(
@@ -1018,8 +1074,11 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.rate_review_rounded,
-                    size: 18, color: AppColors.purple),
+                const Icon(
+                  Icons.rate_review_rounded,
+                  size: 18,
+                  color: AppColors.purple,
+                ),
                 const SizedBox(width: 8),
                 ShaderMask(
                   shaderCallback: (b) =>
@@ -1067,20 +1126,27 @@ class _OrgPhotoThumbnail extends StatelessWidget {
   }
 
   Widget _loading() => Container(
-        color: AppColors.surfaceElevated,
-        child: const Center(
-          child: SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.purple),
-          ),
+    color: AppColors.surfaceElevated,
+    child: const Center(
+      child: SizedBox(
+        width: 20,
+        height: 20,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          color: AppColors.purple,
         ),
-      );
+      ),
+    ),
+  );
 
   Widget _placeholder() => Container(
-        color: AppColors.surfaceElevated,
-        child: const Icon(Icons.image_outlined, color: AppColors.textMuted, size: 30),
-      );
+    color: AppColors.surfaceElevated,
+    child: const Icon(
+      Icons.image_outlined,
+      color: AppColors.textMuted,
+      size: 30,
+    ),
+  );
 }
 
 class _OrgReviewCard extends StatelessWidget {
@@ -1383,7 +1449,11 @@ class _ClassTile extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.school_rounded, size: 20, color: Colors.white),
+            child: const Icon(
+              Icons.school_rounded,
+              size: 20,
+              color: Colors.white,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -1414,7 +1484,10 @@ class _ClassTile extends StatelessWidget {
                 Row(
                   children: [
                     if (ageRange != null) ...[
-                      _Chip(label: ageRange, icon: Icons.person_outline_rounded),
+                      _Chip(
+                        label: ageRange,
+                        icon: Icons.person_outline_rounded,
+                      ),
                       const SizedBox(width: 6),
                     ],
                     if (price != null)
@@ -1442,7 +1515,8 @@ class _EventTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final name = (event['title'] ?? event['name'] ?? 'Unnamed Event').toString();
+    final name = (event['title'] ?? event['name'] ?? 'Unnamed Event')
+        .toString();
     final description = (event['description'] ?? '').toString();
     final startDate = event['start_date'] ?? event['date'];
     String? dateStr;
@@ -1485,7 +1559,11 @@ class _EventTile extends StatelessWidget {
               color: AppColors.purple.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.event_rounded, size: 20, color: AppColors.purple),
+            child: const Icon(
+              Icons.event_rounded,
+              size: 20,
+              color: AppColors.purple,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -1516,8 +1594,11 @@ class _EventTile extends StatelessWidget {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today_rounded,
-                          size: 12, color: AppColors.textMuted),
+                      const Icon(
+                        Icons.calendar_today_rounded,
+                        size: 12,
+                        color: AppColors.textMuted,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         dateStr,
@@ -1533,8 +1614,11 @@ class _EventTile extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.location_on_rounded,
-                          size: 11, color: AppColors.textMuted),
+                      const Icon(
+                        Icons.location_on_rounded,
+                        size: 11,
+                        color: AppColors.textMuted,
+                      ),
                       const SizedBox(width: 3),
                       Flexible(
                         child: Text(
@@ -1550,6 +1634,33 @@ class _EventTile extends StatelessWidget {
                     ],
                   ),
                 ],
+                if (event['series_id'] != null) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.repeat_rounded,
+                        size: 11,
+                        color: AppColors.textMuted,
+                      ),
+                      const SizedBox(width: 3),
+                      Text(
+                        event['recurrence'] != null
+                            ? recurrenceFrequencyText(
+                                EventRecurrence.fromJson(
+                                  event['recurrence'] as Map<String, dynamic>,
+                                ),
+                                l10n,
+                              )
+                            : l10n.repeatsWeekly,
+                        style: GoogleFonts.poppins(
+                          fontSize: 11,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
@@ -1560,8 +1671,19 @@ class _EventTile extends StatelessWidget {
 
   String _monthName(int month) {
     const months = [
-      '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      '',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return months[month];
   }
@@ -1639,9 +1761,7 @@ class _SocialIcon extends StatelessWidget {
             ),
           ],
         ),
-        child: Center(
-          child: FaIcon(icon, size: 18, color: Colors.white),
-        ),
+        child: Center(child: FaIcon(icon, size: 18, color: Colors.white)),
       ),
     );
   }
@@ -1653,10 +1773,7 @@ class _RatingSummaryCard extends StatelessWidget {
   final double rating;
   final int reviewCount;
 
-  const _RatingSummaryCard({
-    required this.rating,
-    required this.reviewCount,
-  });
+  const _RatingSummaryCard({required this.rating, required this.reviewCount});
 
   @override
   Widget build(BuildContext context) {
@@ -1686,7 +1803,10 @@ class _RatingSummaryCard extends StatelessWidget {
           const SizedBox(height: 3),
           Text(
             '$reviewCount reviews',
-            style: GoogleFonts.poppins(fontSize: 10, color: AppColors.textMuted),
+            style: GoogleFonts.poppins(
+              fontSize: 10,
+              color: AppColors.textMuted,
+            ),
           ),
         ],
       ),

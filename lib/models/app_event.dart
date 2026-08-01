@@ -1,3 +1,5 @@
+import 'event_recurrence.dart';
+
 class AppEvent {
   final String id;
   final String title;
@@ -21,6 +23,10 @@ class AppEvent {
   final bool isNationwide;
   final double? price;
   final String? priceComment;
+  final int? seriesId;
+  final int? occurrenceIndex;
+  final String? originalStartDatetime;
+  final EventRecurrence? recurrence;
 
   const AppEvent({
     required this.id,
@@ -45,32 +51,44 @@ class AppEvent {
     this.isNationwide = false,
     this.price,
     this.priceComment,
+    this.seriesId,
+    this.occurrenceIndex,
+    this.originalStartDatetime,
+    this.recurrence,
   });
 
   factory AppEvent.fromJson(Map<String, dynamic> json) => AppEvent(
-      id: (json['id'] ?? '').toString(),
-      title: (json['title'] ?? json['name'] ?? '').toString(),
-      subtitle: (json['description'] ?? json['subtitle'] ?? '').toString(),
-      badge: (json['badge'] ?? json['status'] ?? json['type'] ?? 'NEW').toString().toUpperCase(),
-      categoryId: json['category_id']?.toString(),
-      categoryIds: _parseCategoryIds(json),
-      startDatetime: json['start_datetime']?.toString(),
-      endDatetime: json['end_datetime']?.toString(),
-      address: json['address']?.toString(),
-      city: json['city']?.toString(),
-      cityId: json['city_id'] as int?,
-      cityNameHe: json['city_name_he']?.toString(),
-      cityNameEn: json['city_name_en']?.toString(),
-      cityNameRu: json['city_name_ru']?.toString(),
-      organizationId: json['organization_id'] as int?,
-      minAge: json['min_age'] as int?,
-      maxAge: json['max_age'] as int?,
-      capacity: json['capacity'] as int?,
-      distanceKm: (json['distance_km'] as num?)?.toDouble(),
-      isNationwide: json['is_nationwide'] as bool? ?? false,
-      price: (json['price'] as num?)?.toDouble(),
-      priceComment: json['price_comment']?.toString(),
-    );
+    id: (json['id'] ?? '').toString(),
+    title: (json['title'] ?? json['name'] ?? '').toString(),
+    subtitle: (json['description'] ?? json['subtitle'] ?? '').toString(),
+    badge: (json['badge'] ?? json['status'] ?? json['type'] ?? 'NEW')
+        .toString()
+        .toUpperCase(),
+    categoryId: json['category_id']?.toString(),
+    categoryIds: _parseCategoryIds(json),
+    startDatetime: json['start_datetime']?.toString(),
+    endDatetime: json['end_datetime']?.toString(),
+    address: json['address']?.toString(),
+    city: json['city']?.toString(),
+    cityId: json['city_id'] as int?,
+    cityNameHe: json['city_name_he']?.toString(),
+    cityNameEn: json['city_name_en']?.toString(),
+    cityNameRu: json['city_name_ru']?.toString(),
+    organizationId: json['organization_id'] as int?,
+    minAge: json['min_age'] as int?,
+    maxAge: json['max_age'] as int?,
+    capacity: json['capacity'] as int?,
+    distanceKm: (json['distance_km'] as num?)?.toDouble(),
+    isNationwide: json['is_nationwide'] as bool? ?? false,
+    price: (json['price'] as num?)?.toDouble(),
+    priceComment: json['price_comment']?.toString(),
+    seriesId: json['series_id'] as int?,
+    occurrenceIndex: json['occurrence_index'] as int?,
+    originalStartDatetime: json['original_start_datetime']?.toString(),
+    recurrence: json['recurrence'] != null
+        ? EventRecurrence.fromJson(json['recurrence'] as Map<String, dynamic>)
+        : null,
+  );
 }
 
 List<String> _parseCategoryIds(Map<String, dynamic> json) {

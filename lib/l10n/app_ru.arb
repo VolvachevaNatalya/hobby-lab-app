@@ -312,5 +312,72 @@
   "selectCategories": "Выберите категории",
   "maxCategoriesReached": "Максимум 10 категорий",
 
-  "nationwideLabel": "По всей стране"
+  "nationwideLabel": "По всей стране",
+
+  "repeatSection": "Повтор",
+  "doesNotRepeat": "Без повтора",
+  "repeatPickerDaily": "Ежедневно",
+  "repeatPickerWeekly": "Еженедельно",
+  "repeatPickerMonthly": "Ежемесячно",
+  "repeatPickerYearly": "Ежегодно",
+  "repeatPickerCustom": "Настроить",
+  "repeatEveryLabel": "Повторять каждые",
+  "repeatUnitDay": "день",
+  "repeatUnitWeek": "неделю",
+  "repeatUnitMonth": "месяц",
+  "repeatUnitYear": "год",
+  "repeatEndsLabel": "Завершение",
+  "repeatAfterEventsOption": "После",
+  "repeatOnDateOption": "По дате",
+  "repeatNeverOption": "Никогда",
+  "numberOfEventsHint": "Количество событий",
+  "firstEventIncludedNote": "Первое событие включено в счёт",
+  "repeatMinCountError": "Минимум 2 события",
+  "repeatEndDateError": "Дата окончания должна быть позже даты начала",
+  "repeatsDaily": "Повторяется ежедневно",
+  "repeatsWeekly": "Повторяется еженедельно",
+  "repeatsMonthly": "Повторяется ежемесячно",
+  "repeatsYearly": "Повторяется ежегодно",
+  "repeatsEveryNDays": "Каждые {n} дней",
+  "@repeatsEveryNDays": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "repeatsEveryNWeeks": "Каждые {n} недель",
+  "@repeatsEveryNWeeks": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "repeatsEveryNMonths": "Каждые {n} месяцев",
+  "@repeatsEveryNMonths": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "repeatsEveryNYears": "Каждые {n} лет",
+  "@repeatsEveryNYears": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "repeatCountSummary": "{count} событий",
+  "@repeatCountSummary": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "repeatUntilDate": "До {date}",
+  "@repeatUntilDate": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "repeatNoEndDate": "Без даты окончания",
+  "editEventScopeTitle": "Редактировать событие",
+  "deleteEventScopeTitle": "Удалить событие",
+  "scopeOnlyThisEvent": "Только это событие",
+  "scopeThisAndFollowing": "Это и следующие события",
+  "scopeEntireSeries": "Вся серия"
 }

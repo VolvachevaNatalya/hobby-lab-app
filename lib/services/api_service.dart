@@ -19,6 +19,7 @@ import '../models/organization.dart';
 import '../models/org_photo.dart';
 import '../models/org_invite.dart';
 import '../models/org_member.dart';
+import '../models/event_recurrence.dart';
 
 const _baseUrl = 'https://hobbylab-api-production-84bd.up.railway.app';
 const _tokenKey = 'auth_token';
@@ -49,8 +50,11 @@ class ApiService {
 
   // ── Auth ───────────────────────────────────────────────────────────────────
 
-  static Future<String> login(String email, String password,
-      {bool rememberMe = true}) async {
+  static Future<String> login(
+    String email,
+    String password, {
+    bool rememberMe = true,
+  }) async {
     final response = await http.post(
       Uri.parse('$_baseUrl/auth/login'),
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -111,15 +115,17 @@ class ApiService {
     }
     final detail = _extractDetail(response.body);
     throw Exception(
-        'Google login failed (${response.statusCode})${detail != null ? ": $detail" : ""}');
+      'Google login failed (${response.statusCode})${detail != null ? ": $detail" : ""}',
+    );
   }
 
   // TODO: Backend must implement POST /auth/facebook-login
   // Request body:  {"access_token": "<Facebook User Access Token>"}
   // Response body: {"access_token": "<app JWT>"}
   static Future<void> loginWithFacebook() async {
-    final result = await FacebookAuth.instance
-        .login(permissions: ['email', 'public_profile']);
+    final result = await FacebookAuth.instance.login(
+      permissions: ['email', 'public_profile'],
+    );
 
     if (result.status == LoginStatus.cancelled) {
       throw Exception('Facebook sign-in cancelled');
@@ -148,7 +154,8 @@ class ApiService {
     }
     final detail = _extractDetail(response.body);
     throw Exception(
-        'Facebook login failed (${response.statusCode})${detail != null ? ": $detail" : ""}');
+      'Facebook login failed (${response.statusCode})${detail != null ? ": $detail" : ""}',
+    );
   }
 
   static Future<void> loginWithApple() async {
@@ -172,7 +179,8 @@ class ApiService {
     }
 
     final identityToken = credential.identityToken;
-    if (identityToken == null) throw Exception('Failed to get Apple identity token');
+    if (identityToken == null)
+      throw Exception('Failed to get Apple identity token');
 
     final response = await http.post(
       Uri.parse('$_baseUrl/auth/apple-login'),
@@ -192,7 +200,8 @@ class ApiService {
     }
     final detail = _extractDetail(response.body);
     throw Exception(
-        'Apple login failed (${response.statusCode})${detail != null ? ": $detail" : ""}');
+      'Apple login failed (${response.statusCode})${detail != null ? ": $detail" : ""}',
+    );
   }
 
   static Future<void> logout() async {
@@ -227,7 +236,9 @@ class ApiService {
     request.files.add(await http.MultipartFile.fromPath('file', filePath));
     final streamed = await request.send();
     final response = await http.Response.fromStream(streamed);
-    debugPrint('[Upload] status: ${response.statusCode}  body: ${response.body}');
+    debugPrint(
+      '[Upload] status: ${response.statusCode}  body: ${response.body}',
+    );
     if (response.statusCode == 200 || response.statusCode == 201) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       final url = data['url'] as String?;
@@ -239,7 +250,9 @@ class ApiService {
     }
     if (response.statusCode == 401) _onUnauthorized();
     final detail = _extractDetail(response.body);
-    throw Exception('Upload failed (${response.statusCode})${detail != null ? ": $detail" : ""}');
+    throw Exception(
+      'Upload failed (${response.statusCode})${detail != null ? ": $detail" : ""}',
+    );
   }
 
   static String? _extractDetail(String body) {
@@ -276,8 +289,9 @@ class ApiService {
   static Future<List<AppCity>> getCities({String? q}) async {
     final params = <String, String>{};
     if (q != null && q.isNotEmpty) params['q'] = q;
-    final uri = Uri.parse('$_baseUrl/cities/')
-        .replace(queryParameters: params.isEmpty ? null : params);
+    final uri = Uri.parse(
+      '$_baseUrl/cities/',
+    ).replace(queryParameters: params.isEmpty ? null : params);
     final response = await http.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List<dynamic>)
@@ -287,7 +301,12 @@ class ApiService {
     return [];
   }
 
-  static Future<List<AppClass>> getClasses({int? categoryId, int? cityId, double? userLat, double? userLng}) async {
+  static Future<List<AppClass>> getClasses({
+    int? categoryId,
+    int? cityId,
+    double? userLat,
+    double? userLng,
+  }) async {
     final params = <String, String>{};
     if (categoryId != null) params['category_id'] = categoryId.toString();
     if (cityId != null) params['city_id'] = cityId.toString();
@@ -296,8 +315,9 @@ class ApiService {
       params['user_longitude'] = userLng.toString();
       params['radius_km'] = '25';
     }
-    final uri = Uri.parse('$_baseUrl/classes/')
-        .replace(queryParameters: params.isEmpty ? null : params);
+    final uri = Uri.parse(
+      '$_baseUrl/classes/',
+    ).replace(queryParameters: params.isEmpty ? null : params);
     final response = await http.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List<dynamic>)
@@ -308,11 +328,16 @@ class ApiService {
     throw Exception('Failed to load classes');
   }
 
-  static Future<List<AppClass>> searchClasses(String query, {int? categoryId}) async {
+  static Future<List<AppClass>> searchClasses(
+    String query, {
+    int? categoryId,
+  }) async {
     final params = <String, String>{};
     if (query.isNotEmpty) params['search'] = query;
     if (categoryId != null) params['category_id'] = categoryId.toString();
-    final uri = Uri.parse('$_baseUrl/classes/search').replace(queryParameters: params);
+    final uri = Uri.parse(
+      '$_baseUrl/classes/search',
+    ).replace(queryParameters: params);
     final response = await http.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
@@ -367,7 +392,12 @@ class ApiService {
 
   // ── Events ─────────────────────────────────────────────────────────────────
 
-  static Future<List<AppEvent>> getEvents({int? cityId, int? categoryId, double? userLat, double? userLng}) async {
+  static Future<List<AppEvent>> getEvents({
+    int? cityId,
+    int? categoryId,
+    double? userLat,
+    double? userLng,
+  }) async {
     final params = <String, String>{};
     if (cityId != null) params['city_id'] = cityId.toString();
     if (categoryId != null) params['category_id'] = categoryId.toString();
@@ -376,8 +406,9 @@ class ApiService {
       params['user_longitude'] = userLng.toString();
       params['radius_km'] = '25';
     }
-    final uri = Uri.parse('$_baseUrl/events/')
-        .replace(queryParameters: params.isEmpty ? null : params);
+    final uri = Uri.parse(
+      '$_baseUrl/events/',
+    ).replace(queryParameters: params.isEmpty ? null : params);
     final response = await http.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List<dynamic>)
@@ -401,8 +432,9 @@ class ApiService {
       params['radius_km'] = '25';
     }
     if (categoryId != null) params['category_id'] = categoryId.toString();
-    final uri = Uri.parse('$_baseUrl/organizations/')
-        .replace(queryParameters: params.isEmpty ? null : params);
+    final uri = Uri.parse(
+      '$_baseUrl/organizations/',
+    ).replace(queryParameters: params.isEmpty ? null : params);
     final response = await http.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       final orgs = (jsonDecode(response.body) as List<dynamic>)
@@ -410,11 +442,11 @@ class ApiService {
           .toList();
       // Sort: promoted first (top > featured > highlighted), then by rating.
       int promoRank(String? type) => switch (type) {
-            'top' => 3,
-            'featured' => 2,
-            'highlighted' => 1,
-            _ => 0,
-          };
+        'top' => 3,
+        'featured' => 2,
+        'highlighted' => 1,
+        _ => 0,
+      };
       orgs.sort((a, b) {
         final pd = promoRank(b.promotionType) - promoRank(a.promotionType);
         if (pd != 0) return pd;
@@ -446,11 +478,15 @@ class ApiService {
     final response = await http.post(
       Uri.parse('$_baseUrl/favorites/'),
       headers: headers,
-      body: jsonEncode({'entity_type': 'class', 'entity_id': int.parse(classId)}),
+      body: jsonEncode({
+        'entity_type': 'class',
+        'entity_id': int.parse(classId),
+      }),
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       return Favorite.fromJson(
-          jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, dynamic>,
+      );
     }
     throw Exception('Failed to add favorite');
   }
@@ -460,12 +496,15 @@ class ApiService {
     final response = await http.post(
       Uri.parse('$_baseUrl/favorites/'),
       headers: headers,
-      body: jsonEncode(
-          {'entity_type': 'organization', 'entity_id': int.parse(orgId)}),
+      body: jsonEncode({
+        'entity_type': 'organization',
+        'entity_id': int.parse(orgId),
+      }),
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       return Favorite.fromJson(
-          jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, dynamic>,
+      );
     }
     throw Exception('Failed to add favorite');
   }
@@ -475,12 +514,15 @@ class ApiService {
     final response = await http.post(
       Uri.parse('$_baseUrl/favorites/'),
       headers: headers,
-      body: jsonEncode(
-          {'entity_type': 'event', 'entity_id': int.parse(eventId)}),
+      body: jsonEncode({
+        'entity_type': 'event',
+        'entity_id': int.parse(eventId),
+      }),
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       return Favorite.fromJson(
-          jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, dynamic>,
+      );
     }
     throw Exception('Failed to add favorite');
   }
@@ -497,15 +539,21 @@ class ApiService {
 
   // ── Conversations ──────────────────────────────────────────────────────────
 
-  static Future<Map<String, dynamic>> createConversation(int organizationId) async {
+  static Future<Map<String, dynamic>> createConversation(
+    int organizationId,
+  ) async {
     final headers = await _authHeaders();
-    print('[API] createConversation → POST /conversations/ body: {organization_id: $organizationId}');
+    print(
+      '[API] createConversation → POST /conversations/ body: {organization_id: $organizationId}',
+    );
     final response = await http.post(
       Uri.parse('$_baseUrl/conversations/'),
       headers: headers,
       body: jsonEncode({'organization_id': organizationId}),
     );
-    print('[API] createConversation ← status: ${response.statusCode} body: ${response.body}');
+    print(
+      '[API] createConversation ← status: ${response.statusCode} body: ${response.body}',
+    );
     if (response.statusCode == 200 || response.statusCode == 201) {
       return jsonDecode(response.body) as Map<String, dynamic>;
     }
@@ -542,7 +590,9 @@ class ApiService {
   }
 
   static Future<ChatMessage> sendMessage(
-      String conversationId, String content) async {
+    String conversationId,
+    String content,
+  ) async {
     final headers = await _authHeaders();
     final payload = {
       'conversation_id': int.parse(conversationId),
@@ -554,10 +604,13 @@ class ApiService {
       headers: headers,
       body: jsonEncode(payload),
     );
-    print('[API] sendMessage ← status: ${response.statusCode} body: ${response.body}');
+    print(
+      '[API] sendMessage ← status: ${response.statusCode} body: ${response.body}',
+    );
     if (response.statusCode == 200 || response.statusCode == 201) {
       return ChatMessage.fromJson(
-          jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, dynamic>,
+      );
     }
     throw Exception('Failed to send message');
   }
@@ -607,7 +660,8 @@ class ApiService {
     );
     if (response.statusCode == 200) {
       return UserProfile.fromJson(
-          jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, dynamic>,
+      );
     }
     _handleError(response);
     throw Exception('Failed to load profile');
@@ -630,7 +684,8 @@ class ApiService {
     );
     if (response.statusCode == 200) {
       return UserProfile.fromJson(
-          jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, dynamic>,
+      );
     }
     throw Exception('Failed to update profile');
   }
@@ -716,7 +771,10 @@ class ApiService {
   }
 
   static Future<void> updateMemberRole(
-      String orgId, int userId, String role) async {
+    String orgId,
+    int userId,
+    String role,
+  ) async {
     final response = await http.patch(
       Uri.parse('$_baseUrl/organizations/$orgId/members/$userId/role'),
       headers: await _authHeaders(),
@@ -740,8 +798,9 @@ class ApiService {
   }
 
   static Future<List<Map<String, dynamic>>> getOrgClasses(String orgId) async {
-    final uri = Uri.parse('$_baseUrl/classes/')
-        .replace(queryParameters: {'organization_id': orgId});
+    final uri = Uri.parse(
+      '$_baseUrl/classes/',
+    ).replace(queryParameters: {'organization_id': orgId});
     final response = await http.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List<dynamic>)
@@ -752,8 +811,9 @@ class ApiService {
   }
 
   static Future<List<Map<String, dynamic>>> getOrgEvents(String orgId) async {
-    final uri = Uri.parse('$_baseUrl/events/')
-        .replace(queryParameters: {'organization_id': orgId});
+    final uri = Uri.parse(
+      '$_baseUrl/events/',
+    ).replace(queryParameters: {'organization_id': orgId});
     final response = await http.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List<dynamic>)
@@ -776,7 +836,9 @@ class ApiService {
     throw Exception('Failed to load groups');
   }
 
-  static Future<List<Map<String, dynamic>>> getGroupsByClass(String classId) async {
+  static Future<List<Map<String, dynamic>>> getGroupsByClass(
+    String classId,
+  ) async {
     final response = await http.get(
       Uri.parse('$_baseUrl/groups/class/$classId'),
       headers: await _authHeaders(),
@@ -789,7 +851,9 @@ class ApiService {
     throw Exception('Failed to load groups');
   }
 
-  static Future<List<Map<String, dynamic>>> getGroupSchedules(String groupId) async {
+  static Future<List<Map<String, dynamic>>> getGroupSchedules(
+    String groupId,
+  ) async {
     final response = await http.get(
       Uri.parse('$_baseUrl/group-schedules/group/$groupId'),
       headers: await _authHeaders(),
@@ -898,19 +962,27 @@ class ApiService {
   }) async {
     final headers = await _authHeaders();
     final body = <String, dynamic>{'name': name};
-    if (categoryIds != null && categoryIds.isNotEmpty) body['category_ids'] = categoryIds;
-    if (description != null && description.isNotEmpty) body['description'] = description;
+    if (categoryIds != null && categoryIds.isNotEmpty)
+      body['category_ids'] = categoryIds;
+    if (description != null && description.isNotEmpty)
+      body['description'] = description;
     if (phone != null && phone.isNotEmpty) body['phone'] = phone;
     if (email != null && email.isNotEmpty) body['email'] = email;
     if (website != null && website.isNotEmpty) body['website'] = website;
     if (address != null && address.isNotEmpty) body['address'] = address;
     if (cityId != null) body['city_id'] = cityId;
-    if (instagramUrl != null && instagramUrl.isNotEmpty) body['instagram_url'] = instagramUrl;
-    if (facebookUrl != null && facebookUrl.isNotEmpty) body['facebook_url'] = facebookUrl;
-    if (telegramUrl != null && telegramUrl.isNotEmpty) body['telegram_url'] = telegramUrl;
-    if (youtubeUrl != null && youtubeUrl.isNotEmpty) body['youtube_url'] = youtubeUrl;
-    if (tiktokUrl != null && tiktokUrl.isNotEmpty) body['tiktok_url'] = tiktokUrl;
-    if (whatsappUrl != null && whatsappUrl.isNotEmpty) body['whatsapp_url'] = whatsappUrl;
+    if (instagramUrl != null && instagramUrl.isNotEmpty)
+      body['instagram_url'] = instagramUrl;
+    if (facebookUrl != null && facebookUrl.isNotEmpty)
+      body['facebook_url'] = facebookUrl;
+    if (telegramUrl != null && telegramUrl.isNotEmpty)
+      body['telegram_url'] = telegramUrl;
+    if (youtubeUrl != null && youtubeUrl.isNotEmpty)
+      body['youtube_url'] = youtubeUrl;
+    if (tiktokUrl != null && tiktokUrl.isNotEmpty)
+      body['tiktok_url'] = tiktokUrl;
+    if (whatsappUrl != null && whatsappUrl.isNotEmpty)
+      body['whatsapp_url'] = whatsappUrl;
     final response = await http.post(
       Uri.parse('$_baseUrl/organizations/'),
       headers: headers,
@@ -974,6 +1046,8 @@ class ApiService {
     double? price,
     String? priceComment,
     String? imageUrl,
+    String? scope,
+    RecurrenceInput? recurrence,
   }) async {
     final headers = await _authHeaders();
     final body = <String, dynamic>{};
@@ -994,8 +1068,12 @@ class ApiService {
     if (price != null) body['price'] = price;
     if (priceComment != null) body['price_comment'] = priceComment;
     if (imageUrl != null && imageUrl.isNotEmpty) body['image_url'] = imageUrl;
+    if (recurrence != null) body['recurrence'] = recurrence.toJson();
+    final uri = Uri.parse(
+      '$_baseUrl/events/$eventId',
+    ).replace(queryParameters: scope != null ? {'scope': scope} : null);
     final response = await http.put(
-      Uri.parse('$_baseUrl/events/$eventId'),
+      uri,
       headers: headers,
       body: jsonEncode(body),
     );
@@ -1005,11 +1083,11 @@ class ApiService {
     throw Exception('Failed to update event');
   }
 
-  static Future<void> deleteEvent(int eventId) async {
-    final response = await http.delete(
-      Uri.parse('$_baseUrl/events/$eventId'),
-      headers: await _authHeaders(),
-    );
+  static Future<void> deleteEvent(int eventId, {String? scope}) async {
+    final uri = Uri.parse(
+      '$_baseUrl/events/$eventId',
+    ).replace(queryParameters: scope != null ? {'scope': scope} : null);
+    final response = await http.delete(uri, headers: await _authHeaders());
     if (response.statusCode != 200 && response.statusCode != 204) {
       throw Exception('Failed to delete event');
     }
@@ -1027,7 +1105,8 @@ class ApiService {
       'rating': rating,
     };
     if (comment != null && comment.isNotEmpty) body['comment'] = comment;
-    if (photoUrls != null && photoUrls.isNotEmpty) body['photo_urls'] = photoUrls;
+    if (photoUrls != null && photoUrls.isNotEmpty)
+      body['photo_urls'] = photoUrls;
     final response = await http.post(
       Uri.parse('$_baseUrl/reviews/'),
       headers: headers,
@@ -1048,12 +1127,16 @@ class ApiService {
       headers: await _authHeaders(),
     );
     if (response.statusCode == 200) {
-      return AppEvent.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+      return AppEvent.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>,
+      );
     }
     throw Exception('Failed to load event');
   }
 
-  static Future<List<Map<String, dynamic>>> getReviews(int organizationId) async {
+  static Future<List<Map<String, dynamic>>> getReviews(
+    int organizationId,
+  ) async {
     final response = await http.get(
       Uri.parse('$_baseUrl/reviews/organization/$organizationId'),
       headers: await _authHeaders(),
@@ -1091,7 +1174,8 @@ class ApiService {
     final headers = await _authHeaders();
     final body = <String, dynamic>{};
     if (name != null) body['name'] = name;
-    if (categoryIds != null && categoryIds.isNotEmpty) body['category_ids'] = categoryIds;
+    if (categoryIds != null && categoryIds.isNotEmpty)
+      body['category_ids'] = categoryIds;
     if (description != null) body['description'] = description;
     if (email != null) body['email'] = email;
     if (phone != null) body['phone'] = phone;
@@ -1106,9 +1190,11 @@ class ApiService {
     if (whatsappUrl != null) body['whatsapp_url'] = whatsappUrl;
     if (logoUrl != null) body['logo_url'] = logoUrl;
     if (bannerUrl != null) body['banner_url'] = bannerUrl;
-    if (trialLessonAvailable != null) body['trial_lesson_available'] = trialLessonAvailable;
+    if (trialLessonAvailable != null)
+      body['trial_lesson_available'] = trialLessonAvailable;
     if (trialLessonPrice != null) body['trial_lesson_price'] = trialLessonPrice;
-    if (trialLessonComment != null) body['trial_lesson_comment'] = trialLessonComment;
+    if (trialLessonComment != null)
+      body['trial_lesson_comment'] = trialLessonComment;
     final response = await http.put(
       Uri.parse('$_baseUrl/organizations/$id'),
       headers: headers,
@@ -1134,7 +1220,8 @@ class ApiService {
       }),
     );
     if (response.statusCode == 400) {
-      final detail = (jsonDecode(response.body) as Map<String, dynamic>)['detail'];
+      final detail =
+          (jsonDecode(response.body) as Map<String, dynamic>)['detail'];
       throw Exception(detail?.toString() ?? 'Failed to change password');
     }
     if (response.statusCode != 200 && response.statusCode != 204) {
@@ -1166,7 +1253,8 @@ class ApiService {
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       return OrgPhoto.fromJson(
-          jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, dynamic>,
+      );
     }
     throw Exception('Failed to add photo');
   }
@@ -1194,12 +1282,14 @@ class ApiService {
   // ── Organization invites ──────────────────────────────────────────────────────
 
   static Future<InviteCodeResolveResult> resolveInviteCode(String code) async {
-    final uri = Uri.parse('$_baseUrl/invite-codes/resolve')
-        .replace(queryParameters: {'code': code});
+    final uri = Uri.parse(
+      '$_baseUrl/invite-codes/resolve',
+    ).replace(queryParameters: {'code': code});
     final response = await http.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       return InviteCodeResolveResult.fromJson(
-          jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, dynamic>,
+      );
     }
     _handleError(response);
     final detail = _extractDetail(response.body);
@@ -1231,7 +1321,8 @@ class ApiService {
       'default_role': defaultRole,
       'requires_approval': requiresApproval,
     };
-    if (expiresAt != null) body['expires_at'] = expiresAt.toUtc().toIso8601String();
+    if (expiresAt != null)
+      body['expires_at'] = expiresAt.toUtc().toIso8601String();
     final response = await http.post(
       Uri.parse('$_baseUrl/organizations/$orgId/invite-codes'),
       headers: headers,
@@ -1239,29 +1330,33 @@ class ApiService {
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       return OrgInviteCode.fromJson(
-          jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, dynamic>,
+      );
     }
     _handleError(response);
     throw Exception('Failed to create invite code');
   }
 
   static Future<OrgInviteCode> deactivateInviteCode(
-      String orgId, int codeId) async {
+    String orgId,
+    int codeId,
+  ) async {
     final response = await http.patch(
       Uri.parse(
-          '$_baseUrl/organizations/$orgId/invite-codes/$codeId/deactivate'),
+        '$_baseUrl/organizations/$orgId/invite-codes/$codeId/deactivate',
+      ),
       headers: await _authHeaders(),
     );
     if (response.statusCode == 200) {
       return OrgInviteCode.fromJson(
-          jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, dynamic>,
+      );
     }
     _handleError(response);
     throw Exception('Failed to deactivate invite code');
   }
 
-  static Future<JoinResult> submitJoinRequest(
-      String orgId, String code) async {
+  static Future<JoinResult> submitJoinRequest(String orgId, String code) async {
     final headers = await _authHeaders();
     final response = await http.post(
       Uri.parse('$_baseUrl/organizations/$orgId/join-requests'),
@@ -1270,7 +1365,8 @@ class ApiService {
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       return JoinResult.fromJson(
-          jsonDecode(response.body) as Map<String, dynamic>);
+        jsonDecode(response.body) as Map<String, dynamic>,
+      );
     }
     _handleError(response);
     final detail = _extractDetail(response.body);
@@ -1291,11 +1387,11 @@ class ApiService {
     throw Exception('Failed to load join requests');
   }
 
-  static Future<void> approveJoinRequest(
-      String orgId, int requestId) async {
+  static Future<void> approveJoinRequest(String orgId, int requestId) async {
     final response = await http.post(
       Uri.parse(
-          '$_baseUrl/organizations/$orgId/join-requests/$requestId/approve'),
+        '$_baseUrl/organizations/$orgId/join-requests/$requestId/approve',
+      ),
       headers: await _authHeaders(),
     );
     if (response.statusCode != 200 && response.statusCode != 204) {
@@ -1304,11 +1400,11 @@ class ApiService {
     }
   }
 
-  static Future<void> rejectJoinRequest(
-      String orgId, int requestId) async {
+  static Future<void> rejectJoinRequest(String orgId, int requestId) async {
     final response = await http.post(
       Uri.parse(
-          '$_baseUrl/organizations/$orgId/join-requests/$requestId/reject'),
+        '$_baseUrl/organizations/$orgId/join-requests/$requestId/reject',
+      ),
       headers: await _authHeaders(),
     );
     if (response.statusCode != 200 && response.statusCode != 204) {
@@ -1333,6 +1429,7 @@ class ApiService {
     double? price,
     String? priceComment,
     String? imageUrl,
+    RecurrenceInput? recurrence,
   }) async {
     final headers = await _authHeaders();
     final body = <String, dynamic>{
@@ -1346,15 +1443,18 @@ class ApiService {
     } else if (categoryId != null) {
       body['category_id'] = categoryId;
     }
-    if (description != null && description.isNotEmpty) body['description'] = description;
+    if (description != null && description.isNotEmpty)
+      body['description'] = description;
     if (minAge != null && minAge > 0) body['min_age'] = minAge;
     if (maxAge != null && maxAge < 99) body['max_age'] = maxAge;
     if (capacity != null) body['capacity'] = capacity;
     if (address != null && address.isNotEmpty) body['address'] = address;
     if (cityId != null) body['city_id'] = cityId;
     if (price != null) body['price'] = price;
-    if (priceComment != null && priceComment.isNotEmpty) body['price_comment'] = priceComment;
+    if (priceComment != null && priceComment.isNotEmpty)
+      body['price_comment'] = priceComment;
     if (imageUrl != null && imageUrl.isNotEmpty) body['image_url'] = imageUrl;
+    if (recurrence != null) body['recurrence'] = recurrence.toJson();
     final response = await http.post(
       Uri.parse('$_baseUrl/events/'),
       headers: headers,

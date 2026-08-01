@@ -4,7 +4,9 @@ import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../models/org_models.dart';
 import '../models/app_city.dart';
+import '../models/event_recurrence.dart';
 import '../services/api_service.dart';
+import '../widgets/event_scope_dialog.dart';
 import '../models/app_category.dart';
 import 'org_class_form_screen.dart';
 import 'org_event_form_screen.dart';
@@ -22,7 +24,12 @@ class OrgDashboardScreen extends StatefulWidget {
   final String? orgId;
   final String? userRole;
 
-  const OrgDashboardScreen({super.key, this.orgName = '', this.orgId, this.userRole});
+  const OrgDashboardScreen({
+    super.key,
+    this.orgName = '',
+    this.orgId,
+    this.userRole,
+  });
 
   @override
   State<OrgDashboardScreen> createState() => _OrgDashboardState();
@@ -69,7 +76,8 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
         }
         final first = myOrgs.first;
         _orgId = (first['id'] ?? '').toString();
-        if (mounted) setState(() => _orgName = (first['name'] ?? _orgName).toString());
+        if (mounted)
+          setState(() => _orgName = (first['name'] ?? _orgName).toString());
       }
 
       final myEntry = myOrgs.firstWhere(
@@ -109,13 +117,17 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
       final groupsMap = <String, List<OrgGroup>>{};
       for (final g in rawGroups) {
         final classId = (g['class_id'] ?? '').toString();
-        groupsMap.putIfAbsent(classId, () => []).add(OrgGroup(
-          name: (g['name'] ?? '').toString(),
-          minAge: (g['age_from'] ?? 0) as int,
-          maxAge: (g['age_to'] ?? 99) as int,
-          capacity: (g['capacity'] ?? 0) as int,
-          price: 0,
-        ));
+        groupsMap
+            .putIfAbsent(classId, () => [])
+            .add(
+              OrgGroup(
+                name: (g['name'] ?? '').toString(),
+                minAge: (g['age_from'] ?? 0) as int,
+                maxAge: (g['age_to'] ?? 99) as int,
+                capacity: (g['capacity'] ?? 0) as int,
+                price: 0,
+              ),
+            );
       }
 
       final classes = rawClasses.map((json) {
@@ -146,9 +158,8 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
 
       final events = rawEvents.map((json) {
         final catId = json['category_id']?.toString();
-        final startDt = DateTime.tryParse(
-              (json['start_datetime'] ?? '').toString(),
-            ) ??
+        final startDt =
+            DateTime.tryParse((json['start_datetime'] ?? '').toString()) ??
             DateTime.now();
         final rawCats = json['categories'] as List<dynamic>?;
         final categoryIds = <String>[];
@@ -182,6 +193,13 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
           price: (json['price'] as num?)?.toDouble() ?? 0,
           priceComment: json['price_comment']?.toString(),
           isNationwide: json['is_nationwide'] as bool? ?? false,
+          seriesId: json['series_id'] as int?,
+          occurrenceIndex: json['occurrence_index'] as int?,
+          recurrence: json['recurrence'] != null
+              ? EventRecurrence.fromJson(
+                  json['recurrence'] as Map<String, dynamic>,
+                )
+              : null,
         );
       }).toList();
 
@@ -202,10 +220,8 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
     if (_orgId.isEmpty) return;
     Navigator.of(context).push(
       slideRoute(
-        builder: (_) => OrganizationInvitesScreen(
-          orgId: _orgId,
-          orgName: _orgName,
-        ),
+        builder: (_) =>
+            OrganizationInvitesScreen(orgId: _orgId, orgName: _orgName),
       ),
     );
   }
@@ -224,9 +240,9 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
   }
 
   Future<void> _goAddClass() async {
-    await Navigator.of(context).push(
-      slideRoute(builder: (_) => OrgClassFormScreen(orgId: _orgId)),
-    );
+    await Navigator.of(
+      context,
+    ).push(slideRoute(builder: (_) => OrgClassFormScreen(orgId: _orgId)));
     if (mounted) _loadData();
   }
 
@@ -258,7 +274,10 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
     } catch (_) {}
     if (!mounted) return;
     await Navigator.of(context).push(
-      slideRoute(builder: (_) => OrgEventFormScreen(orgId: _orgId, initialCity: initialCity)),
+      slideRoute(
+        builder: (_) =>
+            OrgEventFormScreen(orgId: _orgId, initialCity: initialCity),
+      ),
     );
     if (mounted) _loadData();
   }
@@ -267,7 +286,10 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
     final result = await Navigator.of(context).push<OrgEvent>(
       slideRoute(builder: (_) => OrgEventFormScreen(event: event)),
     );
-    if (result != null && mounted) {
+    if (!mounted) return;
+    if (event.seriesId != null) {
+      _loadData();
+    } else if (result != null) {
       setState(() {
         final i = _events.indexWhere((e) => e.id == result.id);
         if (i >= 0) _events[i] = result;
@@ -283,14 +305,20 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
       if (mounted) setState(() => _classes.removeWhere((c) => c.id == cls.id));
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Failed to delete class. Please try again.',
-              style: GoogleFonts.poppins(fontSize: 13)),
-          backgroundColor: const Color(0xFFEF4444),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          margin: const EdgeInsets.all(16),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to delete class. Please try again.',
+              style: GoogleFonts.poppins(fontSize: 13),
+            ),
+            backgroundColor: const Color(0xFFEF4444),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            margin: const EdgeInsets.all(16),
+          ),
+        );
       }
     }
   }
@@ -298,19 +326,38 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
   Future<void> _deleteEvent(OrgEvent ev) async {
     final id = int.tryParse(ev.id);
     if (id == null) return;
+
+    String? scope;
+    if (ev.seriesId != null) {
+      final title = AppLocalizations.of(context)!.deleteEventScopeTitle;
+      scope = await showEventScopeDialog(context, title: title);
+      if (scope == null || !mounted) return;
+    }
+
     try {
-      await ApiService.deleteEvent(id);
-      if (mounted) setState(() => _events.removeWhere((e) => e.id == ev.id));
+      await ApiService.deleteEvent(id, scope: scope);
+      if (!mounted) return;
+      if (scope == null || scope == 'single') {
+        setState(() => _events.removeWhere((e) => e.id == ev.id));
+      } else {
+        _loadData();
+      }
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Failed to delete event. Please try again.',
-              style: GoogleFonts.poppins(fontSize: 13)),
-          backgroundColor: const Color(0xFFEF4444),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          margin: const EdgeInsets.all(16),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to delete event. Please try again.',
+              style: GoogleFonts.poppins(fontSize: 13),
+            ),
+            backgroundColor: const Color(0xFFEF4444),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            margin: const EdgeInsets.all(16),
+          ),
+        );
       }
     }
   }
@@ -355,7 +402,14 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
             onDelete: _deleteEvent,
           ),
           const _MessagesTab(),
-          _ProfileTab(orgName: _orgName, initials: _initials, orgId: _orgId, isAdmin: _isAdminOrOwner, viewerRole: _userRole, onEditComplete: _loadData),
+          _ProfileTab(
+            orgName: _orgName,
+            initials: _initials,
+            orgId: _orgId,
+            isAdmin: _isAdminOrOwner,
+            viewerRole: _userRole,
+            onEditComplete: _loadData,
+          ),
         ],
       ),
       bottomNavigationBar: _buildBottomNav(),
@@ -374,8 +428,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.surface,
-        border:
-            Border(top: BorderSide(color: AppColors.divider, width: 1)),
+        border: Border(top: BorderSide(color: AppColors.divider, width: 1)),
       ),
       child: SafeArea(
         top: false,
@@ -396,13 +449,12 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
                         shaderCallback: (b) => isSelected
                             ? AppColors.brandGradient.createShader(b)
                             : const LinearGradient(
-                                    colors: [
-                                      AppColors.textMuted,
-                                      AppColors.textMuted
-                                    ])
-                                .createShader(b),
-                        child: Icon(item.icon,
-                            size: 22, color: Colors.white),
+                                colors: [
+                                  AppColors.textMuted,
+                                  AppColors.textMuted,
+                                ],
+                              ).createShader(b),
+                        child: Icon(item.icon, size: 22, color: Colors.white),
                       ),
                       const SizedBox(height: 3),
                       Text(
@@ -466,10 +518,11 @@ class _DashboardTab extends StatelessWidget {
     this.onEditEvent,
   });
 
-  int get _totalGroups =>
-      classes.fold(0, (s, c) => s + c.groups.length);
-  int get _totalStudents =>
-      classes.fold(0, (s, c) => s + c.groups.fold(0, (gs, g) => gs + g.capacity));
+  int get _totalGroups => classes.fold(0, (s, c) => s + c.groups.length);
+  int get _totalStudents => classes.fold(
+    0,
+    (s, c) => s + c.groups.fold(0, (gs, g) => gs + g.capacity),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -507,12 +560,14 @@ class _DashboardTab extends StatelessWidget {
                   if (preview2Classes.isEmpty)
                     _EmptyHint('No classes yet. Tap + Add to create one.')
                   else
-                    ...preview2Classes.map((c) => _ClassPreviewCard(
-                          cls: c,
-                          onManage: onEditClass != null
-                              ? () => onEditClass!(c)
-                              : null,
-                        )),
+                    ...preview2Classes.map(
+                      (c) => _ClassPreviewCard(
+                        cls: c,
+                        onManage: onEditClass != null
+                            ? () => onEditClass!(c)
+                            : null,
+                      ),
+                    ),
                   const SizedBox(height: 28),
                   _SectionHeader(
                     title: 'My Events',
@@ -524,12 +579,14 @@ class _DashboardTab extends StatelessWidget {
                   if (preview2Events.isEmpty)
                     _EmptyHint('No events yet. Tap + Add to create one.')
                   else
-                    ...preview2Events.map((e) => _EventPreviewCard(
-                          event: e,
-                          onManage: onEditEvent != null
-                              ? () => onEditEvent!(e)
-                              : null,
-                        )),
+                    ...preview2Events.map(
+                      (e) => _EventPreviewCard(
+                        event: e,
+                        onManage: onEditEvent != null
+                            ? () => onEditEvent!(e)
+                            : null,
+                      ),
+                    ),
                   const SizedBox(height: 28),
                   _sectionTitle('Recent Messages'),
                   const SizedBox(height: 12),
@@ -563,8 +620,11 @@ class _DashboardTab extends StatelessWidget {
                 gradient: AppColors.brandGradient,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.card_giftcard_rounded,
-                  color: Colors.white, size: 18),
+              child: const Icon(
+                Icons.card_giftcard_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -589,8 +649,11 @@ class _DashboardTab extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios_rounded,
-                size: 14, color: AppColors.textMuted),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 14,
+              color: AppColors.textMuted,
+            ),
           ],
         ),
       ),
@@ -617,8 +680,11 @@ class _DashboardTab extends StatelessWidget {
                 gradient: AppColors.brandGradient,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.group_rounded,
-                  color: Colors.white, size: 18),
+              child: const Icon(
+                Icons.group_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -643,8 +709,11 @@ class _DashboardTab extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios_rounded,
-                size: 14, color: AppColors.textMuted),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 14,
+              color: AppColors.textMuted,
+            ),
           ],
         ),
       ),
@@ -699,8 +768,8 @@ class _DashboardTab extends StatelessWidget {
             ),
           ),
           GestureDetector(
-            onTap: () => Navigator.of(context)
-                .popUntil((route) => route.isFirst),
+            onTap: () =>
+                Navigator.of(context).popUntil((route) => route.isFirst),
             child: Container(
               width: 40,
               height: 40,
@@ -708,10 +777,14 @@ class _DashboardTab extends StatelessWidget {
                 color: AppColors.purple.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                    color: AppColors.purple.withValues(alpha: 0.3)),
+                  color: AppColors.purple.withValues(alpha: 0.3),
+                ),
               ),
-              child: const Icon(Icons.person_rounded,
-                  color: AppColors.purple, size: 20),
+              child: const Icon(
+                Icons.person_rounded,
+                color: AppColors.purple,
+                size: 20,
+              ),
             ),
           ),
           const SizedBox(width: 8),
@@ -723,8 +796,11 @@ class _DashboardTab extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.divider),
             ),
-            child: const Icon(Icons.settings_rounded,
-                color: AppColors.textMuted, size: 20),
+            child: const Icon(
+              Icons.settings_rounded,
+              color: AppColors.textMuted,
+              size: 20,
+            ),
           ),
         ],
       ),
@@ -734,25 +810,29 @@ class _DashboardTab extends StatelessWidget {
   Widget _buildStats() {
     final stats = [
       _StatData(
-          icon: Icons.school_rounded,
-          value: '${classes.length}',
-          label: 'Classes',
-          color: AppColors.purple),
+        icon: Icons.school_rounded,
+        value: '${classes.length}',
+        label: 'Classes',
+        color: AppColors.purple,
+      ),
       _StatData(
-          icon: Icons.group_rounded,
-          value: '$_totalGroups',
-          label: 'Groups',
-          color: const Color(0xFF059669)),
+        icon: Icons.group_rounded,
+        value: '$_totalGroups',
+        label: 'Groups',
+        color: const Color(0xFF059669),
+      ),
       _StatData(
-          icon: Icons.people_rounded,
-          value: '$_totalStudents',
-          label: 'Students',
-          color: const Color(0xFF0EA5E9)),
+        icon: Icons.people_rounded,
+        value: '$_totalStudents',
+        label: 'Students',
+        color: const Color(0xFF0EA5E9),
+      ),
       _StatData(
-          icon: Icons.event_rounded,
-          value: '${events.length}',
-          label: 'Events',
-          color: const Color(0xFFEC4899)),
+        icon: Icons.event_rounded,
+        value: '${events.length}',
+        label: 'Events',
+        color: const Color(0xFFEC4899),
+      ),
     ];
 
     return GridView.count(
@@ -767,13 +847,13 @@ class _DashboardTab extends StatelessWidget {
   }
 
   Widget _sectionTitle(String text) => Text(
-        text,
-        style: GoogleFonts.poppins(
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
-        ),
-      );
+    text,
+    style: GoogleFonts.poppins(
+      fontSize: 16,
+      fontWeight: FontWeight.w700,
+      color: AppColors.textPrimary,
+    ),
+  );
 
   Widget _buildRecentMessages() {
     return Container(
@@ -798,11 +878,12 @@ class _StatData {
   final String value;
   final String label;
   final Color color;
-  const _StatData(
-      {required this.icon,
-      required this.value,
-      required this.label,
-      required this.color});
+  const _StatData({
+    required this.icon,
+    required this.value,
+    required this.label,
+    required this.color,
+  });
 }
 
 class _StatCard extends StatelessWidget {
@@ -892,15 +973,16 @@ class _SectionHeader extends StatelessWidget {
             child: Text(
               'See All',
               style: GoogleFonts.poppins(
-                  fontSize: 12, color: AppColors.textMuted),
+                fontSize: 12,
+                color: AppColors.textMuted,
+              ),
             ),
           ),
         if (onSeeAll != null) const SizedBox(width: 10),
         GestureDetector(
           onTap: onAction,
           child: Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               gradient: AppColors.brandGradient,
               borderRadius: BorderRadius.circular(10),
@@ -945,7 +1027,10 @@ class _EmptyHint extends StatelessWidget {
           message,
           textAlign: TextAlign.center,
           style: GoogleFonts.poppins(
-              fontSize: 13, color: AppColors.textMuted, height: 1.5),
+            fontSize: 13,
+            color: AppColors.textMuted,
+            height: 1.5,
+          ),
         ),
       ),
     );
@@ -978,13 +1063,13 @@ class _ClassPreviewCard extends StatelessWidget {
               height: 46,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    colors: [cs, ce],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight),
+                  colors: [cs, ce],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(catIcon(cls.category),
-                  color: Colors.white, size: 22),
+              child: Icon(catIcon(cls.category), color: Colors.white, size: 22),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -1002,19 +1087,21 @@ class _ClassPreviewCard extends StatelessWidget {
                   Text(
                     '${cls.category} · ${cls.groups.length} group${cls.groups.length != 1 ? 's' : ''}',
                     style: GoogleFonts.poppins(
-                        fontSize: 11, color: AppColors.textMuted),
+                      fontSize: 11,
+                      color: AppColors.textMuted,
+                    ),
                   ),
                 ],
               ),
             ),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 color: AppColors.purple.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                    color: AppColors.purple.withValues(alpha: 0.25)),
+                  color: AppColors.purple.withValues(alpha: 0.25),
+                ),
               ),
               child: Text(
                 'Manage',
@@ -1067,13 +1154,17 @@ class _EventPreviewCard extends StatelessWidget {
               height: 46,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    colors: [cs, ce],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight),
+                  colors: [cs, ce],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(catIcon(event.category),
-                  color: Colors.white, size: 22),
+              child: Icon(
+                catIcon(event.category),
+                color: Colors.white,
+                size: 22,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -1091,32 +1182,63 @@ class _EventPreviewCard extends StatelessWidget {
                   Text(
                     '${fmtDate(event.date)} · ${event.price == 0 ? AppLocalizations.of(context)!.eventFree : '₪${event.price.toStringAsFixed(0)}'}',
                     style: GoogleFonts.poppins(
-                        fontSize: 11, color: AppColors.textMuted),
+                      fontSize: 11,
+                      color: AppColors.textMuted,
+                    ),
                   ),
                   if (cityLabel != null && cityLabel.isNotEmpty)
-                    Row(children: [
-                      const Icon(Icons.location_on_rounded, size: 10, color: AppColors.textMuted),
-                      const SizedBox(width: 3),
-                      Flexible(
-                        child: Text(
-                          cityLabel,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.poppins(fontSize: 10, color: AppColors.textMuted),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on_rounded,
+                          size: 10,
+                          color: AppColors.textMuted,
                         ),
-                      ),
-                    ]),
+                        const SizedBox(width: 3),
+                        Flexible(
+                          child: Text(
+                            cityLabel,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.poppins(
+                              fontSize: 10,
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  if (event.seriesId != null)
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.repeat_rounded,
+                          size: 10,
+                          color: AppColors.textMuted,
+                        ),
+                        const SizedBox(width: 3),
+                        Text(
+                          event.recurrence != null
+                              ? recurrenceFrequencyText(event.recurrence!, l10n)
+                              : l10n.repeatsWeekly,
+                          style: GoogleFonts.poppins(
+                            fontSize: 10,
+                            color: AppColors.textMuted,
+                          ),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 color: AppColors.purple.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                    color: AppColors.purple.withValues(alpha: 0.25)),
+                  color: AppColors.purple.withValues(alpha: 0.25),
+                ),
               ),
               child: Text(
                 'Manage',
@@ -1160,8 +1282,7 @@ class _ClassesTab extends StatelessWidget {
             child: classes.isEmpty
                 ? _buildEmpty()
                 : ListView.builder(
-                    padding:
-                        const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
                     itemCount: classes.length,
                     itemBuilder: (_, i) => _ClassExpandableCard(
                       cls: classes[i],
@@ -1188,8 +1309,11 @@ class _ClassesTab extends StatelessWidget {
               shape: BoxShape.circle,
               border: Border.all(color: AppColors.divider),
             ),
-            child: const Icon(Icons.school_outlined,
-                size: 38, color: AppColors.textMuted),
+            child: const Icon(
+              Icons.school_outlined,
+              size: 38,
+              color: AppColors.textMuted,
+            ),
           ),
           const SizedBox(height: 20),
           Text(
@@ -1204,7 +1328,9 @@ class _ClassesTab extends StatelessWidget {
           Text(
             'No classes yet. Add your first class!',
             style: GoogleFonts.poppins(
-                fontSize: 13, color: AppColors.textMuted),
+              fontSize: 13,
+              color: AppColors.textMuted,
+            ),
           ),
         ],
       ),
@@ -1224,8 +1350,7 @@ class _ClassExpandableCard extends StatefulWidget {
   });
 
   @override
-  State<_ClassExpandableCard> createState() =>
-      _ClassExpandableCardState();
+  State<_ClassExpandableCard> createState() => _ClassExpandableCardState();
 }
 
 class _ClassExpandableCardState extends State<_ClassExpandableCard> {
@@ -1258,13 +1383,17 @@ class _ClassExpandableCardState extends State<_ClassExpandableCard> {
                     height: 50,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                          colors: [cs, ce],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight),
+                        colors: [cs, ce],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: Icon(catIcon(cls.category),
-                        color: Colors.white, size: 24),
+                    child: Icon(
+                      catIcon(cls.category),
+                      color: Colors.white,
+                      size: 24,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -1284,7 +1413,9 @@ class _ClassExpandableCardState extends State<_ClassExpandableCard> {
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: cs.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(6),
@@ -1302,18 +1433,16 @@ class _ClassExpandableCardState extends State<_ClassExpandableCard> {
                             Text(
                               '${cls.groups.length} group${cls.groups.length != 1 ? 's' : ''}',
                               style: GoogleFonts.poppins(
-                                  fontSize: 11,
-                                  color: AppColors.textMuted),
+                                fontSize: 11,
+                                color: AppColors.textMuted,
+                              ),
                             ),
                           ],
                         ),
                       ],
                     ),
                   ),
-                  _ActionMenu(
-                    onEdit: widget.onEdit,
-                    onDelete: widget.onDelete,
-                  ),
+                  _ActionMenu(onEdit: widget.onEdit, onDelete: widget.onDelete),
                   const SizedBox(width: 4),
                   Icon(
                     _expanded
@@ -1327,15 +1456,14 @@ class _ClassExpandableCardState extends State<_ClassExpandableCard> {
             ),
           ),
           if (_expanded && cls.groups.isNotEmpty) ...[
-            const Divider(
-                height: 1, color: AppColors.divider, indent: 14),
+            const Divider(height: 1, color: AppColors.divider, indent: 14),
             ...cls.groups.map(
               (g) => Container(
                 padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
                 decoration: const BoxDecoration(
                   border: Border(
-                      bottom:
-                          BorderSide(color: AppColors.divider, width: 1)),
+                    bottom: BorderSide(color: AppColors.divider, width: 1),
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -1363,31 +1491,38 @@ class _ClassExpandableCardState extends State<_ClassExpandableCard> {
                           Text(
                             'Ages ${g.minAge}–${g.maxAge} · ₪${g.price.toStringAsFixed(0)}/mo · ${g.capacity} students',
                             style: GoogleFonts.poppins(
-                                fontSize: 11,
-                                color: AppColors.textMuted),
+                              fontSize: 11,
+                              color: AppColors.textMuted,
+                            ),
                           ),
                           if (g.schedule.isNotEmpty) ...[
                             const SizedBox(height: 4),
                             Wrap(
                               spacing: 6,
-                              children: g.schedule.map((s) => Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 7, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: AppColors.purple
-                                      .withValues(alpha: 0.1),
-                                  borderRadius:
-                                      BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  '${s.day} ${fmtTime(s.start)}',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 10,
-                                    color: AppColors.purpleLight,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              )).toList(),
+                              children: g.schedule
+                                  .map(
+                                    (s) => Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 7,
+                                        vertical: 2,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.purple.withValues(
+                                          alpha: 0.1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Text(
+                                        '${s.day} ${fmtTime(s.start)}',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 10,
+                                          color: AppColors.purpleLight,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
                             ),
                           ],
                         ],
@@ -1404,7 +1539,9 @@ class _ClassExpandableCardState extends State<_ClassExpandableCard> {
               child: Text(
                 'No groups added yet.',
                 style: GoogleFonts.poppins(
-                    fontSize: 12, color: AppColors.textMuted),
+                  fontSize: 12,
+                  color: AppColors.textMuted,
+                ),
               ),
             ),
         ],
@@ -1439,8 +1576,7 @@ class _EventsTab extends StatelessWidget {
             child: events.isEmpty
                 ? _buildEmpty()
                 : ListView.builder(
-                    padding:
-                        const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
                     itemCount: events.length,
                     itemBuilder: (_, i) => _EventCard(
                       event: events[i],
@@ -1467,8 +1603,11 @@ class _EventsTab extends StatelessWidget {
               shape: BoxShape.circle,
               border: Border.all(color: AppColors.divider),
             ),
-            child: const Icon(Icons.event_outlined,
-                size: 38, color: AppColors.textMuted),
+            child: const Icon(
+              Icons.event_outlined,
+              size: 38,
+              color: AppColors.textMuted,
+            ),
           ),
           const SizedBox(height: 20),
           Text(
@@ -1483,7 +1622,9 @@ class _EventsTab extends StatelessWidget {
           Text(
             'No events yet. Add your first event!',
             style: GoogleFonts.poppins(
-                fontSize: 13, color: AppColors.textMuted),
+              fontSize: 13,
+              color: AppColors.textMuted,
+            ),
           ),
         ],
       ),
@@ -1530,7 +1671,8 @@ class _EventCard extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(colors: [cs, ce]),
               borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(15)),
+                top: Radius.circular(15),
+              ),
             ),
           ),
           Padding(
@@ -1550,24 +1692,29 @@ class _EventCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    _ActionMenu(
-                        onEdit: onEdit, onDelete: onDelete),
+                    _ActionMenu(onEdit: onEdit, onDelete: onDelete),
                   ],
                 ),
                 const SizedBox(height: 8),
-                _InfoRow(
-                    Icons.calendar_today_rounded, fmtDate(event.date)),
+                _InfoRow(Icons.calendar_today_rounded, fmtDate(event.date)),
                 const SizedBox(height: 4),
-                _InfoRow(Icons.access_time_rounded,
-                    fmtTime(event.time)),
+                _InfoRow(Icons.access_time_rounded, fmtTime(event.time)),
                 if (event.location.isNotEmpty) ...[
                   const SizedBox(height: 4),
-                  _InfoRow(Icons.location_on_rounded,
-                      event.location),
+                  _InfoRow(Icons.location_on_rounded, event.location),
                 ],
                 if (cityLabel != null && cityLabel.isNotEmpty) ...[
                   const SizedBox(height: 4),
                   _InfoRow(Icons.location_city_rounded, cityLabel),
+                ],
+                if (event.seriesId != null) ...[
+                  const SizedBox(height: 4),
+                  _InfoRow(
+                    Icons.repeat_rounded,
+                    event.recurrence != null
+                        ? recurrenceFrequencyText(event.recurrence!, l10n)
+                        : l10n.repeatsWeekly,
+                  ),
                 ],
                 const SizedBox(height: 8),
                 Row(
@@ -1588,8 +1735,7 @@ class _EventCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     _Chip(
                       '${event.capacity} spots',
-                      bgColor: const Color(0xFF059669)
-                          .withValues(alpha: 0.1),
+                      bgColor: const Color(0xFF059669).withValues(alpha: 0.1),
                       textColor: const Color(0xFF059669),
                     ),
                   ],
@@ -1618,7 +1764,9 @@ class _InfoRow extends StatelessWidget {
           child: Text(
             text,
             style: GoogleFonts.poppins(
-                fontSize: 12, color: AppColors.textSecondary),
+              fontSize: 12,
+              color: AppColors.textSecondary,
+            ),
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -1631,8 +1779,7 @@ class _Chip extends StatelessWidget {
   final String label;
   final Color bgColor;
   final Color textColor;
-  const _Chip(this.label,
-      {required this.bgColor, required this.textColor});
+  const _Chip(this.label, {required this.bgColor, required this.textColor});
 
   @override
   Widget build(BuildContext context) {
@@ -1685,8 +1832,11 @@ class _MessagesTab extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: AppColors.divider),
                   ),
-                  child: const Icon(Icons.search_rounded,
-                      color: AppColors.textMuted, size: 18),
+                  child: const Icon(
+                    Icons.search_rounded,
+                    color: AppColors.textMuted,
+                    size: 18,
+                  ),
                 ),
               ],
             ),
@@ -1705,8 +1855,11 @@ class _MessagesTab extends StatelessWidget {
                       shape: BoxShape.circle,
                       border: Border.all(color: AppColors.divider),
                     ),
-                    child: const Icon(Icons.chat_bubble_outline_rounded,
-                        size: 36, color: AppColors.textMuted),
+                    child: const Icon(
+                      Icons.chat_bubble_outline_rounded,
+                      size: 36,
+                      color: AppColors.textMuted,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   Text(
@@ -1721,7 +1874,9 @@ class _MessagesTab extends StatelessWidget {
                   Text(
                     'Messages from your clients will appear here',
                     style: GoogleFonts.poppins(
-                        fontSize: 13, color: AppColors.textMuted),
+                      fontSize: 13,
+                      color: AppColors.textMuted,
+                    ),
                   ),
                 ],
               ),
@@ -1765,10 +1920,12 @@ class _ProfileTabState extends State<_ProfileTab> {
       return;
     }
     final result = await Navigator.of(context).push<dynamic>(
-      slideRoute(builder: (_) => EditOrganizationScreen(
-        orgId: orgIdInt,
-        initialName: widget.orgName,
-      )),
+      slideRoute(
+        builder: (_) => EditOrganizationScreen(
+          orgId: orgIdInt,
+          initialName: widget.orgName,
+        ),
+      ),
     );
     if (!mounted) return;
     if (result == 'deleted') {
@@ -1779,9 +1936,9 @@ class _ProfileTabState extends State<_ProfileTab> {
   }
 
   void _navigateChangePassword() {
-    Navigator.of(context).push(
-      slideRoute(builder: (_) => const ChangePasswordScreen()),
-    );
+    Navigator.of(
+      context,
+    ).push(slideRoute(builder: (_) => const ChangePasswordScreen()));
   }
 
   void _navigateInvites() {
@@ -1810,9 +1967,9 @@ class _ProfileTabState extends State<_ProfileTab> {
   }
 
   void _navigateNotifications() {
-    Navigator.of(context).push(
-      slideRoute(builder: (_) => const NotificationsSettingsScreen()),
-    );
+    Navigator.of(
+      context,
+    ).push(slideRoute(builder: (_) => const NotificationsSettingsScreen()));
   }
 
   void _showComingSoon(String feature) {
@@ -1831,8 +1988,7 @@ class _ProfileTabState extends State<_ProfileTab> {
         ),
         content: Text(
           'This feature is coming soon.',
-          style: GoogleFonts.poppins(
-              fontSize: 13, color: AppColors.textMuted),
+          style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textMuted),
         ),
         actions: [
           TextButton(
@@ -1840,9 +1996,10 @@ class _ProfileTabState extends State<_ProfileTab> {
             child: Text(
               'OK',
               style: GoogleFonts.poppins(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.purple),
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.purple,
+              ),
             ),
           ),
         ],
@@ -1881,7 +2038,9 @@ class _ProfileTabState extends State<_ProfileTab> {
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    widget.orgName.isNotEmpty ? widget.orgName : 'My Organization',
+                    widget.orgName.isNotEmpty
+                        ? widget.orgName
+                        : 'My Organization',
                     style: GoogleFonts.poppins(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
@@ -1891,12 +2050,15 @@ class _ProfileTabState extends State<_ProfileTab> {
                   const SizedBox(height: 4),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 4),
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.purple.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                          color: AppColors.purple.withValues(alpha: 0.3)),
+                        color: AppColors.purple.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Text(
                       'Verified Organization',
@@ -1915,41 +2077,76 @@ class _ProfileTabState extends State<_ProfileTab> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  _SettingCard(title: 'Account Settings', items: [
-                    if (widget.isAdmin)
-                      _SettingItem(Icons.edit_rounded, 'Edit Profile',
-                          onTap: _navigateEditProfile),
-                    _SettingItem(Icons.lock_outline_rounded, 'Change Password',
-                        onTap: _navigateChangePassword),
-                  ]),
+                  _SettingCard(
+                    title: 'Account Settings',
+                    items: [
+                      if (widget.isAdmin)
+                        _SettingItem(
+                          Icons.edit_rounded,
+                          'Edit Profile',
+                          onTap: _navigateEditProfile,
+                        ),
+                      _SettingItem(
+                        Icons.lock_outline_rounded,
+                        'Change Password',
+                        onTap: _navigateChangePassword,
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
-                  _SettingCard(title: 'Business', items: [
-                    if (widget.isAdmin)
-                      _SettingItem(Icons.card_giftcard_rounded,
+                  _SettingCard(
+                    title: 'Business',
+                    items: [
+                      if (widget.isAdmin)
+                        _SettingItem(
+                          Icons.card_giftcard_rounded,
                           l10n.invitesAndRequests,
-                          onTap: _navigateInvites),
-                    if (widget.isAdmin)
-                      _SettingItem(Icons.group_rounded,
+                          onTap: _navigateInvites,
+                        ),
+                      if (widget.isAdmin)
+                        _SettingItem(
+                          Icons.group_rounded,
                           l10n.membersTitle,
-                          onTap: _navigateMembers),
-                    _SettingItem(Icons.notifications_outlined, 'Notifications',
-                        onTap: _navigateNotifications),
-                    _SettingItem(Icons.payments_outlined, 'Billing & Payments',
-                        onTap: () => _showComingSoon('Billing & Payments')),
-                    _SettingItem(Icons.bar_chart_rounded, 'Analytics',
-                        onTap: () => _showComingSoon('Analytics')),
-                  ]),
+                          onTap: _navigateMembers,
+                        ),
+                      _SettingItem(
+                        Icons.notifications_outlined,
+                        'Notifications',
+                        onTap: _navigateNotifications,
+                      ),
+                      _SettingItem(
+                        Icons.payments_outlined,
+                        'Billing & Payments',
+                        onTap: () => _showComingSoon('Billing & Payments'),
+                      ),
+                      _SettingItem(
+                        Icons.bar_chart_rounded,
+                        'Analytics',
+                        onTap: () => _showComingSoon('Analytics'),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
-                  _SettingCard(title: 'Support', items: [
-                    _SettingItem(Icons.help_outline_rounded, 'Help Center',
-                        onTap: () => _showComingSoon('Help Center')),
-                    _SettingItem(Icons.policy_outlined, 'Terms & Privacy',
-                        onTap: () => _showComingSoon('Terms & Privacy')),
-                  ]),
+                  _SettingCard(
+                    title: 'Support',
+                    items: [
+                      _SettingItem(
+                        Icons.help_outline_rounded,
+                        'Help Center',
+                        onTap: () => _showComingSoon('Help Center'),
+                      ),
+                      _SettingItem(
+                        Icons.policy_outlined,
+                        'Terms & Privacy',
+                        onTap: () => _showComingSoon('Terms & Privacy'),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   GestureDetector(
-                    onTap: () => Navigator.of(context)
-                        .popUntil((route) => route.isFirst),
+                    onTap: () => Navigator.of(
+                      context,
+                    ).popUntil((route) => route.isFirst),
                     child: Container(
                       width: double.infinity,
                       height: 52,
@@ -1957,14 +2154,17 @@ class _ProfileTabState extends State<_ProfileTab> {
                         color: const Color(0xFFEF4444).withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                            color: const Color(0xFFEF4444)
-                                .withValues(alpha: 0.3)),
+                          color: const Color(0xFFEF4444).withValues(alpha: 0.3),
+                        ),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.logout_rounded,
-                              size: 18, color: Color(0xFFEF4444)),
+                          const Icon(
+                            Icons.logout_rounded,
+                            size: 18,
+                            color: Color(0xFFEF4444),
+                          ),
                           const SizedBox(width: 8),
                           Text(
                             'Exit Dashboard',
@@ -2027,19 +2227,23 @@ class _SettingCard extends StatelessWidget {
                     onTap: items[i].onTap,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
                       child: Row(
                         children: [
                           Container(
                             width: 32,
                             height: 32,
                             decoration: BoxDecoration(
-                              color: AppColors.purple
-                                  .withValues(alpha: 0.1),
+                              color: AppColors.purple.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(9),
                             ),
-                            child: Icon(items[i].icon,
-                                color: AppColors.purple, size: 16),
+                            child: Icon(
+                              items[i].icon,
+                              color: AppColors.purple,
+                              size: 16,
+                            ),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -2051,17 +2255,21 @@ class _SettingCard extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const Icon(Icons.chevron_right_rounded,
-                              color: AppColors.textMuted, size: 18),
+                          const Icon(
+                            Icons.chevron_right_rounded,
+                            color: AppColors.textMuted,
+                            size: 18,
+                          ),
                         ],
                       ),
                     ),
                   ),
                   if (!isLast)
                     const Divider(
-                        height: 1,
-                        color: AppColors.divider,
-                        indent: 60),
+                      height: 1,
+                      color: AppColors.divider,
+                      indent: 60,
+                    ),
                 ],
               );
             }),
@@ -2105,8 +2313,7 @@ class _TabHeader extends StatelessWidget {
           GestureDetector(
             onTap: onAdd,
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
                 gradient: AppColors.brandGradient,
                 borderRadius: BorderRadius.circular(10),
@@ -2121,11 +2328,12 @@ class _TabHeader extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.add_rounded,
-                      color: Colors.white, size: 16),
+                  const Icon(Icons.add_rounded, color: Colors.white, size: 16),
                   const SizedBox(width: 4),
                   Text(
-                    'New $title'.replaceAll('New Classes', 'New Class').replaceAll('New Events', 'New Event'),
+                    'New $title'
+                        .replaceAll('New Classes', 'New Class')
+                        .replaceAll('New Events', 'New Event'),
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -2151,8 +2359,11 @@ class _ActionMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
-      icon: const Icon(Icons.more_vert_rounded,
-          color: AppColors.textMuted, size: 18),
+      icon: const Icon(
+        Icons.more_vert_rounded,
+        color: AppColors.textMuted,
+        size: 18,
+      ),
       color: AppColors.surfaceElevated,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -2167,12 +2378,19 @@ class _ActionMenu extends StatelessWidget {
           value: 'edit',
           child: Row(
             children: [
-              const Icon(Icons.edit_rounded,
-                  size: 16, color: AppColors.textSecondary),
+              const Icon(
+                Icons.edit_rounded,
+                size: 16,
+                color: AppColors.textSecondary,
+              ),
               const SizedBox(width: 10),
-              Text('Edit',
-                  style: GoogleFonts.poppins(
-                      fontSize: 14, color: AppColors.textPrimary)),
+              Text(
+                'Edit',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: AppColors.textPrimary,
+                ),
+              ),
             ],
           ),
         ),
@@ -2180,12 +2398,19 @@ class _ActionMenu extends StatelessWidget {
           value: 'delete',
           child: Row(
             children: [
-              const Icon(Icons.delete_outline_rounded,
-                  size: 16, color: Color(0xFFEF4444)),
+              const Icon(
+                Icons.delete_outline_rounded,
+                size: 16,
+                color: Color(0xFFEF4444),
+              ),
               const SizedBox(width: 10),
-              Text('Delete',
-                  style: GoogleFonts.poppins(
-                      fontSize: 14, color: Color(0xFFEF4444))),
+              Text(
+                'Delete',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Color(0xFFEF4444),
+                ),
+              ),
             ],
           ),
         ),
