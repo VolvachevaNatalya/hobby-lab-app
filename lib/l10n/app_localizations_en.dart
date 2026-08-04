@@ -914,4 +914,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get scopeEntireSeries => 'Entire series';
+
+  @override
+  String get upcomingEventsTab => 'Upcoming';
+
+  @override
+  String get pastEventsTab => 'Past';
 }

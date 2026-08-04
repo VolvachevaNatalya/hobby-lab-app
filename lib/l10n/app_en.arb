@@ -379,5 +379,7 @@
   "deleteEventScopeTitle": "Delete recurring event",
   "scopeOnlyThisEvent": "Only this event",
   "scopeThisAndFollowing": "This and following events",
-  "scopeEntireSeries": "Entire series"
+  "scopeEntireSeries": "Entire series",
+  "upcomingEventsTab": "Upcoming",
+  "pastEventsTab": "Past"
 }

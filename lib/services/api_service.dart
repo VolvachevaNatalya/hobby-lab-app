@@ -823,6 +823,19 @@ class ApiService {
     throw Exception('Failed to load org events');
   }
 
+  static Future<List<Map<String, dynamic>>> getPublicOrgEvents(String orgId) async {
+    final uri = Uri.parse(
+      '$_baseUrl/events/',
+    ).replace(queryParameters: {'organization_id': orgId});
+    final response = await http.get(uri, headers: await _authHeaders());
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List<dynamic>)
+          .map((e) => e as Map<String, dynamic>)
+          .toList();
+    }
+    throw Exception('Failed to load org events');
+  }
+
   static Future<List<Map<String, dynamic>>> getAllGroups() async {
     final response = await http.get(
       Uri.parse('$_baseUrl/groups/'),

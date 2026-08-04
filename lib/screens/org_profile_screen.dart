@@ -152,7 +152,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
       final futures = <Future>[
         ApiService.getOrganization(widget.orgId!),
         ApiService.getOrgClasses(widget.orgId!),
-        ApiService.getOrgEvents(widget.orgId!),
+        ApiService.getPublicOrgEvents(widget.orgId!),
       ];
       final results = await Future.wait(
         futures.map((f) => f.catchError((_) => null)),
@@ -1520,14 +1520,16 @@ class _EventTile extends StatelessWidget {
     final name = (event['title'] ?? event['name'] ?? 'Unnamed Event')
         .toString();
     final description = (event['description'] ?? '').toString();
-    final startDate = event['start_date'] ?? event['date'];
+    final startDt = event['start_datetime'];
     String? dateStr;
-    if (startDate != null) {
+    if (startDt != null) {
       try {
-        final dt = DateTime.parse(startDate.toString());
-        dateStr = '${dt.day} ${_monthName(dt.month)} ${dt.year}';
+        final dt = DateTime.parse(startDt.toString());
+        final timeStr =
+            '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+        dateStr = '${dt.day} ${_monthName(dt.month)} ${dt.year} · $timeStr';
       } catch (_) {
-        dateStr = startDate.toString();
+        dateStr = startDt.toString();
       }
     }
     final l10n = AppLocalizations.of(context)!;

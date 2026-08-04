@@ -18,6 +18,12 @@ import 'org_members_screen.dart';
 import '../routing/transitions.dart';
 import '../utils/event_grouping.dart';
 
+bool _orgEventIsUpcoming(OrgEvent e) {
+  final now = DateTime.now();
+  if (e.endDateTime != null) return !e.endDateTime!.isBefore(now);
+  return !e.date.isBefore(now);
+}
+
 // ─── Main screen ──────────────────────────────────────────────────────────────
 
 class OrgDashboardScreen extends StatefulWidget {
@@ -181,6 +187,9 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
             categoryNames.add(categoryName);
           }
         }
+        final endDt = json['end_datetime'] != null
+            ? DateTime.tryParse(json['end_datetime'].toString())
+            : null;
         return OrgEvent(
           id: (json['id'] ?? '').toString(),
           name: (json['title'] ?? '').toString(),
@@ -191,6 +200,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
           description: (json['description'] ?? '').toString(),
           date: startDt,
           time: TimeOfDay(hour: startDt.hour, minute: startDt.minute),
+          endDateTime: endDt,
           location: (json['address'] ?? '').toString(),
           cityId: json['city_id'] as int?,
           cityNameHe: json['city_name_he']?.toString(),
@@ -388,7 +398,9 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
             orgName: _orgName,
             initials: _initials,
             classes: _classes,
-            events: groupOrgEventsBySeries(_events),
+            events: groupOrgEventsBySeries(
+              _events.where(_orgEventIsUpcoming).toList(),
+            ),
             onAddClass: _goAddClass,
             onAddEvent: _goAddEvent,
             onSwitchClasses: () => setState(() => _tab = 1),
@@ -405,7 +417,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
             onDelete: _deleteClass,
           ),
           _EventsTab(
-            events: groupOrgEventsBySeries(_events),
+            events: _events,
             onAdd: _goAddEvent,
             onEdit: _goEditEvent,
             onDelete: _deleteEvent,
@@ -1189,7 +1201,7 @@ class _EventPreviewCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${fmtDate(event.date)} · ${event.price == 0 ? AppLocalizations.of(context)!.eventFree : '₪${event.price.toStringAsFixed(0)}'}',
+                    '${fmtDate(event.date)} · ${fmtTime(event.time)} · ${event.price == 0 ? AppLocalizations.of(context)!.eventFree : '₪${event.price.toStringAsFixed(0)}'}',
                     style: GoogleFonts.poppins(
                       fontSize: 11,
                       color: AppColors.textMuted,
@@ -1561,7 +1573,7 @@ class _ClassExpandableCardState extends State<_ClassExpandableCard> {
 
 // ─── Events tab ───────────────────────────────────────────────────────────────
 
-class _EventsTab extends StatelessWidget {
+class _EventsTab extends StatefulWidget {
   final List<OrgEvent> events;
   final VoidCallback onAdd;
   final void Function(OrgEvent) onEdit;
@@ -1575,22 +1587,57 @@ class _EventsTab extends StatelessWidget {
   });
 
   @override
+  State<_EventsTab> createState() => _EventsTabState();
+}
+
+class _EventsTabState extends State<_EventsTab> {
+  bool _showUpcoming = true;
+
+  @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final upcoming = groupOrgEventsBySeries(
+      widget.events.where(_orgEventIsUpcoming).toList(),
+    );
+    final past = groupOrgEventsBySeries(
+      widget.events.where((e) => !_orgEventIsUpcoming(e)).toList(),
+    ).reversed.toList();
+
+    final shown = _showUpcoming ? upcoming : past;
+
     return SafeArea(
       child: Column(
         children: [
-          _TabHeader(title: 'Events', onAdd: onAdd),
+          _TabHeader(title: 'Events', onAdd: widget.onAdd),
           const Divider(height: 1, color: AppColors.divider),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
+            child: Row(
+              children: [
+                _SegmentPill(
+                  label: l10n.upcomingEventsTab,
+                  selected: _showUpcoming,
+                  onTap: () => setState(() => _showUpcoming = true),
+                ),
+                const SizedBox(width: 8),
+                _SegmentPill(
+                  label: l10n.pastEventsTab,
+                  selected: !_showUpcoming,
+                  onTap: () => setState(() => _showUpcoming = false),
+                ),
+              ],
+            ),
+          ),
           Expanded(
-            child: events.isEmpty
-                ? _buildEmpty()
+            child: shown.isEmpty
+                ? _buildEmpty(l10n)
                 : ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-                    itemCount: events.length,
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                    itemCount: shown.length,
                     itemBuilder: (_, i) => _EventCard(
-                      event: events[i],
-                      onEdit: () => onEdit(events[i]),
-                      onDelete: () => onDelete(events[i]),
+                      event: shown[i],
+                      onEdit: () => widget.onEdit(shown[i]),
+                      onDelete: () => widget.onDelete(shown[i]),
                     ),
                   ),
           ),
@@ -1599,7 +1646,7 @@ class _EventsTab extends StatelessWidget {
     );
   }
 
-  Widget _buildEmpty() {
+  Widget _buildEmpty(AppLocalizations l10n) {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1612,30 +1659,53 @@ class _EventsTab extends StatelessWidget {
               shape: BoxShape.circle,
               border: Border.all(color: AppColors.divider),
             ),
-            child: const Icon(
-              Icons.event_outlined,
-              size: 38,
-              color: AppColors.textMuted,
-            ),
+            child: const Icon(Icons.event_outlined, size: 38, color: AppColors.textMuted),
           ),
           const SizedBox(height: 20),
           Text(
-            'No Events Yet',
-            style: GoogleFonts.poppins(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
+            _showUpcoming ? l10n.upcomingEventsTab : l10n.pastEventsTab,
+            style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
           ),
           const SizedBox(height: 8),
           Text(
-            'No events yet. Add your first event!',
-            style: GoogleFonts.poppins(
-              fontSize: 13,
-              color: AppColors.textMuted,
-            ),
+            _showUpcoming ? 'No upcoming events yet.' : 'No past events.',
+            style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textMuted),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _SegmentPill extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+  const _SegmentPill({required this.label, required this.selected, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+        decoration: BoxDecoration(
+          gradient: selected ? AppColors.brandGradient : null,
+          color: selected ? null : AppColors.surfaceElevated,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: selected ? Colors.transparent : AppColors.divider,
+          ),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.poppins(
+            fontSize: 13,
+            fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+            color: selected ? Colors.white : AppColors.textMuted,
+          ),
+        ),
       ),
     );
   }

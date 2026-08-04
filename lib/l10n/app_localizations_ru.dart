@@ -917,4 +917,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get scopeEntireSeries => 'Вся серия';
+
+  @override
+  String get upcomingEventsTab => 'Предстоящие';
+
+  @override
+  String get pastEventsTab => 'Прошедшие';
 }

@@ -901,4 +901,10 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get scopeEntireSeries => 'כל הסדרה';
+
+  @override
+  String get upcomingEventsTab => 'קרובים';
+
+  @override
+  String get pastEventsTab => 'עבר';
 }

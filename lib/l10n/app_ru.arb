@@ -379,5 +379,7 @@
   "deleteEventScopeTitle": "Удалить событие",
   "scopeOnlyThisEvent": "Только это событие",
   "scopeThisAndFollowing": "Это и следующие события",
-  "scopeEntireSeries": "Вся серия"
+  "scopeEntireSeries": "Вся серия",
+  "upcomingEventsTab": "Предстоящие",
+  "pastEventsTab": "Прошедшие"
 }

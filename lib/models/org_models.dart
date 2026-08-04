@@ -70,6 +70,7 @@ class OrgEvent {
   double price;
   String? priceComment;
   bool isNationwide;
+  DateTime? endDateTime;
   int? seriesId;
   int? occurrenceIndex;
   EventRecurrence? recurrence;
@@ -85,6 +86,7 @@ class OrgEvent {
     this.description = '',
     required this.date,
     required this.time,
+    this.endDateTime,
     this.location = '',
     this.cityId,
     this.cityNameHe,

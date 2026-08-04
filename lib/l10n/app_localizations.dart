@@ -1827,6 +1827,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Entire series'**
   String get scopeEntireSeries;
+
+  /// No description provided for @upcomingEventsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get upcomingEventsTab;
+
+  /// No description provided for @pastEventsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Past'**
+  String get pastEventsTab;
 }
 
 class _AppLocalizationsDelegate

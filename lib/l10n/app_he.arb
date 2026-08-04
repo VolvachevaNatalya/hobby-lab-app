@@ -379,5 +379,7 @@
   "deleteEventScopeTitle": "מחיקת אירוע חוזר",
   "scopeOnlyThisEvent": "רק אירוע זה",
   "scopeThisAndFollowing": "זה ואירועים הבאים",
-  "scopeEntireSeries": "כל הסדרה"
+  "scopeEntireSeries": "כל הסדרה",
+  "upcomingEventsTab": "קרובים",
+  "pastEventsTab": "עבר"
 }
