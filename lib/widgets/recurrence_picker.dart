@@ -93,66 +93,126 @@ class _RecurrencePicker extends StatelessWidget {
               label: l10n.repeatPickerDaily,
               icon: Icons.today_rounded,
               selected: _isSelected('daily', 1),
-              onTap: () {
-                Navigator.of(context).pop();
-                onSelect(
-                  const RecurrenceInput(
-                    frequency: 'daily',
-                    interval: 1,
-                    endType: 'never',
-                  ),
+              onTap: () async {
+                final seed = RecurrenceInput(
+                  frequency: 'daily',
+                  interval: 1,
+                  endType: current?.frequency == 'daily'
+                      ? current!.endType
+                      : 'never',
+                  totalCount: current?.frequency == 'daily'
+                      ? current?.totalCount
+                      : null,
+                  endDate: current?.frequency == 'daily'
+                      ? current?.endDate
+                      : null,
                 );
+                final result = await showRecurrenceConfigSheet(
+                  context,
+                  current: seed,
+                  eventDate: eventDate,
+                );
+                if (result != null && context.mounted) {
+                  Navigator.of(context).pop();
+                  onSelect(result);
+                }
               },
             ),
             _Option(
               label: l10n.repeatPickerWeekly,
               icon: Icons.view_week_rounded,
               selected: _isSelected('weekly', 1),
-              onTap: () {
-                Navigator.of(context).pop();
-                onSelect(
-                  const RecurrenceInput(
-                    frequency: 'weekly',
-                    interval: 1,
-                    endType: 'never',
-                  ),
+              onTap: () async {
+                final seed = RecurrenceInput(
+                  frequency: 'weekly',
+                  interval: 1,
+                  endType: current?.frequency == 'weekly'
+                      ? current!.endType
+                      : 'never',
+                  totalCount: current?.frequency == 'weekly'
+                      ? current?.totalCount
+                      : null,
+                  endDate: current?.frequency == 'weekly'
+                      ? current?.endDate
+                      : null,
                 );
+                final result = await showRecurrenceConfigSheet(
+                  context,
+                  current: seed,
+                  eventDate: eventDate,
+                );
+                if (result != null && context.mounted) {
+                  Navigator.of(context).pop();
+                  onSelect(result);
+                }
               },
             ),
             _Option(
               label: l10n.repeatPickerMonthly,
               icon: Icons.calendar_month_rounded,
               selected: _isSelected('monthly', 1),
-              onTap: () {
-                Navigator.of(context).pop();
-                onSelect(
-                  const RecurrenceInput(
-                    frequency: 'monthly',
-                    interval: 1,
-                    endType: 'never',
-                  ),
+              onTap: () async {
+                final seed = RecurrenceInput(
+                  frequency: 'monthly',
+                  interval: 1,
+                  endType: current?.frequency == 'monthly'
+                      ? current!.endType
+                      : 'never',
+                  totalCount: current?.frequency == 'monthly'
+                      ? current?.totalCount
+                      : null,
+                  endDate: current?.frequency == 'monthly'
+                      ? current?.endDate
+                      : null,
                 );
+                final result = await showRecurrenceConfigSheet(
+                  context,
+                  current: seed,
+                  eventDate: eventDate,
+                );
+                if (result != null && context.mounted) {
+                  Navigator.of(context).pop();
+                  onSelect(result);
+                }
               },
             ),
             _Option(
               label: l10n.repeatPickerYearly,
               icon: Icons.event_repeat_rounded,
               selected: _isSelected('yearly', 1),
-              onTap: () {
-                Navigator.of(context).pop();
-                onSelect(
-                  const RecurrenceInput(
-                    frequency: 'yearly',
-                    interval: 1,
-                    endType: 'never',
-                  ),
+              onTap: () async {
+                final seed = RecurrenceInput(
+                  frequency: 'yearly',
+                  interval: 1,
+                  endType: current?.frequency == 'yearly'
+                      ? current!.endType
+                      : 'never',
+                  totalCount: current?.frequency == 'yearly'
+                      ? current?.totalCount
+                      : null,
+                  endDate: current?.frequency == 'yearly'
+                      ? current?.endDate
+                      : null,
                 );
+                final result = await showRecurrenceConfigSheet(
+                  context,
+                  current: seed,
+                  eventDate: eventDate,
+                );
+                if (result != null && context.mounted) {
+                  Navigator.of(context).pop();
+                  onSelect(result);
+                }
               },
             ),
             _Option(
               label: l10n.repeatPickerCustom,
               icon: Icons.tune_rounded,
-              selected: false,
+              selected: current != null &&
+                  !_isSelected('daily', 1) &&
+                  !_isSelected('weekly', 1) &&
+                  !_isSelected('monthly', 1) &&
+                  !_isSelected('yearly', 1),
               onTap: () async {
                 final result = await showRecurrenceConfigSheet(
                   context,

@@ -4,6 +4,7 @@ import '../l10n/app_localizations.dart';
 import '../models/app_event.dart';
 import '../services/api_service.dart';
 import '../theme/app_theme.dart';
+import '../utils/event_grouping.dart';
 import 'event_details_screen.dart';
 import '../routing/transitions.dart';
 
@@ -50,11 +51,36 @@ class _SeeAllEventsScreenState extends State<SeeAllEventsScreen> {
   }
 
   List<AppEvent> get _filtered {
-    if (_query.isEmpty) return _events;
+    final grouped = groupEventsBySeries(_events);
+    if (_query.isEmpty) return grouped;
     final q = _query.toLowerCase();
-    return _events.where((e) =>
+    return grouped.where((e) =>
         e.title.toLowerCase().contains(q) ||
         e.subtitle.toLowerCase().contains(q)).toList();
+  }
+
+  static const _months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  String _fmtEventDate(String? iso) {
+    if (iso == null || iso.isEmpty) return '';
+    final dt = DateTime.tryParse(iso);
+    if (dt == null) return '';
+    return '${dt.day} ${_months[dt.month]} ${dt.year}';
+  }
+
+  String _fmtEventMeta(AppEvent event, String locale) {
+    final cats = event.categoryNames;
+    if (cats.isNotEmpty) {
+      final shown = cats.take(2).join(' · ');
+      return cats.length > 2 ? '$shown +${cats.length - 2}' : shown;
+    }
+    if (event.isNationwide) return AppLocalizations.of(context)!.nationwideLabel;
+    final cityName = switch (locale) {
+      'he' => event.cityNameHe,
+      'ru' => event.cityNameRu,
+      _ => event.cityNameEn,
+    };
+    return cityName ?? event.city ?? '';
   }
 
   @override
@@ -192,13 +218,13 @@ class _SeeAllEventsScreenState extends State<SeeAllEventsScreen> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Text(event.badge,
+                                          Text(_fmtEventDate(event.startDatetime),
                                               style: GoogleFonts.poppins(fontSize: 9, fontWeight: FontWeight.w700, color: Colors.white.withValues(alpha: 0.8), letterSpacing: 1)),
                                           const SizedBox(height: 3),
                                           Text(event.title, maxLines: 1, overflow: TextOverflow.ellipsis,
                                               style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white)),
                                           const SizedBox(height: 2),
-                                          Text(event.subtitle, maxLines: 1, overflow: TextOverflow.ellipsis,
+                                          Text(_fmtEventMeta(event, Localizations.localeOf(context).languageCode), maxLines: 1, overflow: TextOverflow.ellipsis,
                                               style: GoogleFonts.poppins(fontSize: 11, color: Colors.white.withValues(alpha: 0.85))),
                                         ],
                                       ),

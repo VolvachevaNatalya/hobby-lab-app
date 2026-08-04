@@ -135,11 +135,14 @@ class _RecurrenceConfigSheetState extends State<_RecurrenceConfigSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return SafeArea(
-      child: Container(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.85,
-        ),
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomInset),
+      child: SafeArea(
+        child: Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.85,
+          ),
         decoration: const BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -348,7 +351,8 @@ class _RecurrenceConfigSheetState extends State<_RecurrenceConfigSheet> {
           ],
         ),
       ),
-    );
+    ),
+  );
   }
 
   Widget _unitDropdown(AppLocalizations l10n) {

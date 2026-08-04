@@ -855,22 +855,34 @@ class AppLocalizationsHe extends AppLocalizations {
   String get repeatsYearly => 'חוזר שנתי';
 
   @override
-  String repeatsEveryNDays(int n) => 'כל $n ימים';
+  String repeatsEveryNDays(int n) {
+    return 'כל $n ימים';
+  }
 
   @override
-  String repeatsEveryNWeeks(int n) => 'כל $n שבועות';
+  String repeatsEveryNWeeks(int n) {
+    return 'כל $n שבועות';
+  }
 
   @override
-  String repeatsEveryNMonths(int n) => 'כל $n חודשים';
+  String repeatsEveryNMonths(int n) {
+    return 'כל $n חודשים';
+  }
 
   @override
-  String repeatsEveryNYears(int n) => 'כל $n שנים';
+  String repeatsEveryNYears(int n) {
+    return 'כל $n שנים';
+  }
 
   @override
-  String repeatCountSummary(int count) => '$count אירועים';
+  String repeatCountSummary(int count) {
+    return '$count אירועים';
+  }
 
   @override
-  String repeatUntilDate(String date) => 'עד $date';
+  String repeatUntilDate(String date) {
+    return 'עד $date';
+  }
 
   @override
   String get repeatNoEndDate => 'ללא תאריך סיום';

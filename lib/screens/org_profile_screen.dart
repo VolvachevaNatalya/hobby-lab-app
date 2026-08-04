@@ -17,6 +17,7 @@ import 'event_details_screen.dart';
 import 'reviews_screen.dart';
 import 'write_review_screen.dart';
 import '../routing/transitions.dart';
+import '../utils/event_grouping.dart';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -934,12 +935,13 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
   // ── Events ───────────────────────────────────────────────────────────────────
 
   Widget _buildEventsSection() {
+    final grouped = groupRawEventsBySeries(_events);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const _SectionHeader(title: 'Upcoming Events'),
         const SizedBox(height: 14),
-        if (_events.isEmpty)
+        if (grouped.isEmpty)
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(20),
@@ -958,10 +960,10 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
             ),
           )
         else
-          ...List.generate(_events.length, (i) {
-            final ev = _events[i];
+          ...List.generate(grouped.length, (i) {
+            final ev = grouped[i];
             return Padding(
-              padding: EdgeInsets.only(bottom: i < _events.length - 1 ? 10 : 0),
+              padding: EdgeInsets.only(bottom: i < grouped.length - 1 ? 10 : 0),
               child: GestureDetector(
                 onTap: () {
                   final eventId = ev['id']?.toString();

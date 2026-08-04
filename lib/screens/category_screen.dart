@@ -14,6 +14,7 @@ import '../routing/transitions.dart';
 import 'see_all_events_screen.dart';
 import 'see_all_orgs_screen.dart';
 import 'see_all_screen.dart';
+import '../utils/event_grouping.dart';
 
 // ─── Shared gradient / icon pools (mirrors home_screen.dart) ─────────────────
 
@@ -204,7 +205,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final activities = _toActivities(_classes);
-    final banners = _toBanners(_events);
+    final banners = _toBanners(groupEventsBySeries(_events));
 
     return Scaffold(
       backgroundColor: AppColors.background,

@@ -25,6 +25,7 @@ import 'category_screen.dart';
 import 'event_details_screen.dart';
 import '../l10n/app_localizations.dart';
 import '../routing/transitions.dart';
+import '../utils/event_grouping.dart';
 
 // ─── Data classes ─────────────────────────────────────────────────────────────
 
@@ -67,6 +68,7 @@ class _Banner {
   final String subtitle;
   final String badge;
   final String? categoryId;
+  final List<String> categoryNames;
   final Color colorStart;
   final Color colorEnd;
   final IconData icon;
@@ -76,6 +78,7 @@ class _Banner {
     required this.subtitle,
     required this.badge,
     this.categoryId,
+    this.categoryNames = const [],
     required this.colorStart,
     required this.colorEnd,
     required this.icon,
@@ -307,11 +310,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 c.categoryIds.contains(id) ||
                 (c.categoryIds.isEmpty && c.categoryId == id))
             .toList(),
-        events: _apiEvents
+        events: groupEventsBySeries(_apiEvents
             .where((e) =>
                 e.categoryIds.contains(id) ||
                 (e.categoryIds.isEmpty && e.categoryId == id))
-            .toList(),
+            .toList()),
         userLat: _fetchedLat,
         userLng: _fetchedLng,
         cityId: _selectedCity?.id,
@@ -418,7 +421,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              _BannersSection(apiEvents: _apiEvents.take(10).toList()),
+              _BannersSection(apiEvents: groupEventsBySeries(_apiEvents).take(10).toList()),
               const SizedBox(height: 28),
               _SectionHeader(
                 title: l10n.categories,
@@ -704,6 +707,7 @@ class _BannersSection extends StatelessWidget {
         subtitle: e.value.subtitle,
         badge: e.value.badge,
         categoryId: e.value.categoryId,
+        categoryNames: e.value.categoryNames,
         colorStart: s.$1,
         colorEnd: s.$2,
         icon: s.$3,
@@ -784,7 +788,10 @@ class _BannerCard extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.22),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text(banner.badge,
+                    child: Text(
+                        banner.categoryNames.isNotEmpty
+                            ? banner.categoryNames.first
+                            : banner.badge,
                         style: GoogleFonts.poppins(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white, letterSpacing: 1)),
                   ),
                   const SizedBox(height: 8),

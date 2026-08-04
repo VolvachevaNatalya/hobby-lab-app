@@ -16,6 +16,7 @@ import 'change_password_screen.dart';
 import 'org_invites_screen.dart';
 import 'org_members_screen.dart';
 import '../routing/transitions.dart';
+import '../utils/event_grouping.dart';
 
 // ─── Main screen ──────────────────────────────────────────────────────────────
 
@@ -163,22 +164,30 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
             DateTime.now();
         final rawCats = json['categories'] as List<dynamic>?;
         final categoryIds = <String>[];
+        final categoryNames = <String>[];
         String categoryName;
         if (rawCats != null && rawCats.isNotEmpty) {
           categoryName = (rawCats.first as Map)['name']?.toString() ?? 'Other';
           for (final c in rawCats) {
             final id = (c as Map)['id']?.toString();
             if (id != null) categoryIds.add(id);
+            final name = (c as Map)['name']?.toString();
+            if (name != null) categoryNames.add(name);
           }
         } else {
           categoryName = catId != null ? (catMap[catId] ?? 'Other') : 'Other';
           if (catId != null) categoryIds.add(catId);
+          if (categoryName.isNotEmpty && categoryName != 'Other') {
+            categoryNames.add(categoryName);
+          }
         }
         return OrgEvent(
           id: (json['id'] ?? '').toString(),
           name: (json['title'] ?? '').toString(),
           category: categoryName,
           categoryIds: categoryIds,
+          categoryNames: categoryNames,
+          imageUrl: json['image_url']?.toString(),
           description: (json['description'] ?? '').toString(),
           date: startDt,
           time: TimeOfDay(hour: startDt.hour, minute: startDt.minute),
@@ -379,7 +388,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
             orgName: _orgName,
             initials: _initials,
             classes: _classes,
-            events: _events,
+            events: groupOrgEventsBySeries(_events),
             onAddClass: _goAddClass,
             onAddEvent: _goAddEvent,
             onSwitchClasses: () => setState(() => _tab = 1),
@@ -396,7 +405,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
             onDelete: _deleteClass,
           ),
           _EventsTab(
-            events: _events,
+            events: groupOrgEventsBySeries(_events),
             onAdd: _goAddEvent,
             onEdit: _goEditEvent,
             onDelete: _deleteEvent,
@@ -1720,10 +1729,20 @@ class _EventCard extends StatelessWidget {
                 Row(
                   children: [
                     _Chip(
-                      event.category,
+                      event.categoryNames.isNotEmpty
+                          ? event.categoryNames.first
+                          : event.category,
                       bgColor: cs.withValues(alpha: 0.12),
                       textColor: cs,
                     ),
+                    if (event.categoryNames.length > 1) ...[
+                      const SizedBox(width: 4),
+                      _Chip(
+                        '+${event.categoryNames.length - 1}',
+                        bgColor: cs.withValues(alpha: 0.08),
+                        textColor: cs,
+                      ),
+                    ],
                     const SizedBox(width: 8),
                     _Chip(
                       event.price == 0

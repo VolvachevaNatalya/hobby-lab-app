@@ -73,12 +73,15 @@ class OrgEvent {
   int? seriesId;
   int? occurrenceIndex;
   EventRecurrence? recurrence;
+  String? imageUrl;
+  List<String> categoryNames;
 
   OrgEvent({
     required this.id,
     required this.name,
     required this.category,
     this.categoryIds = const [],
+    this.categoryNames = const [],
     this.description = '',
     required this.date,
     required this.time,
@@ -96,6 +99,7 @@ class OrgEvent {
     this.seriesId,
     this.occurrenceIndex,
     this.recurrence,
+    this.imageUrl,
   });
 }
 

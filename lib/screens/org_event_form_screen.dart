@@ -83,6 +83,21 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
       _date = e.date;
       _time = e.time;
       _isNationwide = e.isNationwide;
+      // Synchronously initialize city so form shows it immediately on open
+      if (e.cityId != null) {
+        final nameHe = e.cityNameHe ?? '';
+        final nameEn = e.cityNameEn ?? '';
+        final nameRu = e.cityNameRu ?? '';
+        if (nameHe.isNotEmpty || nameEn.isNotEmpty || nameRu.isNotEmpty) {
+          _selectedCity = AppCity(
+            id: e.cityId!,
+            nameHe: nameHe,
+            nameEn: nameEn,
+            nameRu: nameRu,
+          );
+        }
+      }
+      _imageUrl = e.imageUrl;
       final r = e.recurrence;
       if (r != null) {
         _recurrence = RecurrenceInput(
@@ -207,6 +222,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
   }
 
   void _showCategorySheet() {
+    FocusManager.instance.primaryFocus?.unfocus();
     if (_loadingCategories) return;
     final l10n = AppLocalizations.of(context)!;
     final messenger = ScaffoldMessenger.of(context);
@@ -421,10 +437,11 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
           );
         },
       ),
-    );
+    ).then((_) { if (mounted) FocusManager.instance.primaryFocus?.unfocus(); });
   }
 
   Future<void> _pickDate() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     final picked = await showDatePicker(
       context: context,
       initialDate: _date ?? DateTime.now().add(const Duration(days: 7)),
@@ -433,15 +450,18 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
       locale: const Locale('en'),
       builder: (ctx, child) => Theme(data: darkPickerTheme(ctx), child: child!),
     );
+    if (mounted) FocusManager.instance.primaryFocus?.unfocus();
     if (picked != null && mounted) setState(() => _date = picked);
   }
 
   Future<void> _pickTime() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     final picked = await showTimePicker(
       context: context,
       initialTime: _time ?? const TimeOfDay(hour: 10, minute: 0),
       builder: (ctx, child) => Theme(data: darkPickerTheme(ctx), child: child!),
     );
+    if (mounted) FocusManager.instance.primaryFocus?.unfocus();
     if (picked != null && mounted) setState(() => _time = picked);
   }
 
@@ -459,6 +479,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
 
   Future<void> _save() async {
     if (_saving) return; // prevent double-tap
+    FocusManager.instance.primaryFocus?.unfocus();
 
     if (_nameCtrl.text.trim().isEmpty ||
         _selectedCategories.isEmpty ||
@@ -476,6 +497,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
       if (widget.event!.seriesId != null) {
         final title = AppLocalizations.of(context)!.editEventScopeTitle;
         scope = await showEventScopeDialog(context, title: title);
+        if (mounted) FocusManager.instance.primaryFocus?.unfocus();
         if (scope == null || !mounted) return;
       }
 
@@ -537,16 +559,22 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
             ? _selectedCategories.first.name
             : '',
         categoryIds: _selectedCategories.map((c) => c.id).toList(),
+        categoryNames: _selectedCategories.map((c) => c.name).toList(),
         description: _descCtrl.text.trim(),
         date: _date!,
         time: eventTime,
         location: _locationCtrl.text.trim(),
+        cityId: _selectedCity?.id,
+        cityNameHe: _selectedCity?.nameHe,
+        cityNameEn: _selectedCity?.nameEn,
+        cityNameRu: _selectedCity?.nameRu,
         minAge: int.tryParse(_minAgeCtrl.text) ?? 0,
         maxAge: int.tryParse(_maxAgeCtrl.text) ?? 99,
         capacity: int.tryParse(_capacityCtrl.text) ?? 20,
         price: parsedPrice ?? 0,
         priceComment: commentText.isNotEmpty ? commentText : null,
         isNationwide: _isNationwide,
+        imageUrl: _imageUrl,
         seriesId: widget.event!.seriesId,
         occurrenceIndex: widget.event!.occurrenceIndex,
         recurrence: widget.event!.recurrence,
@@ -614,7 +642,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         behavior: HitTestBehavior.translucent,
         child: SafeArea(
           child: Column(
@@ -1276,6 +1304,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
   }
 
   Future<void> _openRecurrencePicker() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     await showRecurrencePicker(
       context,
       current: _recurrence,
@@ -1287,6 +1316,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
         if (mounted) setState(() => _recurrence = r);
       },
     );
+    if (mounted) FocusManager.instance.primaryFocus?.unfocus();
   }
 
   Widget _buildNationwideRow() {
@@ -1349,9 +1379,11 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
   }
 
   Future<void> _openCityPicker() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     final city = await Navigator.of(
       context,
     ).push<AppCity>(modalRoute(builder: (_) => const CityPickerScreen()));
+    if (mounted) FocusManager.instance.primaryFocus?.unfocus();
     if (city != null && mounted) {
       setState(() => _selectedCity = city);
     }

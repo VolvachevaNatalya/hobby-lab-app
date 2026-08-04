@@ -1612,41 +1612,220 @@ abstract class AppLocalizations {
   /// **'Nationwide'**
   String get nationwideLabel;
 
+  /// No description provided for @repeatSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat'**
   String get repeatSection;
+
+  /// No description provided for @doesNotRepeat.
+  ///
+  /// In en, this message translates to:
+  /// **'Does not repeat'**
   String get doesNotRepeat;
+
+  /// No description provided for @repeatPickerDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
   String get repeatPickerDaily;
+
+  /// No description provided for @repeatPickerWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
   String get repeatPickerWeekly;
+
+  /// No description provided for @repeatPickerMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
   String get repeatPickerMonthly;
+
+  /// No description provided for @repeatPickerYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
   String get repeatPickerYearly;
+
+  /// No description provided for @repeatPickerCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
   String get repeatPickerCustom;
+
+  /// No description provided for @repeatEveryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat every'**
   String get repeatEveryLabel;
+
+  /// No description provided for @repeatUnitDay.
+  ///
+  /// In en, this message translates to:
+  /// **'day'**
   String get repeatUnitDay;
+
+  /// No description provided for @repeatUnitWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'week'**
   String get repeatUnitWeek;
+
+  /// No description provided for @repeatUnitMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'month'**
   String get repeatUnitMonth;
+
+  /// No description provided for @repeatUnitYear.
+  ///
+  /// In en, this message translates to:
+  /// **'year'**
   String get repeatUnitYear;
+
+  /// No description provided for @repeatEndsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends'**
   String get repeatEndsLabel;
+
+  /// No description provided for @repeatAfterEventsOption.
+  ///
+  /// In en, this message translates to:
+  /// **'After'**
   String get repeatAfterEventsOption;
+
+  /// No description provided for @repeatOnDateOption.
+  ///
+  /// In en, this message translates to:
+  /// **'On date'**
   String get repeatOnDateOption;
+
+  /// No description provided for @repeatNeverOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Never'**
   String get repeatNeverOption;
+
+  /// No description provided for @numberOfEventsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of events'**
   String get numberOfEventsHint;
+
+  /// No description provided for @firstEventIncludedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The first event is included in the count'**
   String get firstEventIncludedNote;
+
+  /// No description provided for @repeatMinCountError.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum 2 events'**
   String get repeatMinCountError;
+
+  /// No description provided for @repeatEndDateError.
+  ///
+  /// In en, this message translates to:
+  /// **'End date must be after the start date'**
   String get repeatEndDateError;
+
+  /// No description provided for @repeatsDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeats daily'**
   String get repeatsDaily;
+
+  /// No description provided for @repeatsWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeats weekly'**
   String get repeatsWeekly;
+
+  /// No description provided for @repeatsMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeats monthly'**
   String get repeatsMonthly;
+
+  /// No description provided for @repeatsYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeats yearly'**
   String get repeatsYearly;
+
+  /// No description provided for @repeatsEveryNDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Every {n} days'**
   String repeatsEveryNDays(int n);
+
+  /// No description provided for @repeatsEveryNWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'Every {n} weeks'**
   String repeatsEveryNWeeks(int n);
+
+  /// No description provided for @repeatsEveryNMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Every {n} months'**
   String repeatsEveryNMonths(int n);
+
+  /// No description provided for @repeatsEveryNYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Every {n} years'**
   String repeatsEveryNYears(int n);
+
+  /// No description provided for @repeatCountSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} events'**
   String repeatCountSummary(int count);
+
+  /// No description provided for @repeatUntilDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Until {date}'**
   String repeatUntilDate(String date);
+
+  /// No description provided for @repeatNoEndDate.
+  ///
+  /// In en, this message translates to:
+  /// **'No end date'**
   String get repeatNoEndDate;
+
+  /// No description provided for @editEventScopeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit recurring event'**
   String get editEventScopeTitle;
+
+  /// No description provided for @deleteEventScopeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete recurring event'**
   String get deleteEventScopeTitle;
+
+  /// No description provided for @scopeOnlyThisEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Only this event'**
   String get scopeOnlyThisEvent;
+
+  /// No description provided for @scopeThisAndFollowing.
+  ///
+  /// In en, this message translates to:
+  /// **'This and following events'**
   String get scopeThisAndFollowing;
+
+  /// No description provided for @scopeEntireSeries.
+  ///
+  /// In en, this message translates to:
+  /// **'Entire series'**
   String get scopeEntireSeries;
 }
 

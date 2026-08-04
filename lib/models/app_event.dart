@@ -27,6 +27,8 @@ class AppEvent {
   final int? occurrenceIndex;
   final String? originalStartDatetime;
   final EventRecurrence? recurrence;
+  final String? imageUrl;
+  final List<String> categoryNames;
 
   const AppEvent({
     required this.id,
@@ -55,6 +57,8 @@ class AppEvent {
     this.occurrenceIndex,
     this.originalStartDatetime,
     this.recurrence,
+    this.imageUrl,
+    this.categoryNames = const [],
   });
 
   factory AppEvent.fromJson(Map<String, dynamic> json) => AppEvent(
@@ -88,7 +92,20 @@ class AppEvent {
     recurrence: json['recurrence'] != null
         ? EventRecurrence.fromJson(json['recurrence'] as Map<String, dynamic>)
         : null,
+    imageUrl: json['image_url']?.toString(),
+    categoryNames: _parseCategoryNames(json),
   );
+}
+
+List<String> _parseCategoryNames(Map<String, dynamic> json) {
+  final cats = json['categories'];
+  if (cats is List && cats.isNotEmpty) {
+    return cats
+        .map((c) => (c as Map<String, dynamic>)['name']?.toString())
+        .whereType<String>()
+        .toList();
+  }
+  return const [];
 }
 
 List<String> _parseCategoryIds(Map<String, dynamic> json) {

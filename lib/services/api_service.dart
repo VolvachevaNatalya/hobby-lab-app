@@ -813,7 +813,7 @@ class ApiService {
   static Future<List<Map<String, dynamic>>> getOrgEvents(String orgId) async {
     final uri = Uri.parse(
       '$_baseUrl/events/',
-    ).replace(queryParameters: {'organization_id': orgId});
+    ).replace(queryParameters: {'organization_id': orgId, 'include_past': 'true'});
     final response = await http.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List<dynamic>)

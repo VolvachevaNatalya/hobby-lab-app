@@ -868,22 +868,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get repeatsYearly => 'Repeats yearly';
 
   @override
-  String repeatsEveryNDays(int n) => 'Every $n days';
+  String repeatsEveryNDays(int n) {
+    return 'Every $n days';
+  }
 
   @override
-  String repeatsEveryNWeeks(int n) => 'Every $n weeks';
+  String repeatsEveryNWeeks(int n) {
+    return 'Every $n weeks';
+  }
 
   @override
-  String repeatsEveryNMonths(int n) => 'Every $n months';
+  String repeatsEveryNMonths(int n) {
+    return 'Every $n months';
+  }
 
   @override
-  String repeatsEveryNYears(int n) => 'Every $n years';
+  String repeatsEveryNYears(int n) {
+    return 'Every $n years';
+  }
 
   @override
-  String repeatCountSummary(int count) => '$count events';
+  String repeatCountSummary(int count) {
+    return '$count events';
+  }
 
   @override
-  String repeatUntilDate(String date) => 'Until $date';
+  String repeatUntilDate(String date) {
+    return 'Until $date';
+  }
 
   @override
   String get repeatNoEndDate => 'No end date';

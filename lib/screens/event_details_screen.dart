@@ -263,6 +263,45 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   // ── Hero ─────────────────────────────────────────────────────────────────────
 
   Widget _buildHero(AppEvent event) {
+    final imageUrl = event.imageUrl;
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      return SizedBox(
+        height: 250,
+        width: double.infinity,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => _buildHeroGradient(),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: 80,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.45),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return _buildHeroGradient();
+  }
+
+  Widget _buildHeroGradient() {
     return Container(
       height: 250,
       width: double.infinity,
@@ -359,22 +398,46 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   Widget _buildBadgeRow(AppEvent event) {
     return Row(
       children: [
-        if (event.badge.isNotEmpty)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-            decoration: BoxDecoration(
-              color: AppColors.purple.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: AppColors.purple.withValues(alpha: 0.3),
+        ...event.categoryNames.take(2).map(
+          (name) => Padding(
+            padding: const EdgeInsets.only(right: 6),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+              decoration: BoxDecoration(
+                color: AppColors.purple.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: AppColors.purple.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Text(
+                name,
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.purpleLight,
+                ),
               ),
             ),
-            child: Text(
-              event.badge,
-              style: GoogleFonts.poppins(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: AppColors.purpleLight,
+          ),
+        ),
+        if (event.categoryNames.length > 2)
+          Padding(
+            padding: const EdgeInsets.only(right: 6),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: AppColors.purple.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppColors.purple.withValues(alpha: 0.2)),
+              ),
+              child: Text(
+                '+${event.categoryNames.length - 2}',
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.purple,
+                ),
               ),
             ),
           ),

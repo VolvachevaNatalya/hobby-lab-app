@@ -871,22 +871,34 @@ class AppLocalizationsRu extends AppLocalizations {
   String get repeatsYearly => 'Повторяется ежегодно';
 
   @override
-  String repeatsEveryNDays(int n) => 'Каждые $n дней';
+  String repeatsEveryNDays(int n) {
+    return 'Каждые $n дней';
+  }
 
   @override
-  String repeatsEveryNWeeks(int n) => 'Каждые $n недель';
+  String repeatsEveryNWeeks(int n) {
+    return 'Каждые $n недель';
+  }
 
   @override
-  String repeatsEveryNMonths(int n) => 'Каждые $n месяцев';
+  String repeatsEveryNMonths(int n) {
+    return 'Каждые $n месяцев';
+  }
 
   @override
-  String repeatsEveryNYears(int n) => 'Каждые $n лет';
+  String repeatsEveryNYears(int n) {
+    return 'Каждые $n лет';
+  }
 
   @override
-  String repeatCountSummary(int count) => '$count событий';
+  String repeatCountSummary(int count) {
+    return '$count событий';
+  }
 
   @override
-  String repeatUntilDate(String date) => 'До $date';
+  String repeatUntilDate(String date) {
+    return 'До $date';
+  }
 
   @override
   String get repeatNoEndDate => 'Без даты окончания';
