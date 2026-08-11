@@ -381,5 +381,7 @@
   "scopeThisAndFollowing": "This and following events",
   "scopeEntireSeries": "Entire series",
   "upcomingEventsTab": "Upcoming",
-  "pastEventsTab": "Past"
+  "pastEventsTab": "Past",
+  "duplicateEvent": "Duplicate event",
+  "duplicateEventTitle": "Duplicate Event"
 }

@@ -1061,6 +1061,7 @@ class ApiService {
     String? imageUrl,
     String? scope,
     RecurrenceInput? recurrence,
+    bool removeRecurrence = false,
   }) async {
     final headers = await _authHeaders();
     final body = <String, dynamic>{};
@@ -1081,7 +1082,11 @@ class ApiService {
     if (price != null) body['price'] = price;
     if (priceComment != null) body['price_comment'] = priceComment;
     if (imageUrl != null && imageUrl.isNotEmpty) body['image_url'] = imageUrl;
-    if (recurrence != null) body['recurrence'] = recurrence.toJson();
+    if (recurrence != null) {
+      body['recurrence'] = recurrence.toJson();
+    } else if (removeRecurrence) {
+      body['recurrence'] = null; // explicit null tells backend to remove recurrence
+    }
     final uri = Uri.parse(
       '$_baseUrl/events/$eventId',
     ).replace(queryParameters: scope != null ? {'scope': scope} : null);

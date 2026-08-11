@@ -381,5 +381,7 @@
   "scopeThisAndFollowing": "זה ואירועים הבאים",
   "scopeEntireSeries": "כל הסדרה",
   "upcomingEventsTab": "קרובים",
-  "pastEventsTab": "עבר"
+  "pastEventsTab": "עבר",
+  "duplicateEvent": "שכפול אירוע",
+  "duplicateEventTitle": "שכפול אירוע"
 }

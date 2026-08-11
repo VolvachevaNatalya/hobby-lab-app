@@ -1839,6 +1839,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Past'**
   String get pastEventsTab;
+
+  /// No description provided for @duplicateEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate event'**
+  String get duplicateEvent;
+
+  /// No description provided for @duplicateEventTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate Event'**
+  String get duplicateEventTitle;
 }
 
 class _AppLocalizationsDelegate

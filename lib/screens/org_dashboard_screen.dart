@@ -316,6 +316,19 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
     }
   }
 
+  Future<void> _goDuplicateEvent(OrgEvent source) async {
+    await Navigator.of(context).push(
+      slideRoute(
+        builder: (_) => OrgEventFormScreen(
+          orgId: _orgId,
+          event: source,
+          isDuplicate: true,
+        ),
+      ),
+    );
+    if (mounted) _loadData();
+  }
+
   Future<void> _deleteClass(OrgClass cls) async {
     final id = int.tryParse(cls.id);
     if (id == null) return;
@@ -421,6 +434,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
             onAdd: _goAddEvent,
             onEdit: _goEditEvent,
             onDelete: _deleteEvent,
+            onDuplicate: _goDuplicateEvent,
           ),
           const _MessagesTab(),
           _ProfileTab(
@@ -1578,12 +1592,14 @@ class _EventsTab extends StatefulWidget {
   final VoidCallback onAdd;
   final void Function(OrgEvent) onEdit;
   final void Function(OrgEvent) onDelete;
+  final void Function(OrgEvent) onDuplicate;
 
   const _EventsTab({
     required this.events,
     required this.onAdd,
     required this.onEdit,
     required this.onDelete,
+    required this.onDuplicate,
   });
 
   @override
@@ -1638,6 +1654,7 @@ class _EventsTabState extends State<_EventsTab> {
                       event: shown[i],
                       onEdit: () => widget.onEdit(shown[i]),
                       onDelete: () => widget.onDelete(shown[i]),
+                      onDuplicate: () => widget.onDuplicate(shown[i]),
                     ),
                   ),
           ),
@@ -1715,11 +1732,13 @@ class _EventCard extends StatelessWidget {
   final OrgEvent event;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final VoidCallback onDuplicate;
 
   const _EventCard({
     required this.event,
     required this.onEdit,
     required this.onDelete,
+    required this.onDuplicate,
   });
 
   @override
@@ -1771,7 +1790,7 @@ class _EventCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    _ActionMenu(onEdit: onEdit, onDelete: onDelete),
+                    _ActionMenu(onEdit: onEdit, onDelete: onDelete, onDuplicate: onDuplicate),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -2442,11 +2461,13 @@ class _TabHeader extends StatelessWidget {
 class _ActionMenu extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final VoidCallback? onDuplicate;
 
-  const _ActionMenu({required this.onEdit, required this.onDelete});
+  const _ActionMenu({required this.onEdit, required this.onDelete, this.onDuplicate});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return PopupMenuButton<String>(
       icon: const Icon(
         Icons.more_vert_rounded,
@@ -2460,6 +2481,7 @@ class _ActionMenu extends StatelessWidget {
       ),
       onSelected: (v) {
         if (v == 'edit') onEdit();
+        if (v == 'duplicate') onDuplicate?.call();
         if (v == 'delete') onDelete();
       },
       itemBuilder: (_) => [
@@ -2483,6 +2505,27 @@ class _ActionMenu extends StatelessWidget {
             ],
           ),
         ),
+        if (onDuplicate != null)
+          PopupMenuItem(
+            value: 'duplicate',
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.copy_rounded,
+                  size: 16,
+                  color: AppColors.textSecondary,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  l10n.duplicateEvent,
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
         PopupMenuItem(
           value: 'delete',
           child: Row(

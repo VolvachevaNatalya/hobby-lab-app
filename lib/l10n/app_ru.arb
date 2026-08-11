@@ -381,5 +381,7 @@
   "scopeThisAndFollowing": "Это и следующие события",
   "scopeEntireSeries": "Вся серия",
   "upcomingEventsTab": "Предстоящие",
-  "pastEventsTab": "Прошедшие"
+  "pastEventsTab": "Прошедшие",
+  "duplicateEvent": "Дублировать событие",
+  "duplicateEventTitle": "Дублировать событие"
 }

@@ -907,4 +907,10 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get pastEventsTab => 'עבר';
+
+  @override
+  String get duplicateEvent => 'שכפול אירוע';
+
+  @override
+  String get duplicateEventTitle => 'שכפול אירוע';
 }

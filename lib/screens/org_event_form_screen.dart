@@ -19,12 +19,14 @@ class OrgEventFormScreen extends StatefulWidget {
   final OrgEvent? event;
   final String? orgId;
   final AppCity? initialCity;
+  final bool isDuplicate;
 
   const OrgEventFormScreen({
     super.key,
     this.event,
     this.orgId,
     this.initialCity,
+    this.isDuplicate = false,
   });
 
   @override
@@ -62,7 +64,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
   AppCity? _selectedCity;
   RecurrenceInput? _recurrence;
 
-  bool get _isEdit => widget.event != null;
+  bool get _isEdit => widget.event != null && !widget.isDuplicate;
 
   @override
   void initState() {
@@ -107,6 +109,10 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
           totalCount: r.totalCount,
           endDate: r.endDate,
         );
+      }
+      if (widget.isDuplicate) {
+        _date = null;
+        _time = null;
       }
     } else {
       _selectedCity = widget.initialCity;
@@ -517,6 +523,8 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
           .map((c) => int.tryParse(c.id))
           .whereType<int>()
           .toList();
+      // True when the user cleared recurrence on an event that previously had one
+      final removeRecurrence = widget.event!.seriesId != null && _recurrence == null;
       if (id != null) {
         try {
           await ApiService.updateEvent(
@@ -540,6 +548,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
             imageUrl: _imageUrl,
             scope: scope,
             recurrence: scope != 'single' ? _recurrence : null,
+            removeRecurrence: removeRecurrence,
           );
         } catch (_) {}
       }
@@ -575,9 +584,10 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
         priceComment: commentText.isNotEmpty ? commentText : null,
         isNationwide: _isNationwide,
         imageUrl: _imageUrl,
-        seriesId: widget.event!.seriesId,
-        occurrenceIndex: widget.event!.occurrenceIndex,
-        recurrence: widget.event!.recurrence,
+        // Clear series metadata when recurrence was removed for scope=single
+        seriesId: removeRecurrence ? null : widget.event!.seriesId,
+        occurrenceIndex: removeRecurrence ? null : widget.event!.occurrenceIndex,
+        recurrence: removeRecurrence ? null : widget.event!.recurrence,
       );
       Navigator.of(context).pop(event);
       return;
@@ -825,7 +835,9 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
           ),
           const SizedBox(width: 12),
           Text(
-            _isEdit ? 'Edit Event' : 'New Event',
+            widget.isDuplicate
+                ? AppLocalizations.of(context)!.duplicateEventTitle
+                : (_isEdit ? 'Edit Event' : 'New Event'),
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w700,

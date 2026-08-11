@@ -923,4 +923,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get pastEventsTab => 'Прошедшие';
+
+  @override
+  String get duplicateEvent => 'Дублировать событие';
+
+  @override
+  String get duplicateEventTitle => 'Дублировать событие';
 }

@@ -920,4 +920,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pastEventsTab => 'Past';
+
+  @override
+  String get duplicateEvent => 'Duplicate event';
+
+  @override
+  String get duplicateEventTitle => 'Duplicate Event';
 }
