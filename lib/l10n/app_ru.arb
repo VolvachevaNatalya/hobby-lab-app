@@ -383,5 +383,9 @@
   "upcomingEventsTab": "Предстоящие",
   "pastEventsTab": "Прошедшие",
   "duplicateEvent": "Дублировать событие",
-  "duplicateEventTitle": "Дублировать событие"
+  "duplicateEventTitle": "Дублировать событие",
+  "viewSchedule": "Посмотреть расписание",
+  "scheduleTitle": "Расписание",
+  "noUpcomingOccurrences": "Нет предстоящих событий",
+  "noOccurrences": "Нет событий в этой серии"
 }

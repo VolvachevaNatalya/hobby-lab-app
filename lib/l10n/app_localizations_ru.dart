@@ -929,4 +929,16 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get duplicateEventTitle => 'Дублировать событие';
+
+  @override
+  String get viewSchedule => 'Посмотреть расписание';
+
+  @override
+  String get scheduleTitle => 'Расписание';
+
+  @override
+  String get noUpcomingOccurrences => 'Нет предстоящих событий';
+
+  @override
+  String get noOccurrences => 'Нет событий в этой серии';
 }

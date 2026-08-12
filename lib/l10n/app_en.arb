@@ -383,5 +383,9 @@
   "upcomingEventsTab": "Upcoming",
   "pastEventsTab": "Past",
   "duplicateEvent": "Duplicate event",
-  "duplicateEventTitle": "Duplicate Event"
+  "duplicateEventTitle": "Duplicate Event",
+  "viewSchedule": "View schedule",
+  "scheduleTitle": "Schedule",
+  "noUpcomingOccurrences": "No upcoming occurrences",
+  "noOccurrences": "No events in this series"
 }

@@ -10,6 +10,7 @@ import '../widgets/event_scope_dialog.dart';
 import '../models/app_category.dart';
 import 'org_class_form_screen.dart';
 import 'org_event_form_screen.dart';
+import 'event_schedule_screen.dart';
 import 'edit_organization_screen.dart';
 import 'notifications_settings_screen.dart';
 import 'change_password_screen.dart';
@@ -431,6 +432,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
           ),
           _EventsTab(
             events: _events,
+            orgId: _orgId,
             onAdd: _goAddEvent,
             onEdit: _goEditEvent,
             onDelete: _deleteEvent,
@@ -1589,6 +1591,7 @@ class _ClassExpandableCardState extends State<_ClassExpandableCard> {
 
 class _EventsTab extends StatefulWidget {
   final List<OrgEvent> events;
+  final String orgId;
   final VoidCallback onAdd;
   final void Function(OrgEvent) onEdit;
   final void Function(OrgEvent) onDelete;
@@ -1596,6 +1599,7 @@ class _EventsTab extends StatefulWidget {
 
   const _EventsTab({
     required this.events,
+    required this.orgId,
     required this.onAdd,
     required this.onEdit,
     required this.onDelete,
@@ -1650,11 +1654,22 @@ class _EventsTabState extends State<_EventsTab> {
                 : ListView.builder(
                     padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
                     itemCount: shown.length,
-                    itemBuilder: (_, i) => _EventCard(
+                    itemBuilder: (context, i) => _EventCard(
                       event: shown[i],
                       onEdit: () => widget.onEdit(shown[i]),
                       onDelete: () => widget.onDelete(shown[i]),
                       onDuplicate: () => widget.onDuplicate(shown[i]),
+                      onViewSchedule: shown[i].seriesId != null
+                          ? () => Navigator.of(context).push(
+                                slideRoute(
+                                  builder: (_) => EventScheduleScreen(
+                                    seriesId: shown[i].seriesId!,
+                                    organizationId: int.tryParse(widget.orgId),
+                                    includePast: true,
+                                  ),
+                                ),
+                              )
+                          : null,
                     ),
                   ),
           ),
@@ -1733,12 +1748,14 @@ class _EventCard extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback onDelete;
   final VoidCallback onDuplicate;
+  final VoidCallback? onViewSchedule;
 
   const _EventCard({
     required this.event,
     required this.onEdit,
     required this.onDelete,
     required this.onDuplicate,
+    this.onViewSchedule,
   });
 
   @override
@@ -1790,7 +1807,12 @@ class _EventCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    _ActionMenu(onEdit: onEdit, onDelete: onDelete, onDuplicate: onDuplicate),
+                    _ActionMenu(
+                      onEdit: onEdit,
+                      onDelete: onDelete,
+                      onDuplicate: onDuplicate,
+                      onViewSchedule: onViewSchedule,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -2462,8 +2484,14 @@ class _ActionMenu extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback onDelete;
   final VoidCallback? onDuplicate;
+  final VoidCallback? onViewSchedule;
 
-  const _ActionMenu({required this.onEdit, required this.onDelete, this.onDuplicate});
+  const _ActionMenu({
+    required this.onEdit,
+    required this.onDelete,
+    this.onDuplicate,
+    this.onViewSchedule,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -2482,6 +2510,7 @@ class _ActionMenu extends StatelessWidget {
       onSelected: (v) {
         if (v == 'edit') onEdit();
         if (v == 'duplicate') onDuplicate?.call();
+        if (v == 'schedule') onViewSchedule?.call();
         if (v == 'delete') onDelete();
       },
       itemBuilder: (_) => [
@@ -2518,6 +2547,27 @@ class _ActionMenu extends StatelessWidget {
                 const SizedBox(width: 10),
                 Text(
                   l10n.duplicateEvent,
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        if (onViewSchedule != null)
+          PopupMenuItem(
+            value: 'schedule',
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.view_list_rounded,
+                  size: 16,
+                  color: AppColors.textSecondary,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  l10n.viewSchedule,
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     color: AppColors.textPrimary,

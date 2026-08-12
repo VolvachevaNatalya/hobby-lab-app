@@ -9,6 +9,7 @@ import '../services/saved_activities.dart';
 import '../l10n/app_localizations.dart';
 import 'chat_screen.dart';
 import 'org_profile_screen.dart';
+import 'event_schedule_screen.dart';
 import '../routing/transitions.dart';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -551,55 +552,113 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     if (items.isEmpty) return const SizedBox.shrink();
 
     return Column(
-      children: items
-          .map(
-            (item) => Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              padding: const EdgeInsets.all(14),
+      children: [
+        ...items.map(
+          (item) => Container(
+            margin: const EdgeInsets.only(bottom: 10),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceElevated,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: AppColors.divider),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: item.color.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(item.icon, color: item.color, size: 20),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.label,
+                        style: GoogleFonts.poppins(
+                          fontSize: 11,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                      Text(
+                        item.value,
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (event.seriesId != null && event.organizationId != null)
+          _buildViewScheduleButton(event, l10n),
+      ],
+    );
+  }
+
+  Widget _buildViewScheduleButton(AppEvent event, AppLocalizations l10n) {
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(
+        slideRoute(
+          builder: (_) => EventScheduleScreen(
+            seriesId: event.seriesId!,
+            organizationId: event.organizationId,
+            colorStart: widget.colorStart,
+            colorEnd: widget.colorEnd,
+          ),
+        ),
+      ),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: AppColors.purple.withValues(alpha: 0.07),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.purple.withValues(alpha: 0.18)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
-                color: AppColors.surfaceElevated,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.divider),
+                gradient: AppColors.brandGradient,
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: item.color.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(item.icon, color: item.color, size: 20),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.label,
-                          style: GoogleFonts.poppins(
-                            fontSize: 11,
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                        Text(
-                          item.value,
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              child: const Icon(
+                Icons.view_list_rounded,
+                color: Colors.white,
+                size: 20,
               ),
             ),
-          )
-          .toList(),
+            const SizedBox(width: 12),
+            Text(
+              l10n.viewSchedule,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.purpleLight,
+              ),
+            ),
+            const Spacer(),
+            const Icon(
+              Icons.chevron_right_rounded,
+              size: 18,
+              color: AppColors.purple,
+            ),
+          ],
+        ),
+      ),
     );
   }
 

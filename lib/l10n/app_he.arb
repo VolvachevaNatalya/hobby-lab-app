@@ -383,5 +383,9 @@
   "upcomingEventsTab": "קרובים",
   "pastEventsTab": "עבר",
   "duplicateEvent": "שכפול אירוע",
-  "duplicateEventTitle": "שכפול אירוע"
+  "duplicateEventTitle": "שכפול אירוע",
+  "viewSchedule": "ראה לוח זמנים",
+  "scheduleTitle": "לוח זמנים",
+  "noUpcomingOccurrences": "אין מועדים קרובים",
+  "noOccurrences": "אין אירועים בסדרה זו"
 }

@@ -836,6 +836,24 @@ class ApiService {
     throw Exception('Failed to load org events');
   }
 
+  static Future<List<Map<String, dynamic>>> getSeriesOccurrences(
+    int seriesId, {
+    int? organizationId,
+    bool includePast = false,
+  }) async {
+    final params = <String, String>{'series_id': seriesId.toString()};
+    if (organizationId != null) params['organization_id'] = organizationId.toString();
+    if (includePast) params['include_past'] = 'true';
+    final uri = Uri.parse('$_baseUrl/events/').replace(queryParameters: params);
+    final response = await http.get(uri, headers: await _authHeaders());
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List<dynamic>)
+          .map((e) => e as Map<String, dynamic>)
+          .toList();
+    }
+    throw Exception('Failed to load series occurrences');
+  }
+
   static Future<List<Map<String, dynamic>>> getAllGroups() async {
     final response = await http.get(
       Uri.parse('$_baseUrl/groups/'),

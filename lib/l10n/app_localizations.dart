@@ -1851,6 +1851,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Duplicate Event'**
   String get duplicateEventTitle;
+
+  /// No description provided for @viewSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'View schedule'**
+  String get viewSchedule;
+
+  /// No description provided for @scheduleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule'**
+  String get scheduleTitle;
+
+  /// No description provided for @noUpcomingOccurrences.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming occurrences'**
+  String get noUpcomingOccurrences;
+
+  /// No description provided for @noOccurrences.
+  ///
+  /// In en, this message translates to:
+  /// **'No events in this series'**
+  String get noOccurrences;
 }
 
 class _AppLocalizationsDelegate

@@ -926,4 +926,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get duplicateEventTitle => 'Duplicate Event';
+
+  @override
+  String get viewSchedule => 'View schedule';
+
+  @override
+  String get scheduleTitle => 'Schedule';
+
+  @override
+  String get noUpcomingOccurrences => 'No upcoming occurrences';
+
+  @override
+  String get noOccurrences => 'No events in this series';
 }

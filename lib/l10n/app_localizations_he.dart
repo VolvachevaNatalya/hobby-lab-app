@@ -913,4 +913,16 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get duplicateEventTitle => 'שכפול אירוע';
+
+  @override
+  String get viewSchedule => 'ראה לוח זמנים';
+
+  @override
+  String get scheduleTitle => 'לוח זמנים';
+
+  @override
+  String get noUpcomingOccurrences => 'אין מועדים קרובים';
+
+  @override
+  String get noOccurrences => 'אין אירועים בסדרה זו';
 }
