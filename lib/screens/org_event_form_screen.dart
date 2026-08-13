@@ -498,9 +498,12 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
 
     // Edit mode: persist to API then return updated event to parent
     if (_isEdit) {
-      // Show scope dialog for recurring events before saving
+      // Removing recurrence converts this occurrence to standalone and deletes all siblings.
+      // No scope dialog needed — the operation has a single unambiguous meaning.
+      final removeRecurrence = widget.event!.seriesId != null && _recurrence == null;
+
       String? scope;
-      if (widget.event!.seriesId != null) {
+      if (widget.event!.seriesId != null && !removeRecurrence) {
         final title = AppLocalizations.of(context)!.editEventScopeTitle;
         scope = await showEventScopeDialog(context, title: title);
         if (mounted) FocusManager.instance.primaryFocus?.unfocus();
@@ -523,8 +526,6 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
           .map((c) => int.tryParse(c.id))
           .whereType<int>()
           .toList();
-      // True when the user cleared recurrence on an event that previously had one
-      final removeRecurrence = widget.event!.seriesId != null && _recurrence == null;
       if (id != null) {
         try {
           await ApiService.updateEvent(
@@ -555,8 +556,9 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
       if (!mounted) return;
       setState(() => _saving = false);
 
-      // future/series scope: parent will reload the full list
-      if (scope != null && scope != 'single') {
+      // Removing recurrence deletes siblings — parent must reload the full list.
+      // Same for future/series scope edits.
+      if (removeRecurrence || (scope != null && scope != 'single')) {
         Navigator.of(context).pop(null);
         return;
       }
