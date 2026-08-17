@@ -305,7 +305,7 @@ class _InviteCodeCard extends StatelessWidget {
             children: [
               _InfoChip(
                 icon: Icons.person_rounded,
-                label: code.defaultRole.toUpperCase(),
+                label: code.defaultRole == 'admin' ? l10n.roleAdmin : l10n.roleMember,
                 color: AppColors.purple,
               ),
               _InfoChip(
@@ -840,7 +840,7 @@ class _ErrorView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'Retry',
+                  AppLocalizations.of(context)!.retryBtn,
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,

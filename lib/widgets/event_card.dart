@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 import '../models/app_event.dart';
 import '../services/api_service.dart';
 import '../services/saved_activities.dart';
@@ -90,7 +91,15 @@ class _EventCardState extends State<EventCard> {
   Widget build(BuildContext context) {
     final event = widget.event;
     final colors = eventPalette(event.id);
-    final dateStr = _fmtDate(event.startDatetime);
+    final l10n = AppLocalizations.of(context)!;
+    final months = [
+      '',
+      l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+      l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+      l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+      l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
+    ];
+    final dateStr = _fmtDate(event.startDatetime, months);
     const String? categoryLabel = null;
 
     return GestureDetector(
@@ -196,14 +205,10 @@ class _EventCardState extends State<EventCard> {
     );
   }
 
-  static String? _fmtDate(String? iso) {
+  static String? _fmtDate(String? iso, List<String> months) {
     if (iso == null) return null;
     final dt = DateTime.tryParse(iso);
     if (dt == null) return null;
-    const months = [
-      '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
     return '${dt.day} ${months[dt.month]} ${dt.year}';
   }
 }

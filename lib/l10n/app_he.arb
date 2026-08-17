@@ -36,12 +36,12 @@
 
   "tagline": "גלה. למד. צמח.",
 
-  "onboarding1Title": "גלה את הפעילויות הטובות ביותר",
-  "onboarding1Subtitle": "גלה מאות שיעורים, קייטנות וסדנאות לילדיך הקרובים אליך",
-  "onboarding2Title": "הזמנה קלה",
-  "onboarding2Subtitle": "הזמן את הפעילויות האהובות עליך בכמה הקשות ונהל את כל לוחות הזמנים שלך במקום אחד",
-  "onboarding3Title": "הישאר מחובר",
-  "onboarding3Subtitle": "קבל עדכונים, תזכורות ותקשר עם מארגנים ישירות דרך האפליקציה",
+  "onboarding1Title": "גלה פעילויות",
+  "onboarding1Subtitle": "מצא את השיעורים, הקייטנות והסדנאות הטובות ביותר\nלילדיך בקרבתך",
+  "onboarding2Title": "התחבר עם מארגנים",
+  "onboarding2Subtitle": "שלח הודעות ישירות למארגנים, שאל שאלות\nוקבל תגובות מהירות",
+  "onboarding3Title": "שמור וארגן",
+  "onboarding3Subtitle": "סמן מועדפים, עקוב אחר לוחות הזמנים\nואל תחמיץ הרשמה",
 
   "chooseLanguage": "בחר\nשפה",
   "languageSubtitle": "בחר את השפה המועדפת עליך להמשיך",
@@ -387,5 +387,327 @@
   "viewSchedule": "ראה לוח זמנים",
   "scheduleTitle": "לוח זמנים",
   "noUpcomingOccurrences": "אין מועדים קרובים",
-  "noOccurrences": "אין אירועים בסדרה זו"
+  "noOccurrences": "אין אירועים בסדרה זו",
+
+  "navDashboard": "לוח בקרה",
+  "navClasses": "שיעורים",
+  "navEvents": "אירועים",
+  "orgDashboardSubtitle": "לוח בקרת ארגון",
+  "myOrganizationFallback": "הארגון שלי",
+  "statGroups": "קבוצות",
+  "statStudents": "תלמידים",
+  "myClasses": "השיעורים שלי",
+  "myEvents": "האירועים שלי",
+  "recentMessages": "הודעות אחרונות",
+  "btnAdd": "+ הוסף",
+  "noClassesHint": "אין שיעורים עדיין. הקש + הוסף ליצירת שיעור.",
+  "noEventsHint": "אין אירועים עדיין. הקש + הוסף ליצירת אירוע.",
+  "noRecentMessages": "אין הודעות עדיין.",
+  "btnManage": "נהל",
+  "btnNewClass": "שיעור חדש",
+  "noClassesYetTitle": "אין שיעורים עדיין",
+  "noClassesYetBody": "אין שיעורים עדיין. הוסף את השיעור הראשון שלך!",
+  "agesLabel": "גיל",
+  "perMonthSuffix": "/חו׳",
+  "studentsLabel": "תלמידים",
+  "noGroupsYet": "לא נוספו קבוצות עדיין.",
+  "btnNewEvent": "אירוע חדש",
+  "noUpcomingEventsYet": "אין אירועים קרובים עדיין.",
+  "noPastEvents": "אין אירועים קודמים.",
+  "noMessagesYetBody": "הודעות מהלקוחות שלך יופיעו כאן",
+  "verifiedOrganization": "ארגון מאומת",
+  "businessSection": "עסק",
+  "billingPayments": "חיוב ותשלומים",
+  "analyticsLabel": "אנליטיקה",
+  "supportSection": "תמיכה",
+  "termsPrivacy": "תנאים ופרטיות",
+  "exitDashboard": "יציאה מלוח הבקרה",
+  "comingSoon": "תכונה זו תגיע בקרוב.",
+  "btnEdit": "עריכה",
+  "failedToDeleteClass": "מחיקת השיעור נכשלה. נסה שוב.",
+  "failedToDeleteEvent": "מחיקת האירוע נכשלה. נסה שוב.",
+  "groupCount": "{count, plural, =1{קבוצה 1} other{{count} קבוצות}}",
+  "@groupCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "eventSpotsCount": "{count, plural, =1{מקום 1} other{{count} מקומות}}",
+  "@eventSpotsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "btnSeeAll": "הצג הכל",
+  "tapToChange": "הקש לשינוי",
+  "failedToUploadImage": "העלאת התמונה נכשלה",
+  "btnDone": "סיום",
+  "editClass": "עריכת שיעור",
+  "uploadClassImage": "העלה תמונה לשיעור",
+  "classDetailsSection": "פרטי השיעור",
+  "classNameHint": "שם השיעור",
+  "descriptionHint": "תיאור",
+  "errorSelectCategory": "אנא בחר לפחות קטגוריה אחת",
+  "categoriesLabel": "קטגוריות",
+  "addGroup": "הוסף קבוצה",
+  "createClass": "צור שיעור",
+  "classCreatedSuccess": "השיעור נוצר בהצלחה",
+  "failedToUpdateClass": "עדכון השיעור נכשל",
+  "failedToCreateClass": "יצירת השיעור נכשלה. נסה שוב.",
+  "editEvent": "עריכת אירוע",
+  "uploadEventImage": "העלה תמונה לאירוע",
+  "eventDetailsSection": "פרטי האירוע",
+  "eventNameHint": "שם האירוע",
+  "dateTimeSection": "תאריך ושעה",
+  "selectDate": "בחר תאריך",
+  "selectTime": "בחר שעה",
+  "locationSection": "מיקום",
+  "addressHint": "כתובת / שם המקום",
+  "cityHint": "עיר",
+  "participantsSection": "משתתפים",
+  "minAgeHint": "גיל מינימלי",
+  "maxAgeHint": "גיל מקסימלי",
+  "maxCapacityHint": "מקסימום משתתפים",
+  "priceHint": "מחיר (₪) — השאר ריק אם חינם",
+  "priceCommentHint": "הערה למחיר (אופציונלי)",
+  "createEvent": "צור אירוע",
+  "eventCreatedSuccess": "האירוע נוצר בהצלחה",
+  "failedToCreateEvent": "יצירת האירוע נכשלה. נסה שוב.",
+  "editGroup": "עריכת קבוצה",
+  "newGroup": "קבוצה חדשה",
+  "groupDetailsSection": "פרטי הקבוצה",
+  "groupNameHint": "שם הקבוצה (לדוגמה: U10)",
+  "ageRangeSection": "טווח גיל",
+  "capacityPriceSection": "קיבולת ומחיר",
+  "maxStudentsHint": "מקסימום תלמידים",
+  "pricePerMonthHint": "מחיר לחודש (₪)",
+  "timeSlotCount": "{count, plural, =1{חריץ זמן 1} other{{count} חריצי זמן}}",
+  "@timeSlotCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "addSchedule": "הוסף לוח זמנים",
+  "groupCreatedSuccess": "הקבוצה נוצרה בהצלחה",
+  "failedToCreateGroup": "יצירת הקבוצה נכשלה. נסה שוב.",
+  "addAnotherTimeSlot": "הוסף עוד חריץ זמן",
+  "saveSchedule": "שמור לוח זמנים",
+  "slotLabel": "חריץ {number}",
+  "@slotLabel": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+  "dayOfWeekLabel": "יום בשבוע",
+  "timeLabel": "שעה",
+  "scheduleSavedSuccess": "לוח הזמנים נשמר בהצלחה",
+  "failedToSaveSchedule": "שמירת לוח הזמנים נכשלה. נסה שוב.",
+  "daySunAbbrev": "א׳",
+  "dayMonAbbrev": "ב׳",
+  "dayTueAbbrev": "ג׳",
+  "dayWedAbbrev": "ד׳",
+  "dayThuAbbrev": "ה׳",
+  "dayFriAbbrev": "ו׳",
+  "daySatAbbrev": "שב׳",
+  "editProfile": "עריכת פרופיל",
+  "orgNameLabel": "שם הארגון",
+  "orgPhoneHint": "טלפון",
+  "orgEmailHint": "אימייל",
+  "websiteHint": "אתר",
+  "addressLabel": "כתובת",
+  "socialMediaSection": "רשתות חברתיות",
+  "fieldInstagram": "אינסטגרם",
+  "fieldFacebook": "פייסבוק",
+  "mediaSection": "מדיה",
+  "logoLabel": "לוגו",
+  "bannerLabel": "באנר",
+  "uploadingLabel": "מעלה...",
+  "imageSelectedLabel": "תמונה נבחרה",
+  "tapToReplace": "הקש להחלפה",
+  "chooseFromGallery": "בחר מהגלריה",
+  "selectCity": "בחר עיר",
+  "trialLessonAvailable": "שיעור ניסיון זמין",
+
+  "btnNext": "הבא",
+  "letsConnect": "בואו נתחיל",
+
+  "typeMessageHint": "הקלד הודעה...",
+  "failedToSendMessage": "שליחת ההודעה נכשלה. אנא נסה שוב.",
+
+  "nearbyActivities": "פעילויות קרובות",
+  "allCategories": "כל הקטגוריות",
+  "mapActivitiesCount": "{count, plural, =1{פעילות אחת} other{{count} פעילויות}}",
+  "@mapActivitiesCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "notifNewMessageTitle": "הודעה חדשה",
+  "notifNewMessageBody": "יש לך הודעה חדשה",
+
+  "notificationScreenTitle": "הודעה",
+  "messageLabel": "הודעה",
+  "relatedActivityLabel": "פעילות קשורה",
+  "viewActivityBtn": "צפה בפעילות",
+
+  "notifAppointmentsTitle": "התראות לפגישות",
+  "notifAppointmentsSubtitle": "תזכורות על שיעורים והזמנות הקרובים",
+  "notifChatTitle": "התראות צ'אט",
+  "notifChatSubtitle": "הודעות חדשות מהמארגנים",
+  "notifActivityTitle": "עדכוני פעילות",
+  "notifActivitySubtitle": "שינויים בפעילויות שהזמנת או שמרת",
+  "notifOffersTitle": "הצעות ומבצעים",
+  "notifOffersSubtitle": "עסקאות בזק, הנחות ואירועים מיוחדים",
+  "notifChooseDesc": "בחר אילו התראות אתה רוצה לקבל",
+
+  "imageUnavailable": "תמונה לא זמינה",
+
+  "reviewsTitle": "ביקורות",
+  "writeBtn": "כתוב",
+  "reviewsCount": "{count, plural, =1{ביקורת אחת} other{{count} ביקורות}}",
+  "@reviewsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noReviewsYetSimple": "אין ביקורות עדיין",
+  "beFirstReview": "היה הראשון לשתף את החוויה שלך",
+  "anonymousReviewer": "אנונימי",
+
+  "anyAge": "כל גיל",
+  "ageFromTo": "{from} – {to} שנים",
+  "@ageFromTo": {
+    "placeholders": {
+      "from": { "type": "int" },
+      "to": { "type": "int" }
+    }
+  },
+  "ageFromOnly": "{from}+ שנים",
+  "@ageFromOnly": {
+    "placeholders": {
+      "from": { "type": "int" }
+    }
+  },
+  "upToCapacity": "עד {total}",
+  "@upToCapacity": {
+    "placeholders": {
+      "total": { "type": "int" }
+    }
+  },
+  "groupFallback": "קבוצה",
+  "ageFromToShort": "{from}–{to} שנ'",
+  "@ageFromToShort": {
+    "placeholders": {
+      "from": { "type": "int" },
+      "to": { "type": "int" }
+    }
+  },
+  "ageFromOnlyShort": "{from}+ שנ'",
+  "@ageFromOnlyShort": {
+    "placeholders": {
+      "from": { "type": "int" }
+    }
+  },
+
+  "filtersTitle": "סינון",
+  "btnReset": "איפוס",
+  "filterPriceRange": "טווח מחירים",
+  "filterCategory": "קטגוריה",
+  "filterDistance": "מרחק",
+  "ageSuffix": "שנ'",
+  "upToKm": "עד {distance} ק\"מ",
+  "@upToKm": {
+    "placeholders": {
+      "distance": { "type": "int" }
+    }
+  },
+  "maxKmLabel": "מקסימום 20 ק\"מ",
+  "btnShowResults": "הצג תוצאות",
+
+  "failedUploadPhoto": "העלאת התמונה נכשלה. אנא נסה שוב.",
+  "alreadyReviewed": "כבר ביקרת את הארגון הזה",
+  "failedSubmitReview": "שליחת הביקורת נכשלה. אנא נסה שוב.",
+  "reviewingExperience": "ביקורת על חוויתך",
+  "yourRatingLabel": "הדירוג שלך",
+  "ratingPoor": "גרוע",
+  "ratingFair": "בינוני",
+  "ratingGood": "טוב",
+  "ratingGreat": "מצוין",
+  "ratingExcellent": "מעולה",
+  "yourReviewLabel": "הביקורת שלך",
+  "reviewHint": "שתף את חוויתך עם פעילות זו...",
+  "photosLabel": "תמונות",
+  "photoOptionalCount": "(אופציונלי, {current}/{max})",
+  "@photoOptionalCount": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "addBtn": "הוסף",
+  "submitReviewBtn": "שלח ביקורת",
+  "reviewSubmittedTitle": "הביקורת נשלחה!",
+  "reviewSubmittedBody": "תודה על שיתוף החוויה שלך. הביקורת שלך עוזרת למשפחות אחרות לקבל את ההחלטה הנכונה.",
+  "backToReviewsBtn": "חזרה לביקורות",
+
+  "monthJanAbbrev": "ינו'",
+  "monthFebAbbrev": "פבר'",
+  "monthMarAbbrev": "מרץ",
+  "monthAprAbbrev": "אפר'",
+  "monthMayAbbrev": "מאי",
+  "monthJunAbbrev": "יוני",
+  "monthJulAbbrev": "יולי",
+  "monthAugAbbrev": "אוג'",
+  "monthSepAbbrev": "ספט'",
+  "monthOctAbbrev": "אוק'",
+  "monthNovAbbrev": "נוב'",
+  "monthDecAbbrev": "דצמ'",
+
+  "failedToLoadEvent": "טעינת האירוע נכשלה",
+  "checkOutEventMsg": "בדקו את \"{title}\" ב-HobbyLab!",
+  "@checkOutEventMsg": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "checkOutEventDefault": "בדקו את האירוע הזה ב-HobbyLab!",
+  "dateLabel": "תאריך",
+  "detailsSection": "פרטים",
+  "eventAgesFormat": "גילאים {min}–{max}",
+  "@eventAgesFormat": {
+    "placeholders": {
+      "min": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "organizationFallback": "ארגון",
+  "otherEventsSection": "אירועים נוספים",
+  "failedToLoadSchedule": "טעינת לוח הזמנים נכשלה",
+  "categoryOther": "אחר",
+
+  "actionMessage": "הודעה",
+  "ourClassesSection": "השיעורים שלנו",
+  "noClassesAvailable": "אין שיעורים עדיין",
+  "upcomingEventsSection": "אירועים קרובים",
+  "noUpcomingEvents": "אין אירועים קרובים",
+  "unnamedClass": "שיעור ללא שם",
+  "retryBtn": "נסה שוב",
+  "pleaseWaitUpload": "המתן לסיום העלאת התמונה",
+  "imageUploadFailed": "העלאת התמונה נכשלה — נסה שוב או הסר את התמונה",
+
+  "failedToRegister": "ההרשמה נכשלה. אנא נסה שנית.",
+  "orgDetailsSection": "פרטי הארגון",
+  "contactInfoSection": "פרטי יצירת קשר",
+  "workingHoursSection": "שעות פעילות",
+  "becomeProvider": "הפוך לספק",
+  "uploadLogo": "העלה לוגו",
+  "submitApplication": "שלח בקשה",
+  "statusClosed": "סגור",
+  "unnamedEvent": "אירוע ללא שם",
+  "accountSecuritySection": "אבטחת חשבון",
+  "timeNow": "עכשיו",
+  "changesSavedSuccess": "השינויים נשמרו בהצלחה",
+  "failedToSaveChanges": "שמירת השינויים נכשלה"
 }

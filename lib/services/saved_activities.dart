@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../models/app_category.dart';
 import '../models/organization.dart';
 import '../models/app_event.dart';
 
@@ -7,6 +8,7 @@ class SavedActivity {
   final String name;
   final String studio;
   final String category;
+  final AppCategory? primaryCategory;
   final double rating;
   final int reviewCount;
   final Color colorStart;
@@ -18,6 +20,7 @@ class SavedActivity {
     required this.name,
     required this.studio,
     required this.category,
+    this.primaryCategory,
     required this.rating,
     required this.reviewCount,
     required this.colorStart,

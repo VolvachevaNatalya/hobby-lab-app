@@ -610,7 +610,7 @@ class _ErrorView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'Retry',
+                  AppLocalizations.of(context)!.retryBtn,
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,

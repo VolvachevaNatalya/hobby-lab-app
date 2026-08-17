@@ -55,6 +55,7 @@ class _SavedScreenState extends State<SavedScreen> {
           name: e.value.title,
           studio: e.value.organizationName,
           category: e.value.category,
+          primaryCategory: e.value.primaryCategory,
           rating: e.value.averageRating,
           reviewCount: e.value.reviewCount,
           colorStart: _colorForIndex(e.key),
@@ -578,6 +579,7 @@ class _SavedClassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context).languageCode;
     return GestureDetector(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
         builder: (_) => ActivityDetailsScreen(
@@ -653,7 +655,7 @@ class _SavedClassCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            activity.category,
+                            activity.primaryCategory?.localizedName(locale) ?? activity.category,
                             style: GoogleFonts.poppins(
                               fontSize: 9,
                               fontWeight: FontWeight.w600,
@@ -784,14 +786,18 @@ class _SavedEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final months = [
+      '',
+      l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+      l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+      l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+      l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
+    ];
     String? dateStr;
     if (event.startDatetime != null) {
       final dt = DateTime.tryParse(event.startDatetime!);
       if (dt != null) {
-        const months = [
-          '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-        ];
         dateStr = '${dt.day} ${months[dt.month]} ${dt.year}';
       }
     }

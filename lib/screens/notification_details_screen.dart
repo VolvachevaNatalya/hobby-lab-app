@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import 'activity_details_screen.dart';
 import '../routing/transitions.dart';
@@ -52,7 +53,7 @@ class NotificationDetailsScreen extends StatelessWidget {
                   children: [
                     _buildIconSection(),
                     const SizedBox(height: 20),
-                    _buildBodyCard(),
+                    _buildBodyCard(context),
                     if (_hasActivity) ...[
                       const SizedBox(height: 24),
                       _buildRelatedCard(context),
@@ -92,7 +93,7 @@ class NotificationDetailsScreen extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Text(
-            'Notification',
+            AppLocalizations.of(context)!.notificationScreenTitle,
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -159,7 +160,7 @@ class NotificationDetailsScreen extends StatelessWidget {
 
   // ── Body card ────────────────────────────────────────────────────────────────
 
-  Widget _buildBodyCard() {
+  Widget _buildBodyCard(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -184,7 +185,7 @@ class NotificationDetailsScreen extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                'Message',
+                AppLocalizations.of(context)!.messageLabel,
                 style: GoogleFonts.poppins(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -215,7 +216,7 @@ class NotificationDetailsScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Related Activity',
+          AppLocalizations.of(context)!.relatedActivityLabel,
           style: GoogleFonts.poppins(
             fontSize: 14,
             fontWeight: FontWeight.w700,
@@ -350,7 +351,7 @@ class NotificationDetailsScreen extends StatelessWidget {
                 color: Colors.white, size: 18),
             const SizedBox(width: 8),
             Text(
-              'View Activity',
+              AppLocalizations.of(context)!.viewActivityBtn,
               style: GoogleFonts.poppins(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,

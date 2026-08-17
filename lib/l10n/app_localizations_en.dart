@@ -86,25 +86,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tagline => 'Discover. Learn. Grow.';
 
   @override
-  String get onboarding1Title => 'Find the Best Activities';
+  String get onboarding1Title => 'Discover Activities';
 
   @override
   String get onboarding1Subtitle =>
-      'Discover hundreds of classes, camps and workshops for your children nearby';
+      'Find the best classes, camps, and workshops\nfor your children nearby';
 
   @override
-  String get onboarding2Title => 'Easy Booking';
+  String get onboarding2Title => 'Connect with Organizers';
 
   @override
   String get onboarding2Subtitle =>
-      'Book your favourite activities in a few taps and manage all schedules in one place';
+      'Message organizers directly, ask questions,\nand get quick responses';
 
   @override
-  String get onboarding3Title => 'Stay Connected';
+  String get onboarding3Title => 'Save & Organize';
 
   @override
   String get onboarding3Subtitle =>
-      'Get updates, reminders and communicate with organizers directly in the app';
+      'Bookmark your favourites, track schedules,\nand never miss a registration';
 
   @override
   String get chooseLanguage => 'Choose\nLanguage';
@@ -938,4 +938,737 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noOccurrences => 'No events in this series';
+
+  @override
+  String get navDashboard => 'Dashboard';
+
+  @override
+  String get navClasses => 'Classes';
+
+  @override
+  String get navEvents => 'Events';
+
+  @override
+  String get orgDashboardSubtitle => 'Organization Dashboard';
+
+  @override
+  String get myOrganizationFallback => 'My Organization';
+
+  @override
+  String get statGroups => 'Groups';
+
+  @override
+  String get statStudents => 'Students';
+
+  @override
+  String get myClasses => 'My Classes';
+
+  @override
+  String get myEvents => 'My Events';
+
+  @override
+  String get recentMessages => 'Recent Messages';
+
+  @override
+  String get btnAdd => '+ Add';
+
+  @override
+  String get noClassesHint => 'No classes yet. Tap + Add to create one.';
+
+  @override
+  String get noEventsHint => 'No events yet. Tap + Add to create one.';
+
+  @override
+  String get noRecentMessages => 'No messages yet.';
+
+  @override
+  String get btnManage => 'Manage';
+
+  @override
+  String get btnNewClass => 'New Class';
+
+  @override
+  String get noClassesYetTitle => 'No Classes Yet';
+
+  @override
+  String get noClassesYetBody => 'No classes yet. Add your first class!';
+
+  @override
+  String get agesLabel => 'Ages';
+
+  @override
+  String get perMonthSuffix => '/mo';
+
+  @override
+  String get studentsLabel => 'students';
+
+  @override
+  String get noGroupsYet => 'No groups added yet.';
+
+  @override
+  String get btnNewEvent => 'New Event';
+
+  @override
+  String get noUpcomingEventsYet => 'No upcoming events yet.';
+
+  @override
+  String get noPastEvents => 'No past events.';
+
+  @override
+  String get noMessagesYetBody => 'Messages from your clients will appear here';
+
+  @override
+  String get verifiedOrganization => 'Verified Organization';
+
+  @override
+  String get businessSection => 'Business';
+
+  @override
+  String get billingPayments => 'Billing & Payments';
+
+  @override
+  String get analyticsLabel => 'Analytics';
+
+  @override
+  String get supportSection => 'Support';
+
+  @override
+  String get termsPrivacy => 'Terms & Privacy';
+
+  @override
+  String get exitDashboard => 'Exit Dashboard';
+
+  @override
+  String get comingSoon => 'This feature is coming soon.';
+
+  @override
+  String get btnEdit => 'Edit';
+
+  @override
+  String get failedToDeleteClass => 'Failed to delete class. Please try again.';
+
+  @override
+  String get failedToDeleteEvent => 'Failed to delete event. Please try again.';
+
+  @override
+  String groupCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count groups',
+      one: '1 group',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String eventSpotsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count spots',
+      one: '1 spot',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tapToChange => 'Tap to change';
+
+  @override
+  String get failedToUploadImage => 'Failed to upload image';
+
+  @override
+  String get btnDone => 'Done';
+
+  @override
+  String get editClass => 'Edit Class';
+
+  @override
+  String get uploadClassImage => 'Upload Class Image';
+
+  @override
+  String get classDetailsSection => 'Class Details';
+
+  @override
+  String get classNameHint => 'Class name';
+
+  @override
+  String get descriptionHint => 'Description';
+
+  @override
+  String get errorSelectCategory => 'Please select at least one category';
+
+  @override
+  String get categoriesLabel => 'Categories';
+
+  @override
+  String get addGroup => 'Add Group';
+
+  @override
+  String get createClass => 'Create Class';
+
+  @override
+  String get classCreatedSuccess => 'Class created successfully';
+
+  @override
+  String get failedToUpdateClass => 'Failed to update class';
+
+  @override
+  String get failedToCreateClass => 'Failed to create class. Please try again.';
+
+  @override
+  String get editEvent => 'Edit Event';
+
+  @override
+  String get uploadEventImage => 'Upload Event Image';
+
+  @override
+  String get eventDetailsSection => 'Event Details';
+
+  @override
+  String get eventNameHint => 'Event name';
+
+  @override
+  String get dateTimeSection => 'Date & Time';
+
+  @override
+  String get selectDate => 'Select date';
+
+  @override
+  String get selectTime => 'Select time';
+
+  @override
+  String get locationSection => 'Location';
+
+  @override
+  String get addressHint => 'Address / venue name';
+
+  @override
+  String get cityHint => 'City';
+
+  @override
+  String get participantsSection => 'Participants';
+
+  @override
+  String get minAgeHint => 'Min age';
+
+  @override
+  String get maxAgeHint => 'Max age';
+
+  @override
+  String get maxCapacityHint => 'Max capacity';
+
+  @override
+  String get priceHint => 'Price (₪) — leave blank if free';
+
+  @override
+  String get priceCommentHint => 'Price comment (optional)';
+
+  @override
+  String get createEvent => 'Create Event';
+
+  @override
+  String get eventCreatedSuccess => 'Event created successfully';
+
+  @override
+  String get failedToCreateEvent => 'Failed to create event. Please try again.';
+
+  @override
+  String get editGroup => 'Edit Group';
+
+  @override
+  String get newGroup => 'New Group';
+
+  @override
+  String get groupDetailsSection => 'Group Details';
+
+  @override
+  String get groupNameHint => 'Group name (e.g. U10 Group)';
+
+  @override
+  String get ageRangeSection => 'Age Range';
+
+  @override
+  String get capacityPriceSection => 'Capacity & Price';
+
+  @override
+  String get maxStudentsHint => 'Max students';
+
+  @override
+  String get pricePerMonthHint => 'Price per month (₪)';
+
+  @override
+  String timeSlotCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count time slots',
+      one: '1 time slot',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get addSchedule => 'Add Schedule';
+
+  @override
+  String get groupCreatedSuccess => 'Group created successfully';
+
+  @override
+  String get failedToCreateGroup => 'Failed to create group. Please try again.';
+
+  @override
+  String get addAnotherTimeSlot => 'Add Another Time Slot';
+
+  @override
+  String get saveSchedule => 'Save Schedule';
+
+  @override
+  String slotLabel(int number) {
+    return 'Slot $number';
+  }
+
+  @override
+  String get dayOfWeekLabel => 'Day of week';
+
+  @override
+  String get timeLabel => 'Time';
+
+  @override
+  String get scheduleSavedSuccess => 'Schedule saved successfully';
+
+  @override
+  String get failedToSaveSchedule =>
+      'Failed to save schedule. Please try again.';
+
+  @override
+  String get daySunAbbrev => 'Sun';
+
+  @override
+  String get dayMonAbbrev => 'Mon';
+
+  @override
+  String get dayTueAbbrev => 'Tue';
+
+  @override
+  String get dayWedAbbrev => 'Wed';
+
+  @override
+  String get dayThuAbbrev => 'Thu';
+
+  @override
+  String get dayFriAbbrev => 'Fri';
+
+  @override
+  String get daySatAbbrev => 'Sat';
+
+  @override
+  String get orgNameLabel => 'Organization Name';
+
+  @override
+  String get orgPhoneHint => 'Phone';
+
+  @override
+  String get orgEmailHint => 'Email';
+
+  @override
+  String get websiteHint => 'Website';
+
+  @override
+  String get addressLabel => 'Address';
+
+  @override
+  String get socialMediaSection => 'Social Media';
+
+  @override
+  String get fieldInstagram => 'Instagram';
+
+  @override
+  String get fieldFacebook => 'Facebook';
+
+  @override
+  String get mediaSection => 'Media';
+
+  @override
+  String get logoLabel => 'Logo';
+
+  @override
+  String get bannerLabel => 'Banner';
+
+  @override
+  String get uploadingLabel => 'Uploading...';
+
+  @override
+  String get imageSelectedLabel => 'Image selected';
+
+  @override
+  String get tapToReplace => 'Tap to replace';
+
+  @override
+  String get chooseFromGallery => 'Choose from gallery';
+
+  @override
+  String get selectCity => 'Select city';
+
+  @override
+  String get trialLessonAvailable => 'Trial lesson available';
+
+  @override
+  String get btnNext => 'Next';
+
+  @override
+  String get letsConnect => 'Let\'s Connect';
+
+  @override
+  String get typeMessageHint => 'Type a message...';
+
+  @override
+  String get failedToSendMessage => 'Failed to send message. Please try again.';
+
+  @override
+  String get nearbyActivities => 'Nearby Activities';
+
+  @override
+  String get allCategories => 'All categories';
+
+  @override
+  String mapActivitiesCount(int count) {
+    return '$count Activities';
+  }
+
+  @override
+  String get notifNewMessageTitle => 'New message';
+
+  @override
+  String get notifNewMessageBody => 'You have a new message';
+
+  @override
+  String get notificationScreenTitle => 'Notification';
+
+  @override
+  String get messageLabel => 'Message';
+
+  @override
+  String get relatedActivityLabel => 'Related Activity';
+
+  @override
+  String get viewActivityBtn => 'View Activity';
+
+  @override
+  String get notifAppointmentsTitle => 'Appointment Notifications';
+
+  @override
+  String get notifAppointmentsSubtitle =>
+      'Reminders about upcoming classes and bookings';
+
+  @override
+  String get notifChatTitle => 'Chat Notifications';
+
+  @override
+  String get notifChatSubtitle => 'New messages from organizers';
+
+  @override
+  String get notifActivityTitle => 'Activity Updates';
+
+  @override
+  String get notifActivitySubtitle =>
+      'Changes to activities you\'ve booked or saved';
+
+  @override
+  String get notifOffersTitle => 'Offers & Promotions';
+
+  @override
+  String get notifOffersSubtitle =>
+      'Flash deals, discounts, and special events';
+
+  @override
+  String get notifChooseDesc =>
+      'Choose which notifications you want to receive';
+
+  @override
+  String get imageUnavailable => 'Image unavailable';
+
+  @override
+  String get reviewsTitle => 'Reviews';
+
+  @override
+  String get writeBtn => 'Write';
+
+  @override
+  String reviewsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reviews',
+      one: '1 review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noReviewsYetSimple => 'No reviews yet';
+
+  @override
+  String get beFirstReview => 'Be the first to share your experience';
+
+  @override
+  String get anonymousReviewer => 'Anonymous';
+
+  @override
+  String get anyAge => 'Any age';
+
+  @override
+  String ageFromTo(int from, int to) {
+    return '$from – $to years';
+  }
+
+  @override
+  String ageFromOnly(int from) {
+    return '$from+ years';
+  }
+
+  @override
+  String upToCapacity(int total) {
+    return 'Up to $total';
+  }
+
+  @override
+  String get groupFallback => 'Group';
+
+  @override
+  String ageFromToShort(int from, int to) {
+    return '$from–$to yrs';
+  }
+
+  @override
+  String ageFromOnlyShort(int from) {
+    return '$from+ yrs';
+  }
+
+  @override
+  String get filtersTitle => 'Filters';
+
+  @override
+  String get btnReset => 'Reset';
+
+  @override
+  String get filterPriceRange => 'Price Range';
+
+  @override
+  String get filterCategory => 'Category';
+
+  @override
+  String get filterDistance => 'Distance';
+
+  @override
+  String get ageSuffix => 'yrs';
+
+  @override
+  String upToKm(int distance) {
+    return 'Up to $distance km';
+  }
+
+  @override
+  String get maxKmLabel => '20 km max';
+
+  @override
+  String get btnShowResults => 'Show Results';
+
+  @override
+  String get failedUploadPhoto => 'Failed to upload photo. Please try again.';
+
+  @override
+  String get alreadyReviewed => 'You have already reviewed this organization';
+
+  @override
+  String get failedSubmitReview => 'Failed to submit review. Please try again.';
+
+  @override
+  String get reviewingExperience => 'Reviewing your experience';
+
+  @override
+  String get yourRatingLabel => 'Your Rating';
+
+  @override
+  String get ratingPoor => 'Poor';
+
+  @override
+  String get ratingFair => 'Fair';
+
+  @override
+  String get ratingGood => 'Good';
+
+  @override
+  String get ratingGreat => 'Great';
+
+  @override
+  String get ratingExcellent => 'Excellent';
+
+  @override
+  String get yourReviewLabel => 'Your Review';
+
+  @override
+  String get reviewHint => 'Share your experience with this activity...';
+
+  @override
+  String get photosLabel => 'Photos';
+
+  @override
+  String photoOptionalCount(int current, int max) {
+    return '(optional, $current/$max)';
+  }
+
+  @override
+  String get addBtn => 'Add';
+
+  @override
+  String get submitReviewBtn => 'Submit Review';
+
+  @override
+  String get reviewSubmittedTitle => 'Review Submitted!';
+
+  @override
+  String get reviewSubmittedBody =>
+      'Thank you for sharing your experience. Your review helps other families make the right choice.';
+
+  @override
+  String get backToReviewsBtn => 'Back to Reviews';
+
+  @override
+  String get monthJanAbbrev => 'Jan';
+
+  @override
+  String get monthFebAbbrev => 'Feb';
+
+  @override
+  String get monthMarAbbrev => 'Mar';
+
+  @override
+  String get monthAprAbbrev => 'Apr';
+
+  @override
+  String get monthMayAbbrev => 'May';
+
+  @override
+  String get monthJunAbbrev => 'Jun';
+
+  @override
+  String get monthJulAbbrev => 'Jul';
+
+  @override
+  String get monthAugAbbrev => 'Aug';
+
+  @override
+  String get monthSepAbbrev => 'Sep';
+
+  @override
+  String get monthOctAbbrev => 'Oct';
+
+  @override
+  String get monthNovAbbrev => 'Nov';
+
+  @override
+  String get monthDecAbbrev => 'Dec';
+
+  @override
+  String get failedToLoadEvent => 'Failed to load event';
+
+  @override
+  String checkOutEventMsg(String title) {
+    return 'Check out \"$title\" on HobbyLab!';
+  }
+
+  @override
+  String get checkOutEventDefault => 'Check out this event on HobbyLab!';
+
+  @override
+  String get dateLabel => 'Date';
+
+  @override
+  String get detailsSection => 'Details';
+
+  @override
+  String eventAgesFormat(int min, int max) {
+    return 'Ages $min–$max';
+  }
+
+  @override
+  String get organizationFallback => 'Organization';
+
+  @override
+  String get otherEventsSection => 'Other Events';
+
+  @override
+  String get failedToLoadSchedule => 'Failed to load schedule';
+
+  @override
+  String get categoryOther => 'Other';
+
+  @override
+  String get actionMessage => 'Message';
+
+  @override
+  String get ourClassesSection => 'Our Classes';
+
+  @override
+  String get noClassesAvailable => 'No classes available yet';
+
+  @override
+  String get upcomingEventsSection => 'Upcoming Events';
+
+  @override
+  String get noUpcomingEvents => 'No upcoming events';
+
+  @override
+  String get unnamedClass => 'Unnamed Class';
+
+  @override
+  String get retryBtn => 'Retry';
+
+  @override
+  String get pleaseWaitUpload => 'Please wait for image upload to finish';
+
+  @override
+  String get imageUploadFailed =>
+      'Image upload failed — please try again or remove the photo';
+
+  @override
+  String get failedToRegister => 'Failed to register. Please try again.';
+
+  @override
+  String get orgDetailsSection => 'Organization Details';
+
+  @override
+  String get contactInfoSection => 'Contact Information';
+
+  @override
+  String get workingHoursSection => 'Working Hours';
+
+  @override
+  String get becomeProvider => 'Become a Provider';
+
+  @override
+  String get uploadLogo => 'Upload Logo';
+
+  @override
+  String get submitApplication => 'Submit Application';
+
+  @override
+  String get statusClosed => 'Closed';
+
+  @override
+  String get unnamedEvent => 'Unnamed Event';
+
+  @override
+  String get accountSecuritySection => 'ACCOUNT SECURITY';
+
+  @override
+  String get timeNow => 'Now';
+
+  @override
+  String get changesSavedSuccess => 'Changes saved successfully';
+
+  @override
+  String get failedToSaveChanges => 'Failed to save changes';
 }

@@ -289,7 +289,7 @@ class _RecurrenceConfigSheetState extends State<_RecurrenceConfigSheet> {
                                     const SizedBox(width: 8),
                                     Text(
                                       _endDate != null
-                                          ? '${_endDate!.day} ${_monthName(_endDate!.month)} ${_endDate!.year}'
+                                          ? _fmtEndDate(_endDate!, l10n)
                                           : l10n.repeatOnDateOption,
                                       style: GoogleFonts.poppins(
                                         fontSize: 13,
@@ -508,22 +508,13 @@ class _RecurrenceConfigSheetState extends State<_RecurrenceConfigSheet> {
     ),
   );
 
-  String _monthName(int month) {
-    const months = [
-      '',
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+  String _fmtEndDate(DateTime dt, AppLocalizations l10n) {
+    final months = [
+      '', l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+      l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+      l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+      l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
     ];
-    return months[month];
+    return '${dt.day} ${months[dt.month]} ${dt.year}';
   }
 }

@@ -48,7 +48,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get btnSaveChanges => 'שמור שינויים';
 
   @override
-  String get btnSeeAll => 'ראה הכל';
+  String get btnSeeAll => 'הצג הכל';
 
   @override
   String get btnLogOut => 'התנתק';
@@ -86,25 +86,25 @@ class AppLocalizationsHe extends AppLocalizations {
   String get tagline => 'גלה. למד. צמח.';
 
   @override
-  String get onboarding1Title => 'גלה את הפעילויות הטובות ביותר';
+  String get onboarding1Title => 'גלה פעילויות';
 
   @override
   String get onboarding1Subtitle =>
-      'גלה מאות שיעורים, קייטנות וסדנאות לילדיך הקרובים אליך';
+      'מצא את השיעורים, הקייטנות והסדנאות הטובות ביותר\nלילדיך בקרבתך';
 
   @override
-  String get onboarding2Title => 'הזמנה קלה';
+  String get onboarding2Title => 'התחבר עם מארגנים';
 
   @override
   String get onboarding2Subtitle =>
-      'הזמן את הפעילויות האהובות עליך בכמה הקשות ונהל את כל לוחות הזמנים שלך במקום אחד';
+      'שלח הודעות ישירות למארגנים, שאל שאלות\nוקבל תגובות מהירות';
 
   @override
-  String get onboarding3Title => 'הישאר מחובר';
+  String get onboarding3Title => 'שמור וארגן';
 
   @override
   String get onboarding3Subtitle =>
-      'קבל עדכונים, תזכורות ותקשר עם מארגנים ישירות דרך האפליקציה';
+      'סמן מועדפים, עקוב אחר לוחות הזמנים\nואל תחמיץ הרשמה';
 
   @override
   String get chooseLanguage => 'בחר\nשפה';
@@ -223,7 +223,7 @@ class AppLocalizationsHe extends AppLocalizations {
       'התחל לגלות ושמור פעילויות שמעניינות אותך לילדיך';
 
   @override
-  String get editProfile => 'ערוך פרופיל';
+  String get editProfile => 'עריכת פרופיל';
 
   @override
   String get mainInformation => 'מידע עיקרי';
@@ -925,4 +925,739 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get noOccurrences => 'אין אירועים בסדרה זו';
+
+  @override
+  String get navDashboard => 'לוח בקרה';
+
+  @override
+  String get navClasses => 'שיעורים';
+
+  @override
+  String get navEvents => 'אירועים';
+
+  @override
+  String get orgDashboardSubtitle => 'לוח בקרת ארגון';
+
+  @override
+  String get myOrganizationFallback => 'הארגון שלי';
+
+  @override
+  String get statGroups => 'קבוצות';
+
+  @override
+  String get statStudents => 'תלמידים';
+
+  @override
+  String get myClasses => 'השיעורים שלי';
+
+  @override
+  String get myEvents => 'האירועים שלי';
+
+  @override
+  String get recentMessages => 'הודעות אחרונות';
+
+  @override
+  String get btnAdd => '+ הוסף';
+
+  @override
+  String get noClassesHint => 'אין שיעורים עדיין. הקש + הוסף ליצירת שיעור.';
+
+  @override
+  String get noEventsHint => 'אין אירועים עדיין. הקש + הוסף ליצירת אירוע.';
+
+  @override
+  String get noRecentMessages => 'אין הודעות עדיין.';
+
+  @override
+  String get btnManage => 'נהל';
+
+  @override
+  String get btnNewClass => 'שיעור חדש';
+
+  @override
+  String get noClassesYetTitle => 'אין שיעורים עדיין';
+
+  @override
+  String get noClassesYetBody =>
+      'אין שיעורים עדיין. הוסף את השיעור הראשון שלך!';
+
+  @override
+  String get agesLabel => 'גיל';
+
+  @override
+  String get perMonthSuffix => '/חו׳';
+
+  @override
+  String get studentsLabel => 'תלמידים';
+
+  @override
+  String get noGroupsYet => 'לא נוספו קבוצות עדיין.';
+
+  @override
+  String get btnNewEvent => 'אירוע חדש';
+
+  @override
+  String get noUpcomingEventsYet => 'אין אירועים קרובים עדיין.';
+
+  @override
+  String get noPastEvents => 'אין אירועים קודמים.';
+
+  @override
+  String get noMessagesYetBody => 'הודעות מהלקוחות שלך יופיעו כאן';
+
+  @override
+  String get verifiedOrganization => 'ארגון מאומת';
+
+  @override
+  String get businessSection => 'עסק';
+
+  @override
+  String get billingPayments => 'חיוב ותשלומים';
+
+  @override
+  String get analyticsLabel => 'אנליטיקה';
+
+  @override
+  String get supportSection => 'תמיכה';
+
+  @override
+  String get termsPrivacy => 'תנאים ופרטיות';
+
+  @override
+  String get exitDashboard => 'יציאה מלוח הבקרה';
+
+  @override
+  String get comingSoon => 'תכונה זו תגיע בקרוב.';
+
+  @override
+  String get btnEdit => 'עריכה';
+
+  @override
+  String get failedToDeleteClass => 'מחיקת השיעור נכשלה. נסה שוב.';
+
+  @override
+  String get failedToDeleteEvent => 'מחיקת האירוע נכשלה. נסה שוב.';
+
+  @override
+  String groupCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count קבוצות',
+      one: 'קבוצה 1',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String eventSpotsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count מקומות',
+      one: 'מקום 1',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tapToChange => 'הקש לשינוי';
+
+  @override
+  String get failedToUploadImage => 'העלאת התמונה נכשלה';
+
+  @override
+  String get btnDone => 'סיום';
+
+  @override
+  String get editClass => 'עריכת שיעור';
+
+  @override
+  String get uploadClassImage => 'העלה תמונה לשיעור';
+
+  @override
+  String get classDetailsSection => 'פרטי השיעור';
+
+  @override
+  String get classNameHint => 'שם השיעור';
+
+  @override
+  String get descriptionHint => 'תיאור';
+
+  @override
+  String get errorSelectCategory => 'אנא בחר לפחות קטגוריה אחת';
+
+  @override
+  String get categoriesLabel => 'קטגוריות';
+
+  @override
+  String get addGroup => 'הוסף קבוצה';
+
+  @override
+  String get createClass => 'צור שיעור';
+
+  @override
+  String get classCreatedSuccess => 'השיעור נוצר בהצלחה';
+
+  @override
+  String get failedToUpdateClass => 'עדכון השיעור נכשל';
+
+  @override
+  String get failedToCreateClass => 'יצירת השיעור נכשלה. נסה שוב.';
+
+  @override
+  String get editEvent => 'עריכת אירוע';
+
+  @override
+  String get uploadEventImage => 'העלה תמונה לאירוע';
+
+  @override
+  String get eventDetailsSection => 'פרטי האירוע';
+
+  @override
+  String get eventNameHint => 'שם האירוע';
+
+  @override
+  String get dateTimeSection => 'תאריך ושעה';
+
+  @override
+  String get selectDate => 'בחר תאריך';
+
+  @override
+  String get selectTime => 'בחר שעה';
+
+  @override
+  String get locationSection => 'מיקום';
+
+  @override
+  String get addressHint => 'כתובת / שם המקום';
+
+  @override
+  String get cityHint => 'עיר';
+
+  @override
+  String get participantsSection => 'משתתפים';
+
+  @override
+  String get minAgeHint => 'גיל מינימלי';
+
+  @override
+  String get maxAgeHint => 'גיל מקסימלי';
+
+  @override
+  String get maxCapacityHint => 'מקסימום משתתפים';
+
+  @override
+  String get priceHint => 'מחיר (₪) — השאר ריק אם חינם';
+
+  @override
+  String get priceCommentHint => 'הערה למחיר (אופציונלי)';
+
+  @override
+  String get createEvent => 'צור אירוע';
+
+  @override
+  String get eventCreatedSuccess => 'האירוע נוצר בהצלחה';
+
+  @override
+  String get failedToCreateEvent => 'יצירת האירוע נכשלה. נסה שוב.';
+
+  @override
+  String get editGroup => 'עריכת קבוצה';
+
+  @override
+  String get newGroup => 'קבוצה חדשה';
+
+  @override
+  String get groupDetailsSection => 'פרטי הקבוצה';
+
+  @override
+  String get groupNameHint => 'שם הקבוצה (לדוגמה: U10)';
+
+  @override
+  String get ageRangeSection => 'טווח גיל';
+
+  @override
+  String get capacityPriceSection => 'קיבולת ומחיר';
+
+  @override
+  String get maxStudentsHint => 'מקסימום תלמידים';
+
+  @override
+  String get pricePerMonthHint => 'מחיר לחודש (₪)';
+
+  @override
+  String timeSlotCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count חריצי זמן',
+      one: 'חריץ זמן 1',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get addSchedule => 'הוסף לוח זמנים';
+
+  @override
+  String get groupCreatedSuccess => 'הקבוצה נוצרה בהצלחה';
+
+  @override
+  String get failedToCreateGroup => 'יצירת הקבוצה נכשלה. נסה שוב.';
+
+  @override
+  String get addAnotherTimeSlot => 'הוסף עוד חריץ זמן';
+
+  @override
+  String get saveSchedule => 'שמור לוח זמנים';
+
+  @override
+  String slotLabel(int number) {
+    return 'חריץ $number';
+  }
+
+  @override
+  String get dayOfWeekLabel => 'יום בשבוע';
+
+  @override
+  String get timeLabel => 'שעה';
+
+  @override
+  String get scheduleSavedSuccess => 'לוח הזמנים נשמר בהצלחה';
+
+  @override
+  String get failedToSaveSchedule => 'שמירת לוח הזמנים נכשלה. נסה שוב.';
+
+  @override
+  String get daySunAbbrev => 'א׳';
+
+  @override
+  String get dayMonAbbrev => 'ב׳';
+
+  @override
+  String get dayTueAbbrev => 'ג׳';
+
+  @override
+  String get dayWedAbbrev => 'ד׳';
+
+  @override
+  String get dayThuAbbrev => 'ה׳';
+
+  @override
+  String get dayFriAbbrev => 'ו׳';
+
+  @override
+  String get daySatAbbrev => 'שב׳';
+
+  @override
+  String get orgNameLabel => 'שם הארגון';
+
+  @override
+  String get orgPhoneHint => 'טלפון';
+
+  @override
+  String get orgEmailHint => 'אימייל';
+
+  @override
+  String get websiteHint => 'אתר';
+
+  @override
+  String get addressLabel => 'כתובת';
+
+  @override
+  String get socialMediaSection => 'רשתות חברתיות';
+
+  @override
+  String get fieldInstagram => 'אינסטגרם';
+
+  @override
+  String get fieldFacebook => 'פייסבוק';
+
+  @override
+  String get mediaSection => 'מדיה';
+
+  @override
+  String get logoLabel => 'לוגו';
+
+  @override
+  String get bannerLabel => 'באנר';
+
+  @override
+  String get uploadingLabel => 'מעלה...';
+
+  @override
+  String get imageSelectedLabel => 'תמונה נבחרה';
+
+  @override
+  String get tapToReplace => 'הקש להחלפה';
+
+  @override
+  String get chooseFromGallery => 'בחר מהגלריה';
+
+  @override
+  String get selectCity => 'בחר עיר';
+
+  @override
+  String get trialLessonAvailable => 'שיעור ניסיון זמין';
+
+  @override
+  String get btnNext => 'הבא';
+
+  @override
+  String get letsConnect => 'בואו נתחיל';
+
+  @override
+  String get typeMessageHint => 'הקלד הודעה...';
+
+  @override
+  String get failedToSendMessage => 'שליחת ההודעה נכשלה. אנא נסה שוב.';
+
+  @override
+  String get nearbyActivities => 'פעילויות קרובות';
+
+  @override
+  String get allCategories => 'כל הקטגוריות';
+
+  @override
+  String mapActivitiesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count פעילויות',
+      one: 'פעילות אחת',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get notifNewMessageTitle => 'הודעה חדשה';
+
+  @override
+  String get notifNewMessageBody => 'יש לך הודעה חדשה';
+
+  @override
+  String get notificationScreenTitle => 'הודעה';
+
+  @override
+  String get messageLabel => 'הודעה';
+
+  @override
+  String get relatedActivityLabel => 'פעילות קשורה';
+
+  @override
+  String get viewActivityBtn => 'צפה בפעילות';
+
+  @override
+  String get notifAppointmentsTitle => 'התראות לפגישות';
+
+  @override
+  String get notifAppointmentsSubtitle => 'תזכורות על שיעורים והזמנות הקרובים';
+
+  @override
+  String get notifChatTitle => 'התראות צ\'אט';
+
+  @override
+  String get notifChatSubtitle => 'הודעות חדשות מהמארגנים';
+
+  @override
+  String get notifActivityTitle => 'עדכוני פעילות';
+
+  @override
+  String get notifActivitySubtitle => 'שינויים בפעילויות שהזמנת או שמרת';
+
+  @override
+  String get notifOffersTitle => 'הצעות ומבצעים';
+
+  @override
+  String get notifOffersSubtitle => 'עסקאות בזק, הנחות ואירועים מיוחדים';
+
+  @override
+  String get notifChooseDesc => 'בחר אילו התראות אתה רוצה לקבל';
+
+  @override
+  String get imageUnavailable => 'תמונה לא זמינה';
+
+  @override
+  String get reviewsTitle => 'ביקורות';
+
+  @override
+  String get writeBtn => 'כתוב';
+
+  @override
+  String reviewsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ביקורות',
+      one: 'ביקורת אחת',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noReviewsYetSimple => 'אין ביקורות עדיין';
+
+  @override
+  String get beFirstReview => 'היה הראשון לשתף את החוויה שלך';
+
+  @override
+  String get anonymousReviewer => 'אנונימי';
+
+  @override
+  String get anyAge => 'כל גיל';
+
+  @override
+  String ageFromTo(int from, int to) {
+    return '$from – $to שנים';
+  }
+
+  @override
+  String ageFromOnly(int from) {
+    return '$from+ שנים';
+  }
+
+  @override
+  String upToCapacity(int total) {
+    return 'עד $total';
+  }
+
+  @override
+  String get groupFallback => 'קבוצה';
+
+  @override
+  String ageFromToShort(int from, int to) {
+    return '$from–$to שנ\'';
+  }
+
+  @override
+  String ageFromOnlyShort(int from) {
+    return '$from+ שנ\'';
+  }
+
+  @override
+  String get filtersTitle => 'סינון';
+
+  @override
+  String get btnReset => 'איפוס';
+
+  @override
+  String get filterPriceRange => 'טווח מחירים';
+
+  @override
+  String get filterCategory => 'קטגוריה';
+
+  @override
+  String get filterDistance => 'מרחק';
+
+  @override
+  String get ageSuffix => 'שנ\'';
+
+  @override
+  String upToKm(int distance) {
+    return 'עד $distance ק\"מ';
+  }
+
+  @override
+  String get maxKmLabel => 'מקסימום 20 ק\"מ';
+
+  @override
+  String get btnShowResults => 'הצג תוצאות';
+
+  @override
+  String get failedUploadPhoto => 'העלאת התמונה נכשלה. אנא נסה שוב.';
+
+  @override
+  String get alreadyReviewed => 'כבר ביקרת את הארגון הזה';
+
+  @override
+  String get failedSubmitReview => 'שליחת הביקורת נכשלה. אנא נסה שוב.';
+
+  @override
+  String get reviewingExperience => 'ביקורת על חוויתך';
+
+  @override
+  String get yourRatingLabel => 'הדירוג שלך';
+
+  @override
+  String get ratingPoor => 'גרוע';
+
+  @override
+  String get ratingFair => 'בינוני';
+
+  @override
+  String get ratingGood => 'טוב';
+
+  @override
+  String get ratingGreat => 'מצוין';
+
+  @override
+  String get ratingExcellent => 'מעולה';
+
+  @override
+  String get yourReviewLabel => 'הביקורת שלך';
+
+  @override
+  String get reviewHint => 'שתף את חוויתך עם פעילות זו...';
+
+  @override
+  String get photosLabel => 'תמונות';
+
+  @override
+  String photoOptionalCount(int current, int max) {
+    return '(אופציונלי, $current/$max)';
+  }
+
+  @override
+  String get addBtn => 'הוסף';
+
+  @override
+  String get submitReviewBtn => 'שלח ביקורת';
+
+  @override
+  String get reviewSubmittedTitle => 'הביקורת נשלחה!';
+
+  @override
+  String get reviewSubmittedBody =>
+      'תודה על שיתוף החוויה שלך. הביקורת שלך עוזרת למשפחות אחרות לקבל את ההחלטה הנכונה.';
+
+  @override
+  String get backToReviewsBtn => 'חזרה לביקורות';
+
+  @override
+  String get monthJanAbbrev => 'ינו\'';
+
+  @override
+  String get monthFebAbbrev => 'פבר\'';
+
+  @override
+  String get monthMarAbbrev => 'מרץ';
+
+  @override
+  String get monthAprAbbrev => 'אפר\'';
+
+  @override
+  String get monthMayAbbrev => 'מאי';
+
+  @override
+  String get monthJunAbbrev => 'יוני';
+
+  @override
+  String get monthJulAbbrev => 'יולי';
+
+  @override
+  String get monthAugAbbrev => 'אוג\'';
+
+  @override
+  String get monthSepAbbrev => 'ספט\'';
+
+  @override
+  String get monthOctAbbrev => 'אוק\'';
+
+  @override
+  String get monthNovAbbrev => 'נוב\'';
+
+  @override
+  String get monthDecAbbrev => 'דצמ\'';
+
+  @override
+  String get failedToLoadEvent => 'טעינת האירוע נכשלה';
+
+  @override
+  String checkOutEventMsg(String title) {
+    return 'בדקו את \"$title\" ב-HobbyLab!';
+  }
+
+  @override
+  String get checkOutEventDefault => 'בדקו את האירוע הזה ב-HobbyLab!';
+
+  @override
+  String get dateLabel => 'תאריך';
+
+  @override
+  String get detailsSection => 'פרטים';
+
+  @override
+  String eventAgesFormat(int min, int max) {
+    return 'גילאים $min–$max';
+  }
+
+  @override
+  String get organizationFallback => 'ארגון';
+
+  @override
+  String get otherEventsSection => 'אירועים נוספים';
+
+  @override
+  String get failedToLoadSchedule => 'טעינת לוח הזמנים נכשלה';
+
+  @override
+  String get categoryOther => 'אחר';
+
+  @override
+  String get actionMessage => 'הודעה';
+
+  @override
+  String get ourClassesSection => 'השיעורים שלנו';
+
+  @override
+  String get noClassesAvailable => 'אין שיעורים עדיין';
+
+  @override
+  String get upcomingEventsSection => 'אירועים קרובים';
+
+  @override
+  String get noUpcomingEvents => 'אין אירועים קרובים';
+
+  @override
+  String get unnamedClass => 'שיעור ללא שם';
+
+  @override
+  String get retryBtn => 'נסה שוב';
+
+  @override
+  String get pleaseWaitUpload => 'המתן לסיום העלאת התמונה';
+
+  @override
+  String get imageUploadFailed =>
+      'העלאת התמונה נכשלה — נסה שוב או הסר את התמונה';
+
+  @override
+  String get failedToRegister => 'ההרשמה נכשלה. אנא נסה שנית.';
+
+  @override
+  String get orgDetailsSection => 'פרטי הארגון';
+
+  @override
+  String get contactInfoSection => 'פרטי יצירת קשר';
+
+  @override
+  String get workingHoursSection => 'שעות פעילות';
+
+  @override
+  String get becomeProvider => 'הפוך לספק';
+
+  @override
+  String get uploadLogo => 'העלה לוגו';
+
+  @override
+  String get submitApplication => 'שלח בקשה';
+
+  @override
+  String get statusClosed => 'סגור';
+
+  @override
+  String get unnamedEvent => 'אירוע ללא שם';
+
+  @override
+  String get accountSecuritySection => 'אבטחת חשבון';
+
+  @override
+  String get timeNow => 'עכשיו';
+
+  @override
+  String get changesSavedSuccess => 'השינויים נשמרו בהצלחה';
+
+  @override
+  String get failedToSaveChanges => 'שמירת השינויים נכשלה';
 }

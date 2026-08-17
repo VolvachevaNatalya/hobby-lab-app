@@ -1,3 +1,5 @@
+import 'app_category.dart';
+
 class Organization {
   final String id;
   final String name;
@@ -11,9 +13,10 @@ class Organization {
   final String? logoUrl;
   final String? category;
   final List<String> categoryIds;
+  final List<AppCategory> categoryList;
   final double averageRating;
   final int reviewCount;
-  final String? promotionType; // 'top', 'featured', 'highlighted', or null
+  final String? promotionType;
   final double? distanceKm;
 
   const Organization({
@@ -29,6 +32,7 @@ class Organization {
     this.logoUrl,
     this.category,
     this.categoryIds = const [],
+    this.categoryList = const [],
     required this.averageRating,
     required this.reviewCount,
     this.promotionType,
@@ -68,6 +72,7 @@ class Organization {
       logoUrl: json['logo_url']?.toString(),
       category: json['category']?.toString(),
       categoryIds: _parseOrgCategoryIds(json),
+      categoryList: _parseOrgCategories(json),
       averageRating: (json['average_rating'] ?? json['rating'] ?? 0).toDouble(),
       reviewCount: (json['review_count'] ?? 0) as int,
       promotionType: promoType,
@@ -87,4 +92,15 @@ List<String> _parseOrgCategoryIds(Map<String, dynamic> json) {
   }
   final legacy = json['category_id']?.toString();
   return legacy != null ? [legacy] : const [];
+}
+
+List<AppCategory> _parseOrgCategories(Map<String, dynamic> json) {
+  final cats = json['categories'];
+  if (cats is List && cats.isNotEmpty) {
+    return cats
+        .whereType<Map<String, dynamic>>()
+        .map(AppCategory.fromJson)
+        .toList();
+  }
+  return const [];
 }

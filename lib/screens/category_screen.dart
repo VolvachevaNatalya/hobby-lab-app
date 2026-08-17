@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
+import '../models/app_category.dart';
 import '../models/app_class.dart';
 import '../models/app_event.dart';
 import '../models/organization.dart';
@@ -15,6 +16,14 @@ import 'see_all_events_screen.dart';
 import 'see_all_orgs_screen.dart';
 import 'see_all_screen.dart';
 import '../utils/event_grouping.dart';
+
+String _resolveEventBadge(String badge, AppLocalizations l10n) {
+  switch (badge.toLowerCase()) {
+    case 'active': return l10n.activeStatus;
+    case 'inactive': return l10n.inactiveStatus;
+    default: return badge;
+  }
+}
 
 // ─── Shared gradient / icon pools (mirrors home_screen.dart) ─────────────────
 
@@ -48,6 +57,7 @@ class _Activity {
   final String studio;
   final String categoryId;
   final String category;
+  final AppCategory? primaryCategory;
   final double rating;
   final int reviewCount;
   final Color colorStart;
@@ -59,6 +69,7 @@ class _Activity {
     required this.studio,
     required this.categoryId,
     required this.category,
+    this.primaryCategory,
     required this.rating,
     required this.reviewCount,
     required this.colorStart,
@@ -95,6 +106,7 @@ List<_Activity> _toActivities(List<AppClass> src) =>
         studio: e.value.organizationName,
         categoryId: e.value.categoryId,
         category: e.value.category,
+        primaryCategory: e.value.primaryCategory,
         rating: e.value.averageRating,
         reviewCount: e.value.reviewCount,
         colorStart: g.$1,
@@ -328,7 +340,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       onSeeAll: () => Navigator.of(context).push(
                           slideRoute(builder: (_) => SeeAllScreen(
                               title: widget.categoryName,
-                              initialCategory: widget.categoryName,
+                              initialCategoryId: widget.categoryId,
                               categoryId: int.tryParse(widget.categoryId),
                               cityId: widget.cityId))),
                     ),
@@ -587,6 +599,7 @@ class _ActivityCardState extends State<_ActivityCard> {
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context).languageCode;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
@@ -647,7 +660,8 @@ class _ActivityCardState extends State<_ActivityCard> {
                           color: Colors.black.withValues(alpha: 0.35),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Text(widget.activity.category,
+                        child: Text(
+                            widget.activity.primaryCategory?.localizedName(locale) ?? widget.activity.category,
                             style: GoogleFonts.poppins(fontSize: 9,
                                 fontWeight: FontWeight.w600, color: Colors.white,
                                 letterSpacing: 0.3)),
@@ -794,7 +808,8 @@ class _BannerCard extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.22),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text(banner.badge,
+                    child: Text(
+                        _resolveEventBadge(banner.badge, AppLocalizations.of(context)!),
                         style: GoogleFonts.poppins(fontSize: 10,
                             fontWeight: FontWeight.w700, color: Colors.white,
                             letterSpacing: 1)),

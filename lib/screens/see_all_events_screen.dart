@@ -59,19 +59,26 @@ class _SeeAllEventsScreenState extends State<SeeAllEventsScreen> {
         e.subtitle.toLowerCase().contains(q)).toList();
   }
 
-  static const _months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  List<String> _buildMonths(AppLocalizations l10n) => [
+    '',
+    l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+    l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+    l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+    l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
+  ];
 
-  String _fmtEventDate(String? iso) {
+  String _fmtEventDate(String? iso, List<String> months) {
     if (iso == null || iso.isEmpty) return '';
     final dt = DateTime.tryParse(iso);
     if (dt == null) return '';
-    return '${dt.day} ${_months[dt.month]} ${dt.year}';
+    return '${dt.day} ${months[dt.month]} ${dt.year}';
   }
 
   String _fmtEventMeta(AppEvent event, String locale) {
-    final cats = event.categoryNames;
+    final cats = event.categories;
     if (cats.isNotEmpty) {
-      final shown = cats.take(2).join(' · ');
+      final names = cats.map((c) => c.localizedName(locale)).toList();
+      final shown = names.take(2).join(' · ');
       return cats.length > 2 ? '$shown +${cats.length - 2}' : shown;
     }
     if (event.isNationwide) return AppLocalizations.of(context)!.nationwideLabel;
@@ -86,6 +93,7 @@ class _SeeAllEventsScreenState extends State<SeeAllEventsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final months = _buildMonths(l10n);
     final items = _filtered;
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -218,7 +226,7 @@ class _SeeAllEventsScreenState extends State<SeeAllEventsScreen> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Text(_fmtEventDate(event.startDatetime),
+                                          Text(_fmtEventDate(event.startDatetime, months),
                                               style: GoogleFonts.poppins(fontSize: 9, fontWeight: FontWeight.w700, color: Colors.white.withValues(alpha: 0.8), letterSpacing: 1)),
                                           const SizedBox(height: 3),
                                           Text(event.title, maxLines: 1, overflow: TextOverflow.ellipsis,

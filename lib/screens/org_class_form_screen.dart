@@ -225,8 +225,8 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
                                   decoration: BoxDecoration(
                                     gradient: sel
                                         ? LinearGradient(colors: [
-                                            catColorStart(cat.name),
-                                            catColorEnd(cat.name),
+                                            catColorStart(cat.stableNameEn),
+                                            catColorEnd(cat.stableNameEn),
                                           ])
                                         : null,
                                     color: sel
@@ -234,7 +234,7 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
                                         : AppColors.surfaceElevated,
                                     shape: BoxShape.circle,
                                   ),
-                                  child: Icon(catIcon(cat.name),
+                                  child: Icon(catIcon(cat.stableNameEn),
                                       size: 16,
                                       color: sel
                                           ? Colors.white
@@ -242,15 +242,18 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
-                                  child: Text(cat.name,
-                                      style: GoogleFonts.poppins(
-                                          fontSize: 14,
-                                          color: sel
-                                              ? AppColors.purpleLight
-                                              : AppColors.textPrimary,
-                                          fontWeight: sel
-                                              ? FontWeight.w600
-                                              : FontWeight.w400)),
+                                  child: Builder(builder: (ctx) {
+                                    final locale = Localizations.localeOf(ctx).languageCode;
+                                    return Text(cat.localizedName(locale),
+                                        style: GoogleFonts.poppins(
+                                            fontSize: 14,
+                                            color: sel
+                                                ? AppColors.purpleLight
+                                                : AppColors.textPrimary,
+                                            fontWeight: sel
+                                                ? FontWeight.w600
+                                                : FontWeight.w400));
+                                  }),
                                 ),
                                 if (sel)
                                   const Icon(Icons.check_rounded,
@@ -274,7 +277,7 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Center(
-                          child: Text('Done',
+                          child: Text(l10n.btnDone,
                               style: GoogleFonts.poppins(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
@@ -309,7 +312,7 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
       });
     } catch (_) {
       if (!mounted) return;
-      _showSnack('Failed to upload image', const Color(0xFFEF4444));
+      _showSnack(AppLocalizations.of(context)!.failedToUploadImage, const Color(0xFFEF4444));
       setState(() => _imageLocalPath = null);
     } finally {
       if (mounted) setState(() => _imageUploading = false);
@@ -371,14 +374,15 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
         Navigator.of(context).pop(OrgClass(
           id: widget.orgClass!.id,
           name: _nameCtrl.text.trim(),
-          category: _selectedCategories.first.name,
+          category: _selectedCategories.first.stableNameEn,
           categoryIds: _selectedCategories.map((c) => c.id).toList(),
+          categoryList: _selectedCategories,
           description: _descCtrl.text.trim(),
           groups: _groups,
         ));
       } catch (_) {
         if (!mounted) return;
-        _showSnack('Failed to update class', const Color(0xFFEF4444));
+        _showSnack(AppLocalizations.of(context)!.failedToUpdateClass, const Color(0xFFEF4444));
       } finally {
         if (mounted) setState(() => _saving = false);
       }
@@ -421,11 +425,12 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
       }
 
       if (!mounted) return;
-      _showSnack('Class created successfully', const Color(0xFF059669));
+      final l10n = AppLocalizations.of(context)!;
+      _showSnack(l10n.classCreatedSuccess, const Color(0xFF059669));
       Navigator.of(context).pop();
     } catch (_) {
       if (!mounted) return;
-      _showSnack('Failed to create class. Please try again.',
+      _showSnack(AppLocalizations.of(context)!.failedToCreateClass,
           const Color(0xFFEF4444));
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -453,7 +458,7 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
                   children: [
                     _buildImageUpload(),
                     const SizedBox(height: 24),
-                    _sectionLabel('Class Details'),
+                    _sectionLabel(l10n.classDetailsSection),
                     const SizedBox(height: 12),
                     _buildFieldCard(
                       key: _detailsCardKey,
@@ -463,7 +468,7 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
                       children: [
                         _inlineField(
                           ctrl: _nameCtrl,
-                          hint: 'Class name',
+                          hint: l10n.classNameHint,
                           icon: Icons.school_rounded,
                           isRequired: true,
                           error: _submitted && _nameCtrl.text.trim().isEmpty,
@@ -480,9 +485,9 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
                     if (_submitted && _nameCtrl.text.trim().isEmpty)
                       _errorLabel(l10n.fieldRequired),
                     if (_submitted && _selectedCategories.isEmpty)
-                      _errorLabel('Please select at least one category'),
+                      _errorLabel(l10n.errorSelectCategory),
                     const SizedBox(height: 24),
-                    _sectionLabel('Groups'),
+                    _sectionLabel(l10n.groupsSection),
                     const SizedBox(height: 12),
                     _buildGroupsSection(),
                     const SizedBox(height: 36),
@@ -519,7 +524,9 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
           ),
           const SizedBox(width: 12),
           Text(
-            _isEdit ? 'Edit Class' : 'New Class',
+            _isEdit
+                ? AppLocalizations.of(context)!.editClass
+                : AppLocalizations.of(context)!.btnNewClass,
             style: GoogleFonts.poppins(
                 fontSize: 18, fontWeight: FontWeight.w700,
                 color: AppColors.textPrimary),
@@ -564,7 +571,7 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
                               color: Colors.black54,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Text('Tap to change',
+                            child: Text(AppLocalizations.of(context)!.tapToChange,
                                 style: GoogleFonts.poppins(
                                     fontSize: 11, color: Colors.white)),
                           ),
@@ -583,7 +590,7 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
                               color: Colors.white, size: 34),
                         ),
                         const SizedBox(height: 8),
-                        Text('Upload Class Image',
+                        Text(AppLocalizations.of(context)!.uploadClassImage,
                             style: GoogleFonts.poppins(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
@@ -682,6 +689,7 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
   Widget _categoryField({bool isRequired = false, bool error = false}) {
     final empty = _selectedCategories.isEmpty;
     final showError = error && empty;
+    final locale = Localizations.localeOf(context).languageCode;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: _showCategorySheet,
@@ -704,7 +712,7 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
                   ? Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: Text(
-                        'Categories',
+                        AppLocalizations.of(context)!.categoriesLabel,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: showError
@@ -719,7 +727,7 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
                         spacing: 6,
                         runSpacing: 6,
                         children: _selectedCategories
-                            .map((cat) => _buildCategoryChip(cat))
+                            .map((cat) => _buildCategoryChip(cat, locale))
                             .toList(),
                       ),
                     ),
@@ -740,26 +748,27 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
     );
   }
 
-  Widget _buildCategoryChip(AppCategory cat) {
+  Widget _buildCategoryChip(AppCategory cat, String locale) {
+    final stable = cat.stableNameEn;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            catColorStart(cat.name).withValues(alpha: 0.25),
-            catColorEnd(cat.name).withValues(alpha: 0.25),
+            catColorStart(stable).withValues(alpha: 0.25),
+            catColorEnd(stable).withValues(alpha: 0.25),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border:
-            Border.all(color: catColorStart(cat.name).withValues(alpha: 0.5)),
+            Border.all(color: catColorStart(stable).withValues(alpha: 0.5)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(catIcon(cat.name), size: 11, color: catColorStart(cat.name)),
+          Icon(catIcon(stable), size: 11, color: catColorStart(stable)),
           const SizedBox(width: 4),
-          Text(cat.name,
+          Text(cat.localizedName(locale),
               style: GoogleFonts.poppins(
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
@@ -798,7 +807,7 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
                   color: AppColors.textPrimary, fontSize: 14),
               cursorColor: AppColors.purple,
               decoration: InputDecoration(
-                hintText: 'Description',
+                hintText: AppLocalizations.of(context)!.descriptionHint,
                 hintStyle: GoogleFonts.poppins(
                     color: AppColors.textMuted, fontSize: 14),
                 border: InputBorder.none,
@@ -845,11 +854,14 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
                           style: GoogleFonts.poppins(
                               fontSize: 14, fontWeight: FontWeight.w600,
                               color: AppColors.textPrimary)),
-                      Text(
-                        'Ages ${g.minAge}–${g.maxAge} · ₪${g.price.toStringAsFixed(0)}/mo · ${g.capacity} students',
-                        style: GoogleFonts.poppins(
-                            fontSize: 11, color: AppColors.textMuted),
-                      ),
+                      Builder(builder: (ctx) {
+                        final l10n = AppLocalizations.of(ctx)!;
+                        return Text(
+                          '${l10n.agesLabel} ${g.minAge}–${g.maxAge} · ₪${g.price.toStringAsFixed(0)}${l10n.perMonthSuffix} · ${g.capacity} ${l10n.studentsLabel}',
+                          style: GoogleFonts.poppins(
+                              fontSize: 11, color: AppColors.textMuted),
+                        );
+                      }),
                     ],
                   ),
                 ),
@@ -900,7 +912,7 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
                 const SizedBox(width: 8),
                 ShaderMask(
                   shaderCallback: (b) => AppColors.brandGradient.createShader(b),
-                  child: Text('Add Group',
+                  child: Text(AppLocalizations.of(context)!.addGroup,
                       style: GoogleFonts.poppins(
                           fontSize: 14, fontWeight: FontWeight.w600,
                           color: Colors.white)),
@@ -942,12 +954,15 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
                   child: CircularProgressIndicator(
                       strokeWidth: 2.5, color: Colors.white),
                 )
-              : Text(
-                  _isEdit ? 'Save Changes' : 'Create Class',
-                  style: GoogleFonts.poppins(
-                      fontSize: 16, fontWeight: FontWeight.w600,
-                      color: Colors.white),
-                ),
+              : Builder(builder: (ctx) {
+                  final l10n = AppLocalizations.of(ctx)!;
+                  return Text(
+                    _isEdit ? l10n.btnSaveChanges : l10n.createClass,
+                    style: GoogleFonts.poppins(
+                        fontSize: 16, fontWeight: FontWeight.w600,
+                        color: Colors.white),
+                  );
+                }),
         ),
       ),
     );

@@ -587,7 +587,7 @@ class _InfoSection extends StatelessWidget {
             ),
             const SizedBox(width: 4),
             Text(
-              '($reviewCount reviews)',
+              '(${AppLocalizations.of(context)!.reviewsCount(reviewCount)})',
               style: GoogleFonts.poppins(
                   fontSize: 13, color: AppColors.textMuted),
             ),
@@ -953,8 +953,8 @@ class _AgeSection extends StatelessWidget {
   final List<Map<String, dynamic>> groups;
   const _AgeSection({required this.groups});
 
-  String get _ageRange {
-    if (groups.isEmpty) return 'Any age';
+  String _ageRange(AppLocalizations l10n) {
+    if (groups.isEmpty) return l10n.anyAge;
     int? minAge, maxAge;
     for (final g in groups) {
       final from = g['age_from'] as int?;
@@ -962,26 +962,27 @@ class _AgeSection extends StatelessWidget {
       if (from != null) minAge = (minAge == null) ? from : (from < minAge ? from : minAge);
       if (to != null) maxAge = (maxAge == null) ? to : (to > maxAge ? to : maxAge);
     }
-    if (minAge != null && maxAge != null) return '$minAge – $maxAge years';
-    if (minAge != null) return '$minAge+ years';
-    return 'Any age';
+    if (minAge != null && maxAge != null) return l10n.ageFromTo(minAge, maxAge);
+    if (minAge != null) return l10n.ageFromOnly(minAge);
+    return l10n.anyAge;
   }
 
-  String get _capacity {
+  String _capacity(AppLocalizations l10n) {
     if (groups.isEmpty) return '—';
     int total = 0;
     for (final g in groups) {
       total += (g['capacity'] as int?) ?? 0;
     }
-    return total > 0 ? 'Up to $total' : '—';
+    return total > 0 ? l10n.upToCapacity(total) : '—';
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _SectionTitle(AppLocalizations.of(context)!.ageInfoSection),
+        _SectionTitle(l10n.ageInfoSection),
         const SizedBox(height: 14),
         Row(
           children: [
@@ -990,8 +991,8 @@ class _AgeSection extends StatelessWidget {
                 icon: Icons.child_care_rounded,
                 iconColor: AppColors.purple,
                 iconBg: AppColors.purple.withValues(alpha: 0.12),
-                label: AppLocalizations.of(context)!.ageRange,
-                value: _ageRange,
+                label: l10n.ageRange,
+                value: _ageRange(l10n),
               ),
             ),
             const SizedBox(width: 12),
@@ -1000,8 +1001,8 @@ class _AgeSection extends StatelessWidget {
                 icon: Icons.group_rounded,
                 iconColor: const Color(0xFF0EA5E9),
                 iconBg: const Color(0xFF0EA5E9).withValues(alpha: 0.1),
-                label: AppLocalizations.of(context)!.groupSize,
-                value: _capacity,
+                label: l10n.groupSize,
+                value: _capacity(l10n),
               ),
             ),
           ],
@@ -1120,8 +1121,6 @@ class _GroupTile extends StatelessWidget {
   final List<Map<String, dynamic>> schedules;
   const _GroupTile({required this.group, required this.schedules});
 
-  static const _days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
   String _fmtTime(String? t) {
     if (t == null || t.isEmpty) return '';
     final p = t.split(':');
@@ -1130,16 +1129,22 @@ class _GroupTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final name = group['name']?.toString() ?? 'Group';
+    final l10n = AppLocalizations.of(context)!;
+    final localDays = [
+      l10n.daySunAbbrev, l10n.dayMonAbbrev, l10n.dayTueAbbrev,
+      l10n.dayWedAbbrev, l10n.dayThuAbbrev, l10n.dayFriAbbrev,
+      l10n.daySatAbbrev,
+    ];
+    final name = group['name']?.toString() ?? l10n.groupFallback;
     final ageFrom = group['age_from'] as int?;
     final ageTo = group['age_to'] as int?;
     final capacity = group['capacity'] as int?;
 
     String ageLabel = '';
     if (ageFrom != null && ageTo != null) {
-      ageLabel = '$ageFrom–$ageTo yrs';
+      ageLabel = l10n.ageFromToShort(ageFrom, ageTo);
     } else if (ageFrom != null) {
-      ageLabel = '$ageFrom+ yrs';
+      ageLabel = l10n.ageFromOnlyShort(ageFrom);
     }
 
     // Build schedule summary: "Mon 10:00–11:00, Wed 14:00–15:00"
@@ -1147,7 +1152,7 @@ class _GroupTile extends StatelessWidget {
       final day = (s['day_of_week'] as int?)?.clamp(0, 6) ?? 0;
       final start = _fmtTime(s['start_time']?.toString());
       final end = _fmtTime(s['end_time']?.toString());
-      return '${_days[day]} $start–$end';
+      return '${localDays[day]} $start–$end';
     }).join('  ·  ');
 
     return Container(
@@ -1214,8 +1219,6 @@ class _ScheduleSection extends StatelessWidget {
   final List<Map<String, dynamic>> schedules;
   const _ScheduleSection({required this.groups, required this.schedules});
 
-  static const _days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
   String _fmt(String? t) {
     if (t == null || t.isEmpty) return '';
     final parts = t.split(':');
@@ -1225,11 +1228,17 @@ class _ScheduleSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final localDays = [
+      l10n.daySunAbbrev, l10n.dayMonAbbrev, l10n.dayTueAbbrev,
+      l10n.dayWedAbbrev, l10n.dayThuAbbrev, l10n.dayFriAbbrev,
+      l10n.daySatAbbrev,
+    ];
     if (schedules.isEmpty) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _SectionTitle(AppLocalizations.of(context)!.scheduleSection),
+          _SectionTitle(l10n.scheduleSection),
           const SizedBox(height: 14),
           Container(
             width: double.infinity,
@@ -1239,7 +1248,7 @@ class _ScheduleSection extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: AppColors.divider),
             ),
-            child: Text(AppLocalizations.of(context)!.noScheduleAvailable,
+            child: Text(l10n.noScheduleAvailable,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textMuted)),
           ),
@@ -1248,7 +1257,7 @@ class _ScheduleSection extends StatelessWidget {
     }
 
     // Group schedules by group name
-    final groupMap = {for (final g in groups) g['id'].toString(): g['name']?.toString() ?? 'Group'};
+    final groupMap = {for (final g in groups) g['id'].toString(): g['name']?.toString() ?? l10n.groupFallback};
 
     // Group by day
     final byDay = <int, List<Map<String, dynamic>>>{};
@@ -1261,7 +1270,7 @@ class _ScheduleSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _SectionTitle(AppLocalizations.of(context)!.scheduleSection),
+        _SectionTitle(l10n.scheduleSection),
         const SizedBox(height: 14),
         Container(
           padding: const EdgeInsets.all(16),
@@ -1281,7 +1290,7 @@ class _ScheduleSection extends StatelessWidget {
                     SizedBox(
                       width: 36,
                       child: Text(
-                        _days[day.clamp(0, 6)],
+                        localDays[day.clamp(0, 6)],
                         style: GoogleFonts.poppins(
                           fontSize: 12, fontWeight: FontWeight.w700,
                           color: AppColors.textSecondary,
@@ -1425,11 +1434,12 @@ class _ReviewPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final rating = (review['rating'] ?? 0) as num;
     final comment = (review['comment'] ?? '').toString();
     final reviewerName = (review['reviewer_name'] ??
             review['user_name'] ??
-            'Anonymous')
+            l10n.anonymousReviewer)
         .toString();
     final createdAt = review['created_at']?.toString() ?? '';
     final dateStr = _fmtDate(createdAt);
@@ -1548,6 +1558,7 @@ class _ContactBarState extends State<_ContactBar> {
 
   Future<void> _contact() async {
     if (_loading) return;
+    final l10n = AppLocalizations.of(context)!;
     setState(() => _loading = true);
     String? conversationId;
     try {
@@ -1560,7 +1571,7 @@ class _ContactBarState extends State<_ContactBar> {
     setState(() => _loading = false);
     Navigator.of(context).push(slideRoute(builder: (_) => ChatScreen(
       conversationId: conversationId,
-      name: widget.orgName.isNotEmpty ? widget.orgName : 'Organization',
+      name: widget.orgName.isNotEmpty ? widget.orgName : l10n.organizationFallback,
       initials: _initials.isNotEmpty ? _initials : '?',
       avatarColor: widget.colorStart,
     )));

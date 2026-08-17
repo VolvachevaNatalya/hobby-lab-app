@@ -20,6 +20,7 @@ class OrgEventFormScreen extends StatefulWidget {
   final String? orgId;
   final AppCity? initialCity;
   final bool isDuplicate;
+  final VoidCallback? onSaved;
 
   const OrgEventFormScreen({
     super.key,
@@ -27,6 +28,7 @@ class OrgEventFormScreen extends StatefulWidget {
     this.orgId,
     this.initialCity,
     this.isDuplicate = false,
+    this.onSaved,
   });
 
   @override
@@ -220,7 +222,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
       });
     } catch (_) {
       if (!mounted) return;
-      _showSnack('Failed to upload image', const Color(0xFFEF4444));
+      _showSnack(AppLocalizations.of(context)!.failedToUploadImage, const Color(0xFFEF4444));
       setState(() => _imageLocalPath = null);
     } finally {
       if (mounted) setState(() => _imageUploading = false);
@@ -367,8 +369,8 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                                     gradient: sel
                                         ? LinearGradient(
                                             colors: [
-                                              catColorStart(cat.name),
-                                              catColorEnd(cat.name),
+                                              catColorStart(cat.stableNameEn),
+                                              catColorEnd(cat.stableNameEn),
                                             ],
                                           )
                                         : null,
@@ -378,7 +380,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(
-                                    catIcon(cat.name),
+                                    catIcon(cat.stableNameEn),
                                     size: 16,
                                     color: sel
                                         ? Colors.white
@@ -387,8 +389,10 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
-                                  child: Text(
-                                    cat.name,
+                                  child: Builder(builder: (ctx) {
+                                    final locale = Localizations.localeOf(ctx).languageCode;
+                                    return Text(
+                                    cat.localizedName(locale),
                                     style: GoogleFonts.poppins(
                                       fontSize: 14,
                                       color: sel
@@ -398,7 +402,8 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                                           ? FontWeight.w600
                                           : FontWeight.w400,
                                     ),
-                                  ),
+                                  );
+                                  }),
                                 ),
                                 if (sel)
                                   const Icon(
@@ -426,7 +431,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                         ),
                         child: Center(
                           child: Text(
-                            'Done',
+                            l10n.btnDone,
                             style: GoogleFonts.poppins(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
@@ -556,9 +561,13 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
       if (!mounted) return;
       setState(() => _saving = false);
 
-      // Removing recurrence deletes siblings — parent must reload the full list.
-      // Same for future/series scope edits.
-      if (removeRecurrence || (scope != null && scope != 'single')) {
+      // Force parent reload when the event list structure changes:
+      // - removing recurrence deletes siblings
+      // - adding recurrence to a standalone event generates new occurrence rows
+      // - future/series scope edits may affect multiple events
+      final convertingToSeries = widget.event!.seriesId == null && _recurrence != null;
+      if (convertingToSeries || removeRecurrence || (scope != null && scope != 'single')) {
+        widget.onSaved?.call();
         Navigator.of(context).pop(null);
         return;
       }
@@ -567,10 +576,10 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
         id: widget.event!.id,
         name: _nameCtrl.text.trim(),
         category: _selectedCategories.isNotEmpty
-            ? _selectedCategories.first.name
+            ? _selectedCategories.first.stableNameEn
             : '',
         categoryIds: _selectedCategories.map((c) => c.id).toList(),
-        categoryNames: _selectedCategories.map((c) => c.name).toList(),
+        categoryList: _selectedCategories,
         description: _descCtrl.text.trim(),
         date: _date!,
         time: eventTime,
@@ -591,6 +600,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
         occurrenceIndex: removeRecurrence ? null : widget.event!.occurrenceIndex,
         recurrence: removeRecurrence ? null : widget.event!.recurrence,
       );
+      widget.onSaved?.call();
       Navigator.of(context).pop(event);
       return;
     }
@@ -635,12 +645,12 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
         recurrence: _recurrence,
       );
       if (!mounted) return;
-      _showSnack('Event created successfully', const Color(0xFF059669));
+      _showSnack(AppLocalizations.of(context)!.eventCreatedSuccess, const Color(0xFF059669));
       Navigator.of(context).pop();
     } catch (_) {
       if (!mounted) return;
       _showSnack(
-        'Failed to create event. Please try again.',
+        AppLocalizations.of(context)!.failedToCreateEvent,
         const Color(0xFFEF4444),
       );
     } finally {
@@ -669,7 +679,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                     children: [
                       _buildImageUpload(),
                       const SizedBox(height: 24),
-                      _sectionLabel('Event Details'),
+                      _sectionLabel(l10n.eventDetailsSection),
                       const SizedBox(height: 12),
                       _buildFieldCard(
                         key: _detailsCardKey,
@@ -680,7 +690,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                         children: [
                           _inlineField(
                             ctrl: _nameCtrl,
-                            hint: 'Event name',
+                            hint: l10n.eventNameHint,
                             icon: Icons.event_rounded,
                             isRequired: true,
                             error: _submitted && _nameCtrl.text.trim().isEmpty,
@@ -699,7 +709,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                       if (_submitted && _selectedCategories.isEmpty)
                         _errorLabel(l10n.fieldRequired),
                       const SizedBox(height: 20),
-                      _sectionLabel('Date & Time'),
+                      _sectionLabel(l10n.dateTimeSection),
                       const SizedBox(height: 12),
                       _buildFieldCard(
                         key: _dateCardKey,
@@ -709,7 +719,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                             icon: Icons.calendar_today_rounded,
                             label: _date != null
                                 ? fmtDate(_date!)
-                                : 'Select date',
+                                : l10n.selectDate,
                             isEmpty: _date == null,
                             onTap: _pickDate,
                             isRequired: true,
@@ -720,7 +730,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                             icon: Icons.access_time_rounded,
                             label: _time != null
                                 ? fmtTime(_time!)
-                                : 'Select time',
+                                : l10n.selectTime,
                             isEmpty: _time == null,
                             onTap: _pickTime,
                           ),
@@ -729,7 +739,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                       if (_submitted && _date == null)
                         _errorLabel(l10n.fieldRequired),
                       const SizedBox(height: 20),
-                      _sectionLabel('Location'),
+                      _sectionLabel(l10n.locationSection),
                       const SizedBox(height: 12),
                       _buildFieldCard(
                         key: _locationCardKey,
@@ -740,7 +750,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                         children: [
                           _inlineField(
                             ctrl: _locationCtrl,
-                            hint: 'Address / venue name',
+                            hint: l10n.addressHint,
                             icon: Icons.location_on_rounded,
                           ),
                           _divider(),
@@ -761,7 +771,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                       const SizedBox(height: 12),
                       _buildRepeatRow(),
                       const SizedBox(height: 20),
-                      _sectionLabel('Participants'),
+                      _sectionLabel(l10n.participantsSection),
                       const SizedBox(height: 12),
                       _buildFieldCard(
                         children: [
@@ -769,7 +779,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                           _divider(),
                           _inlineField(
                             ctrl: _capacityCtrl,
-                            hint: 'Max capacity',
+                            hint: l10n.maxCapacityHint,
                             icon: Icons.group_rounded,
                             type: TextInputType.number,
                             inputFormatters: [
@@ -779,7 +789,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                           _divider(),
                           _inlineField(
                             ctrl: _priceCtrl,
-                            hint: 'Price (₪) — leave blank if free',
+                            hint: l10n.priceHint,
                             icon: Icons.payments_rounded,
                             type: const TextInputType.numberWithOptions(
                               decimal: true,
@@ -793,7 +803,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                           _divider(),
                           _inlineField(
                             ctrl: _priceCommentCtrl,
-                            hint: 'Price comment (optional)',
+                            hint: l10n.priceCommentHint,
                             icon: Icons.comment_rounded,
                             action: TextInputAction.done,
                           ),
@@ -839,7 +849,9 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
           Text(
             widget.isDuplicate
                 ? AppLocalizations.of(context)!.duplicateEventTitle
-                : (_isEdit ? 'Edit Event' : 'New Event'),
+                : (_isEdit
+                    ? AppLocalizations.of(context)!.editEvent
+                    : AppLocalizations.of(context)!.btnNewEvent),
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -891,7 +903,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          'Tap to change',
+                          AppLocalizations.of(context)!.tapToChange,
                           style: GoogleFonts.poppins(
                             fontSize: 11,
                             color: Colors.white,
@@ -917,7 +929,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Upload Event Image',
+                      AppLocalizations.of(context)!.uploadEventImage,
                       style: GoogleFonts.poppins(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
@@ -1038,6 +1050,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
   Widget _categoryField({bool isRequired = false, bool error = false}) {
     final empty = _selectedCategories.isEmpty;
     final showError = error && empty;
+    final locale = Localizations.localeOf(context).languageCode;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: _showCategorySheet,
@@ -1062,7 +1075,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                   ? Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: Text(
-                        'Categories',
+                        AppLocalizations.of(context)!.categoriesLabel,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: showError
@@ -1077,7 +1090,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                         spacing: 6,
                         runSpacing: 6,
                         children: _selectedCategories
-                            .map((cat) => _buildCategoryChip(cat))
+                            .map((cat) => _buildCategoryChip(cat, locale))
                             .toList(),
                       ),
                     ),
@@ -1101,28 +1114,29 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
     );
   }
 
-  Widget _buildCategoryChip(AppCategory cat) {
+  Widget _buildCategoryChip(AppCategory cat, String locale) {
+    final stable = cat.stableNameEn;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            catColorStart(cat.name).withValues(alpha: 0.25),
-            catColorEnd(cat.name).withValues(alpha: 0.25),
+            catColorStart(stable).withValues(alpha: 0.25),
+            catColorEnd(stable).withValues(alpha: 0.25),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: catColorStart(cat.name).withValues(alpha: 0.5),
+          color: catColorStart(stable).withValues(alpha: 0.5),
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(catIcon(cat.name), size: 11, color: catColorStart(cat.name)),
+          Icon(catIcon(stable), size: 11, color: catColorStart(stable)),
           const SizedBox(width: 4),
           Text(
-            cat.name,
+            cat.localizedName(locale),
             style: GoogleFonts.poppins(
               fontSize: 11,
               fontWeight: FontWeight.w500,
@@ -1146,6 +1160,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
   }
 
   Widget _buildDescField() {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -1173,7 +1188,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
               ),
               cursorColor: AppColors.purple,
               decoration: InputDecoration(
-                hintText: 'Description',
+                hintText: l10n.descriptionHint,
                 hintStyle: GoogleFonts.poppins(
                   color: AppColors.textMuted,
                   fontSize: 14,
@@ -1238,6 +1253,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
   }
 
   Widget _ageRangeRow() {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
@@ -1256,7 +1272,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
               ),
               cursorColor: AppColors.purple,
               decoration: InputDecoration(
-                hintText: 'Min age',
+                hintText: l10n.minAgeHint,
                 hintStyle: GoogleFonts.poppins(
                   color: AppColors.textMuted,
                   fontSize: 14,
@@ -1285,7 +1301,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
               ),
               cursorColor: AppColors.purple,
               decoration: InputDecoration(
-                hintText: 'Max age',
+                hintText: l10n.maxAgeHint,
                 hintStyle: GoogleFonts.poppins(
                   color: AppColors.textMuted,
                   fontSize: 14,
@@ -1404,6 +1420,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
   }
 
   Widget _buildCityPickerRow({bool error = false}) {
+    final l10n = AppLocalizations.of(context)!;
     final lang = Localizations.localeOf(context).languageCode;
     final label = _selectedCity?.displayName(lang);
     final hasLabel = label != null && label.isNotEmpty;
@@ -1422,7 +1439,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
             const SizedBox(width: 14),
             Expanded(
               child: Text(
-                label != null && label.isNotEmpty ? label : 'City',
+                label != null && label.isNotEmpty ? label : l10n.cityHint,
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   color: error
@@ -1482,14 +1499,17 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                     color: Colors.white,
                   ),
                 )
-              : Text(
-                  _isEdit ? 'Save Changes' : 'Create Event',
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
+              : Builder(builder: (ctx) {
+                  final l10n = AppLocalizations.of(ctx)!;
+                  return Text(
+                    _isEdit ? l10n.btnSaveChanges : l10n.createEvent,
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  );
+                }),
         ),
       ),
     );

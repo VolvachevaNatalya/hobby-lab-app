@@ -130,7 +130,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 32),
-                    _sectionLabel('ACCOUNT SECURITY'),
+                    _sectionLabel(l.accountSecuritySection),
                     const SizedBox(height: 16),
                     AppTextField(
                       controller: _currentController,

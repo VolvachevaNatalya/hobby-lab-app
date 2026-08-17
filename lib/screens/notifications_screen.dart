@@ -19,7 +19,7 @@ class _NotificationData {
   final Color iconColor;
   final String title;
   final String body;
-  final String time;
+  final String rawTime;
   final bool isRead;
   final String? conversationId;
 
@@ -30,12 +30,41 @@ class _NotificationData {
     required this.iconColor,
     required this.title,
     required this.body,
-    required this.time,
+    required this.rawTime,
     required this.isRead,
     this.conversationId,
   });
 }
 
+String _fmtNotifTime(String raw, AppLocalizations l10n) {
+  if (raw.isEmpty) return '';
+  try {
+    final dt = DateTime.parse(raw).toLocal();
+    final now = DateTime.now();
+    final hour = dt.hour.toString().padLeft(2, '0');
+    final min = dt.minute.toString().padLeft(2, '0');
+    final isToday = dt.year == now.year && dt.month == now.month && dt.day == now.day;
+    if (isToday) return '$hour:$min';
+    final months = [
+      l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+      l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+      l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+      l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
+    ];
+    return '${months[dt.month - 1]} ${dt.day}, $hour:$min';
+  } catch (_) {
+    return raw;
+  }
+}
+
+
+String _resolveNotifText(String raw, AppLocalizations l10n) {
+  switch (raw) {
+    case 'notification.new_message.title': return l10n.notifNewMessageTitle;
+    case 'notification.new_message.body':  return l10n.notifNewMessageBody;
+    default: return raw;
+  }
+}
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
@@ -105,7 +134,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       iconColor: color,
       title: n.title,
       body: n.body,
-      time: n.time,
+      rawTime: n.rawTime,
       isRead: n.isRead,
       conversationId: n.conversationId,
     );
@@ -145,6 +174,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           ),
                           itemBuilder: (context, i) {
                             final item = _items[i];
+                            final l10n = AppLocalizations.of(context)!;
                             return _NotificationTile(
                               data: item,
                               onTap: () {
@@ -166,9 +196,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                   Navigator.of(context).push(slideRoute(builder: (_) => NotificationDetailsScreen(
                                     icon: item.icon,
                                     iconColor: item.iconColor,
-                                    title: item.title,
-                                    body: item.body,
-                                    time: item.time,
+                                    title: _resolveNotifText(item.title, l10n),
+                                    body: _resolveNotifText(item.body, l10n),
+                                    time: _fmtNotifTime(item.rawTime, l10n),
                                   )));
                                 }
                               },
@@ -293,6 +323,7 @@ class _NotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
@@ -322,7 +353,7 @@ class _NotificationTile extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          data.title,
+                          _resolveNotifText(data.title, l10n),
                           style: GoogleFonts.poppins(
                             fontSize: 14,
                             fontWeight: data.isRead
@@ -333,7 +364,7 @@ class _NotificationTile extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        data.time,
+                        _fmtNotifTime(data.rawTime, l10n),
                         style: GoogleFonts.poppins(
                           fontSize: 11,
                           color: AppColors.textMuted,
@@ -343,7 +374,7 @@ class _NotificationTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    data.body,
+                    _resolveNotifText(data.body, l10n),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.poppins(

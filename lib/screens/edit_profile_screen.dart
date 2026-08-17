@@ -87,15 +87,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         _selectedAvatarPath = null;
         _avatarUploadFailed = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Failed to upload image: $e',
-            style: GoogleFonts.poppins(fontSize: 13, color: Colors.white)),
-        backgroundColor: const Color(0xFFEF4444),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 5),
-      ));
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(l10n.failedToUploadImage,
+              style: GoogleFonts.poppins(fontSize: 13, color: Colors.white)),
+          backgroundColor: const Color(0xFFEF4444),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          margin: const EdgeInsets.all(16),
+          duration: const Duration(seconds: 5),
+        ));
+      }
     } finally {
       if (mounted) setState(() => _avatarUploading = false);
     }
@@ -320,7 +323,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (_saving) return;
     if (_avatarUploading) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Please wait for image upload to finish',
+        content: Text(AppLocalizations.of(context)!.pleaseWaitUpload,
             style: GoogleFonts.poppins(fontSize: 13, color: Colors.white)),
         backgroundColor: AppColors.purple,
         behavior: SnackBarBehavior.floating,
@@ -331,7 +334,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
     if (_avatarUploadFailed) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Image upload failed — please try again or remove the photo',
+        content: Text(AppLocalizations.of(context)!.imageUploadFailed,
             style: GoogleFonts.poppins(fontSize: 13, color: Colors.white)),
         backgroundColor: const Color(0xFFEF4444),
         behavior: SnackBarBehavior.floating,

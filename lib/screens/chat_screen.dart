@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../services/api_service.dart';
 
@@ -9,18 +9,26 @@ import '../services/api_service.dart';
 class _Msg {
   final String text;
   final bool isUser;
-  final String time;
-  const _Msg(this.text, this.isUser, this.time);
+  final String rawTime;
+  const _Msg(this.text, this.isUser, this.rawTime);
 }
 
-String _formatTime(String raw) {
+String _fmtChatTime(String raw, AppLocalizations l10n) {
   if (raw.isEmpty || raw == 'Now') return raw;
   try {
     final dt = DateTime.parse(raw).toLocal();
     final now = DateTime.now();
     final isToday = dt.year == now.year && dt.month == now.month && dt.day == now.day;
-    if (isToday) return DateFormat('HH:mm').format(dt);
-    return DateFormat('MMM d, HH:mm').format(dt);
+    final hour = dt.hour.toString().padLeft(2, '0');
+    final min = dt.minute.toString().padLeft(2, '0');
+    if (isToday) return '$hour:$min';
+    final months = [
+      l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+      l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+      l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+      l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
+    ];
+    return '${months[dt.month - 1]} ${dt.day}, $hour:$min';
   } catch (_) {
     return raw;
   }
@@ -91,7 +99,7 @@ class _ChatScreenState extends State<ChatScreen> {
           final senderId = (msg.senderId as String);
           final isUser = senderId == myId;
           debugPrint('[Chat] sender_id: "$senderId" → isUser: $isUser');
-          return _Msg(msg.content as String, isUser, _formatTime(msg.time as String));
+          return _Msg(msg.content as String, isUser, msg.time as String);
         }).toList();
       });
     } catch (e) {
@@ -143,7 +151,7 @@ class _ChatScreenState extends State<ChatScreen> {
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               content: Text(
-                'Failed to send message. Please try again.',
+                AppLocalizations.of(context)!.failedToSendMessage,
                 style: GoogleFonts.poppins(fontSize: 13, color: Colors.white),
               ),
             ),
@@ -320,7 +328,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   textInputAction: TextInputAction.send,
                   onSubmitted: (_) => _send(),
                   decoration: InputDecoration(
-                    hintText: 'Type a message...',
+                    hintText: AppLocalizations.of(context)!.typeMessageHint,
                     hintStyle: GoogleFonts.poppins(
                       color: AppColors.textMuted,
                       fontSize: 14,
@@ -454,7 +462,9 @@ class _ChatBubble extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  msg.time,
+                  msg.rawTime == 'Now'
+                      ? AppLocalizations.of(context)!.timeNow
+                      : _fmtChatTime(msg.rawTime, AppLocalizations.of(context)!),
                   style: GoogleFonts.poppins(
                     fontSize: 10,
                     color: AppColors.textMuted,

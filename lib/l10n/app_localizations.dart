@@ -253,37 +253,37 @@ abstract class AppLocalizations {
   /// No description provided for @onboarding1Title.
   ///
   /// In en, this message translates to:
-  /// **'Find the Best Activities'**
+  /// **'Discover Activities'**
   String get onboarding1Title;
 
   /// No description provided for @onboarding1Subtitle.
   ///
   /// In en, this message translates to:
-  /// **'Discover hundreds of classes, camps and workshops for your children nearby'**
+  /// **'Find the best classes, camps, and workshops\nfor your children nearby'**
   String get onboarding1Subtitle;
 
   /// No description provided for @onboarding2Title.
   ///
   /// In en, this message translates to:
-  /// **'Easy Booking'**
+  /// **'Connect with Organizers'**
   String get onboarding2Title;
 
   /// No description provided for @onboarding2Subtitle.
   ///
   /// In en, this message translates to:
-  /// **'Book your favourite activities in a few taps and manage all schedules in one place'**
+  /// **'Message organizers directly, ask questions,\nand get quick responses'**
   String get onboarding2Subtitle;
 
   /// No description provided for @onboarding3Title.
   ///
   /// In en, this message translates to:
-  /// **'Stay Connected'**
+  /// **'Save & Organize'**
   String get onboarding3Title;
 
   /// No description provided for @onboarding3Subtitle.
   ///
   /// In en, this message translates to:
-  /// **'Get updates, reminders and communicate with organizers directly in the app'**
+  /// **'Bookmark your favourites, track schedules,\nand never miss a registration'**
   String get onboarding3Subtitle;
 
   /// No description provided for @chooseLanguage.
@@ -1875,6 +1875,1350 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No events in this series'**
   String get noOccurrences;
+
+  /// No description provided for @navDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get navDashboard;
+
+  /// No description provided for @navClasses.
+  ///
+  /// In en, this message translates to:
+  /// **'Classes'**
+  String get navClasses;
+
+  /// No description provided for @navEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get navEvents;
+
+  /// No description provided for @orgDashboardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization Dashboard'**
+  String get orgDashboardSubtitle;
+
+  /// No description provided for @myOrganizationFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'My Organization'**
+  String get myOrganizationFallback;
+
+  /// No description provided for @statGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Groups'**
+  String get statGroups;
+
+  /// No description provided for @statStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Students'**
+  String get statStudents;
+
+  /// No description provided for @myClasses.
+  ///
+  /// In en, this message translates to:
+  /// **'My Classes'**
+  String get myClasses;
+
+  /// No description provided for @myEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'My Events'**
+  String get myEvents;
+
+  /// No description provided for @recentMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Messages'**
+  String get recentMessages;
+
+  /// No description provided for @btnAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'+ Add'**
+  String get btnAdd;
+
+  /// No description provided for @noClassesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No classes yet. Tap + Add to create one.'**
+  String get noClassesHint;
+
+  /// No description provided for @noEventsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No events yet. Tap + Add to create one.'**
+  String get noEventsHint;
+
+  /// No description provided for @noRecentMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'No messages yet.'**
+  String get noRecentMessages;
+
+  /// No description provided for @btnManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage'**
+  String get btnManage;
+
+  /// No description provided for @btnNewClass.
+  ///
+  /// In en, this message translates to:
+  /// **'New Class'**
+  String get btnNewClass;
+
+  /// No description provided for @noClassesYetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Classes Yet'**
+  String get noClassesYetTitle;
+
+  /// No description provided for @noClassesYetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No classes yet. Add your first class!'**
+  String get noClassesYetBody;
+
+  /// No description provided for @agesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ages'**
+  String get agesLabel;
+
+  /// No description provided for @perMonthSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'/mo'**
+  String get perMonthSuffix;
+
+  /// No description provided for @studentsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'students'**
+  String get studentsLabel;
+
+  /// No description provided for @noGroupsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No groups added yet.'**
+  String get noGroupsYet;
+
+  /// No description provided for @btnNewEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'New Event'**
+  String get btnNewEvent;
+
+  /// No description provided for @noUpcomingEventsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming events yet.'**
+  String get noUpcomingEventsYet;
+
+  /// No description provided for @noPastEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'No past events.'**
+  String get noPastEvents;
+
+  /// No description provided for @noMessagesYetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages from your clients will appear here'**
+  String get noMessagesYetBody;
+
+  /// No description provided for @verifiedOrganization.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified Organization'**
+  String get verifiedOrganization;
+
+  /// No description provided for @businessSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get businessSection;
+
+  /// No description provided for @billingPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing & Payments'**
+  String get billingPayments;
+
+  /// No description provided for @analyticsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics'**
+  String get analyticsLabel;
+
+  /// No description provided for @supportSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get supportSection;
+
+  /// No description provided for @termsPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms & Privacy'**
+  String get termsPrivacy;
+
+  /// No description provided for @exitDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit Dashboard'**
+  String get exitDashboard;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature is coming soon.'**
+  String get comingSoon;
+
+  /// No description provided for @btnEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get btnEdit;
+
+  /// No description provided for @failedToDeleteClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete class. Please try again.'**
+  String get failedToDeleteClass;
+
+  /// No description provided for @failedToDeleteEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete event. Please try again.'**
+  String get failedToDeleteEvent;
+
+  /// No description provided for @groupCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 group} other{{count} groups}}'**
+  String groupCount(int count);
+
+  /// No description provided for @eventSpotsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 spot} other{{count} spots}}'**
+  String eventSpotsCount(int count);
+
+  /// No description provided for @tapToChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to change'**
+  String get tapToChange;
+
+  /// No description provided for @failedToUploadImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to upload image'**
+  String get failedToUploadImage;
+
+  /// No description provided for @btnDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get btnDone;
+
+  /// No description provided for @editClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Class'**
+  String get editClass;
+
+  /// No description provided for @uploadClassImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Class Image'**
+  String get uploadClassImage;
+
+  /// No description provided for @classDetailsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Class Details'**
+  String get classDetailsSection;
+
+  /// No description provided for @classNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Class name'**
+  String get classNameHint;
+
+  /// No description provided for @descriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get descriptionHint;
+
+  /// No description provided for @errorSelectCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select at least one category'**
+  String get errorSelectCategory;
+
+  /// No description provided for @categoriesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get categoriesLabel;
+
+  /// No description provided for @addGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Group'**
+  String get addGroup;
+
+  /// No description provided for @createClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Class'**
+  String get createClass;
+
+  /// No description provided for @classCreatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Class created successfully'**
+  String get classCreatedSuccess;
+
+  /// No description provided for @failedToUpdateClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update class'**
+  String get failedToUpdateClass;
+
+  /// No description provided for @failedToCreateClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create class. Please try again.'**
+  String get failedToCreateClass;
+
+  /// No description provided for @editEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Event'**
+  String get editEvent;
+
+  /// No description provided for @uploadEventImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Event Image'**
+  String get uploadEventImage;
+
+  /// No description provided for @eventDetailsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Event Details'**
+  String get eventDetailsSection;
+
+  /// No description provided for @eventNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Event name'**
+  String get eventNameHint;
+
+  /// No description provided for @dateTimeSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Date & Time'**
+  String get dateTimeSection;
+
+  /// No description provided for @selectDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date'**
+  String get selectDate;
+
+  /// No description provided for @selectTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Select time'**
+  String get selectTime;
+
+  /// No description provided for @locationSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get locationSection;
+
+  /// No description provided for @addressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Address / venue name'**
+  String get addressHint;
+
+  /// No description provided for @cityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get cityHint;
+
+  /// No description provided for @participantsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Participants'**
+  String get participantsSection;
+
+  /// No description provided for @minAgeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Min age'**
+  String get minAgeHint;
+
+  /// No description provided for @maxAgeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Max age'**
+  String get maxAgeHint;
+
+  /// No description provided for @maxCapacityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Max capacity'**
+  String get maxCapacityHint;
+
+  /// No description provided for @priceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Price (₪) — leave blank if free'**
+  String get priceHint;
+
+  /// No description provided for @priceCommentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Price comment (optional)'**
+  String get priceCommentHint;
+
+  /// No description provided for @createEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Event'**
+  String get createEvent;
+
+  /// No description provided for @eventCreatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Event created successfully'**
+  String get eventCreatedSuccess;
+
+  /// No description provided for @failedToCreateEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create event. Please try again.'**
+  String get failedToCreateEvent;
+
+  /// No description provided for @editGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Group'**
+  String get editGroup;
+
+  /// No description provided for @newGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'New Group'**
+  String get newGroup;
+
+  /// No description provided for @groupDetailsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Details'**
+  String get groupDetailsSection;
+
+  /// No description provided for @groupNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Group name (e.g. U10 Group)'**
+  String get groupNameHint;
+
+  /// No description provided for @ageRangeSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Age Range'**
+  String get ageRangeSection;
+
+  /// No description provided for @capacityPriceSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity & Price'**
+  String get capacityPriceSection;
+
+  /// No description provided for @maxStudentsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Max students'**
+  String get maxStudentsHint;
+
+  /// No description provided for @pricePerMonthHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Price per month (₪)'**
+  String get pricePerMonthHint;
+
+  /// No description provided for @timeSlotCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 time slot} other{{count} time slots}}'**
+  String timeSlotCount(int count);
+
+  /// No description provided for @addSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Schedule'**
+  String get addSchedule;
+
+  /// No description provided for @groupCreatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Group created successfully'**
+  String get groupCreatedSuccess;
+
+  /// No description provided for @failedToCreateGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create group. Please try again.'**
+  String get failedToCreateGroup;
+
+  /// No description provided for @addAnotherTimeSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Another Time Slot'**
+  String get addAnotherTimeSlot;
+
+  /// No description provided for @saveSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Schedule'**
+  String get saveSchedule;
+
+  /// No description provided for @slotLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Slot {number}'**
+  String slotLabel(int number);
+
+  /// No description provided for @dayOfWeekLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Day of week'**
+  String get dayOfWeekLabel;
+
+  /// No description provided for @timeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get timeLabel;
+
+  /// No description provided for @scheduleSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule saved successfully'**
+  String get scheduleSavedSuccess;
+
+  /// No description provided for @failedToSaveSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save schedule. Please try again.'**
+  String get failedToSaveSchedule;
+
+  /// No description provided for @daySunAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get daySunAbbrev;
+
+  /// No description provided for @dayMonAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get dayMonAbbrev;
+
+  /// No description provided for @dayTueAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get dayTueAbbrev;
+
+  /// No description provided for @dayWedAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get dayWedAbbrev;
+
+  /// No description provided for @dayThuAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get dayThuAbbrev;
+
+  /// No description provided for @dayFriAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get dayFriAbbrev;
+
+  /// No description provided for @daySatAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get daySatAbbrev;
+
+  /// No description provided for @orgNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization Name'**
+  String get orgNameLabel;
+
+  /// No description provided for @orgPhoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get orgPhoneHint;
+
+  /// No description provided for @orgEmailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get orgEmailHint;
+
+  /// No description provided for @websiteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get websiteHint;
+
+  /// No description provided for @addressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get addressLabel;
+
+  /// No description provided for @socialMediaSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Social Media'**
+  String get socialMediaSection;
+
+  /// No description provided for @fieldInstagram.
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram'**
+  String get fieldInstagram;
+
+  /// No description provided for @fieldFacebook.
+  ///
+  /// In en, this message translates to:
+  /// **'Facebook'**
+  String get fieldFacebook;
+
+  /// No description provided for @mediaSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Media'**
+  String get mediaSection;
+
+  /// No description provided for @logoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Logo'**
+  String get logoLabel;
+
+  /// No description provided for @bannerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Banner'**
+  String get bannerLabel;
+
+  /// No description provided for @uploadingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading...'**
+  String get uploadingLabel;
+
+  /// No description provided for @imageSelectedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Image selected'**
+  String get imageSelectedLabel;
+
+  /// No description provided for @tapToReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to replace'**
+  String get tapToReplace;
+
+  /// No description provided for @chooseFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get chooseFromGallery;
+
+  /// No description provided for @selectCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Select city'**
+  String get selectCity;
+
+  /// No description provided for @trialLessonAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial lesson available'**
+  String get trialLessonAvailable;
+
+  /// No description provided for @btnNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get btnNext;
+
+  /// No description provided for @letsConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s Connect'**
+  String get letsConnect;
+
+  /// No description provided for @typeMessageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a message...'**
+  String get typeMessageHint;
+
+  /// No description provided for @failedToSendMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send message. Please try again.'**
+  String get failedToSendMessage;
+
+  /// No description provided for @nearbyActivities.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearby Activities'**
+  String get nearbyActivities;
+
+  /// No description provided for @allCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All categories'**
+  String get allCategories;
+
+  /// No description provided for @mapActivitiesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Activities'**
+  String mapActivitiesCount(int count);
+
+  /// No description provided for @notifNewMessageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New message'**
+  String get notifNewMessageTitle;
+
+  /// No description provided for @notifNewMessageBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You have a new message'**
+  String get notifNewMessageBody;
+
+  /// No description provided for @notificationScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification'**
+  String get notificationScreenTitle;
+
+  /// No description provided for @messageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get messageLabel;
+
+  /// No description provided for @relatedActivityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Related Activity'**
+  String get relatedActivityLabel;
+
+  /// No description provided for @viewActivityBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'View Activity'**
+  String get viewActivityBtn;
+
+  /// No description provided for @notifAppointmentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment Notifications'**
+  String get notifAppointmentsTitle;
+
+  /// No description provided for @notifAppointmentsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders about upcoming classes and bookings'**
+  String get notifAppointmentsSubtitle;
+
+  /// No description provided for @notifChatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat Notifications'**
+  String get notifChatTitle;
+
+  /// No description provided for @notifChatSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New messages from organizers'**
+  String get notifChatSubtitle;
+
+  /// No description provided for @notifActivityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity Updates'**
+  String get notifActivityTitle;
+
+  /// No description provided for @notifActivitySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes to activities you\'ve booked or saved'**
+  String get notifActivitySubtitle;
+
+  /// No description provided for @notifOffersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers & Promotions'**
+  String get notifOffersTitle;
+
+  /// No description provided for @notifOffersSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Flash deals, discounts, and special events'**
+  String get notifOffersSubtitle;
+
+  /// No description provided for @notifChooseDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose which notifications you want to receive'**
+  String get notifChooseDesc;
+
+  /// No description provided for @imageUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Image unavailable'**
+  String get imageUnavailable;
+
+  /// No description provided for @reviewsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get reviewsTitle;
+
+  /// No description provided for @writeBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Write'**
+  String get writeBtn;
+
+  /// No description provided for @reviewsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 review} other{{count} reviews}}'**
+  String reviewsCount(int count);
+
+  /// No description provided for @noReviewsYetSimple.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet'**
+  String get noReviewsYetSimple;
+
+  /// No description provided for @beFirstReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to share your experience'**
+  String get beFirstReview;
+
+  /// No description provided for @anonymousReviewer.
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous'**
+  String get anonymousReviewer;
+
+  /// No description provided for @anyAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Any age'**
+  String get anyAge;
+
+  /// No description provided for @ageFromTo.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} – {to} years'**
+  String ageFromTo(int from, int to);
+
+  /// No description provided for @ageFromOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'{from}+ years'**
+  String ageFromOnly(int from);
+
+  /// No description provided for @upToCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to {total}'**
+  String upToCapacity(int total);
+
+  /// No description provided for @groupFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get groupFallback;
+
+  /// No description provided for @ageFromToShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{from}–{to} yrs'**
+  String ageFromToShort(int from, int to);
+
+  /// No description provided for @ageFromOnlyShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{from}+ yrs'**
+  String ageFromOnlyShort(int from);
+
+  /// No description provided for @filtersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get filtersTitle;
+
+  /// No description provided for @btnReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get btnReset;
+
+  /// No description provided for @filterPriceRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Price Range'**
+  String get filterPriceRange;
+
+  /// No description provided for @filterCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get filterCategory;
+
+  /// No description provided for @filterDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance'**
+  String get filterDistance;
+
+  /// No description provided for @ageSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'yrs'**
+  String get ageSuffix;
+
+  /// No description provided for @upToKm.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to {distance} km'**
+  String upToKm(int distance);
+
+  /// No description provided for @maxKmLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'20 km max'**
+  String get maxKmLabel;
+
+  /// No description provided for @btnShowResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Results'**
+  String get btnShowResults;
+
+  /// No description provided for @failedUploadPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to upload photo. Please try again.'**
+  String get failedUploadPhoto;
+
+  /// No description provided for @alreadyReviewed.
+  ///
+  /// In en, this message translates to:
+  /// **'You have already reviewed this organization'**
+  String get alreadyReviewed;
+
+  /// No description provided for @failedSubmitReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to submit review. Please try again.'**
+  String get failedSubmitReview;
+
+  /// No description provided for @reviewingExperience.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviewing your experience'**
+  String get reviewingExperience;
+
+  /// No description provided for @yourRatingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Rating'**
+  String get yourRatingLabel;
+
+  /// No description provided for @ratingPoor.
+  ///
+  /// In en, this message translates to:
+  /// **'Poor'**
+  String get ratingPoor;
+
+  /// No description provided for @ratingFair.
+  ///
+  /// In en, this message translates to:
+  /// **'Fair'**
+  String get ratingFair;
+
+  /// No description provided for @ratingGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get ratingGood;
+
+  /// No description provided for @ratingGreat.
+  ///
+  /// In en, this message translates to:
+  /// **'Great'**
+  String get ratingGreat;
+
+  /// No description provided for @ratingExcellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get ratingExcellent;
+
+  /// No description provided for @yourReviewLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Review'**
+  String get yourReviewLabel;
+
+  /// No description provided for @reviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your experience with this activity...'**
+  String get reviewHint;
+
+  /// No description provided for @photosLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get photosLabel;
+
+  /// No description provided for @photoOptionalCount.
+  ///
+  /// In en, this message translates to:
+  /// **'(optional, {current}/{max})'**
+  String photoOptionalCount(int current, int max);
+
+  /// No description provided for @addBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get addBtn;
+
+  /// No description provided for @submitReviewBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Review'**
+  String get submitReviewBtn;
+
+  /// No description provided for @reviewSubmittedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Submitted!'**
+  String get reviewSubmittedTitle;
+
+  /// No description provided for @reviewSubmittedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for sharing your experience. Your review helps other families make the right choice.'**
+  String get reviewSubmittedBody;
+
+  /// No description provided for @backToReviewsBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Reviews'**
+  String get backToReviewsBtn;
+
+  /// No description provided for @monthJanAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Jan'**
+  String get monthJanAbbrev;
+
+  /// No description provided for @monthFebAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Feb'**
+  String get monthFebAbbrev;
+
+  /// No description provided for @monthMarAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Mar'**
+  String get monthMarAbbrev;
+
+  /// No description provided for @monthAprAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Apr'**
+  String get monthAprAbbrev;
+
+  /// No description provided for @monthMayAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'May'**
+  String get monthMayAbbrev;
+
+  /// No description provided for @monthJunAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Jun'**
+  String get monthJunAbbrev;
+
+  /// No description provided for @monthJulAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Jul'**
+  String get monthJulAbbrev;
+
+  /// No description provided for @monthAugAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Aug'**
+  String get monthAugAbbrev;
+
+  /// No description provided for @monthSepAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Sep'**
+  String get monthSepAbbrev;
+
+  /// No description provided for @monthOctAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Oct'**
+  String get monthOctAbbrev;
+
+  /// No description provided for @monthNovAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Nov'**
+  String get monthNovAbbrev;
+
+  /// No description provided for @monthDecAbbrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Dec'**
+  String get monthDecAbbrev;
+
+  /// No description provided for @failedToLoadEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load event'**
+  String get failedToLoadEvent;
+
+  /// No description provided for @checkOutEventMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Check out \"{title}\" on HobbyLab!'**
+  String checkOutEventMsg(String title);
+
+  /// No description provided for @checkOutEventDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Check out this event on HobbyLab!'**
+  String get checkOutEventDefault;
+
+  /// No description provided for @dateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get dateLabel;
+
+  /// No description provided for @detailsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get detailsSection;
+
+  /// No description provided for @eventAgesFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Ages {min}–{max}'**
+  String eventAgesFormat(int min, int max);
+
+  /// No description provided for @organizationFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization'**
+  String get organizationFallback;
+
+  /// No description provided for @otherEventsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Other Events'**
+  String get otherEventsSection;
+
+  /// No description provided for @failedToLoadSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load schedule'**
+  String get failedToLoadSchedule;
+
+  /// No description provided for @categoryOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get categoryOther;
+
+  /// No description provided for @actionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get actionMessage;
+
+  /// No description provided for @ourClassesSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Our Classes'**
+  String get ourClassesSection;
+
+  /// No description provided for @noClassesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No classes available yet'**
+  String get noClassesAvailable;
+
+  /// No description provided for @upcomingEventsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming Events'**
+  String get upcomingEventsSection;
+
+  /// No description provided for @noUpcomingEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming events'**
+  String get noUpcomingEvents;
+
+  /// No description provided for @unnamedClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Unnamed Class'**
+  String get unnamedClass;
+
+  /// No description provided for @retryBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retryBtn;
+
+  /// No description provided for @pleaseWaitUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait for image upload to finish'**
+  String get pleaseWaitUpload;
+
+  /// No description provided for @imageUploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Image upload failed — please try again or remove the photo'**
+  String get imageUploadFailed;
+
+  /// No description provided for @failedToRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to register. Please try again.'**
+  String get failedToRegister;
+
+  /// No description provided for @orgDetailsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization Details'**
+  String get orgDetailsSection;
+
+  /// No description provided for @contactInfoSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Information'**
+  String get contactInfoSection;
+
+  /// No description provided for @workingHoursSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Working Hours'**
+  String get workingHoursSection;
+
+  /// No description provided for @becomeProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Become a Provider'**
+  String get becomeProvider;
+
+  /// No description provided for @uploadLogo.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Logo'**
+  String get uploadLogo;
+
+  /// No description provided for @submitApplication.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Application'**
+  String get submitApplication;
+
+  /// No description provided for @statusClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get statusClosed;
+
+  /// No description provided for @unnamedEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Unnamed Event'**
+  String get unnamedEvent;
+
+  /// No description provided for @accountSecuritySection.
+  ///
+  /// In en, this message translates to:
+  /// **'ACCOUNT SECURITY'**
+  String get accountSecuritySection;
+
+  /// No description provided for @timeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Now'**
+  String get timeNow;
+
+  /// No description provided for @changesSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes saved successfully'**
+  String get changesSavedSuccess;
+
+  /// No description provided for @failedToSaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save changes'**
+  String get failedToSaveChanges;
 }
 
 class _AppLocalizationsDelegate

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
+import '../models/app_category.dart';
+import '../models/org_models.dart';
+import '../models/event_recurrence.dart';
 import '../services/api_service.dart';
 import '../l10n/app_localizations.dart';
 import '../routing/transitions.dart';
@@ -12,6 +15,7 @@ class EventScheduleScreen extends StatefulWidget {
   final Color colorStart;
   final Color colorEnd;
   final bool includePast;
+  final bool isOrganizer;
 
   const EventScheduleScreen({
     super.key,
@@ -20,6 +24,7 @@ class EventScheduleScreen extends StatefulWidget {
     this.colorStart = const Color(0xFF7C3AED),
     this.colorEnd = const Color(0xFFEC4899),
     this.includePast = false,
+    this.isOrganizer = false,
   });
 
   @override
@@ -52,7 +57,7 @@ class _EventScheduleScreenState extends State<EventScheduleScreen> {
       });
       setState(() => _occurrences = data);
     } catch (_) {
-      if (mounted) setState(() => _error = 'Failed to load schedule');
+      if (mounted) setState(() => _error = AppLocalizations.of(context)!.failedToLoadSchedule);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -142,15 +147,21 @@ class _EventScheduleScreenState extends State<EventScheduleScreen> {
         colorStart: widget.colorStart,
         colorEnd: widget.colorEnd,
         isPast: _isPast(_occurrences[i]),
-        onTap: () => Navigator.of(context).push(
-          slideRoute(
-            builder: (_) => EventDetailsScreen(
-              eventId: _occurrences[i]['id'].toString(),
-              colorStart: widget.colorStart,
-              colorEnd: widget.colorEnd,
+        onTap: () async {
+          await Navigator.of(context).push(
+            slideRoute(
+              builder: (_) => EventDetailsScreen(
+                eventId: _occurrences[i]['id'].toString(),
+                colorStart: widget.colorStart,
+                colorEnd: widget.colorEnd,
+                orgEvent: widget.isOrganizer
+                    ? _parseOccurrence(_occurrences[i])
+                    : null,
+              ),
             ),
-          ),
-        ),
+          );
+          if (mounted) _load();
+        },
       ),
     );
   }
@@ -160,6 +171,58 @@ class _EventScheduleScreenState extends State<EventScheduleScreen> {
     if (raw == null) return false;
     final dt = DateTime.tryParse(raw);
     return dt != null && dt.isBefore(DateTime.now());
+  }
+
+  static OrgEvent _parseOccurrence(Map<String, dynamic> json) {
+    final startDt =
+        DateTime.tryParse((json['start_datetime'] ?? '').toString()) ??
+        DateTime.now();
+    final endDt = json['end_datetime'] != null
+        ? DateTime.tryParse(json['end_datetime'].toString())
+        : null;
+    final rawCats = json['categories'] as List<dynamic>?;
+    final categoryIds = <String>[];
+    final categoryList = <AppCategory>[];
+    String categoryName = 'Other';
+    if (rawCats != null && rawCats.isNotEmpty) {
+      for (final c in rawCats) {
+        if (c is! Map<String, dynamic>) continue;
+        final cat = AppCategory.fromJson(c);
+        categoryList.add(cat);
+        categoryIds.add(cat.id);
+      }
+      if (categoryList.isNotEmpty) categoryName = categoryList.first.stableNameEn;
+    }
+    return OrgEvent(
+      id: (json['id'] ?? '').toString(),
+      name: (json['title'] ?? '').toString(),
+      category: categoryName,
+      categoryIds: categoryIds,
+      categoryList: categoryList,
+      imageUrl: json['image_url']?.toString(),
+      description: (json['description'] ?? '').toString(),
+      date: startDt,
+      time: TimeOfDay(hour: startDt.hour, minute: startDt.minute),
+      endDateTime: endDt,
+      location: (json['address'] ?? '').toString(),
+      cityId: json['city_id'] as int?,
+      cityNameHe: json['city_name_he']?.toString(),
+      cityNameEn: json['city_name_en']?.toString(),
+      cityNameRu: json['city_name_ru']?.toString(),
+      minAge: (json['min_age'] ?? 0) as int,
+      maxAge: (json['max_age'] ?? 99) as int,
+      capacity: (json['capacity'] ?? 0) as int,
+      price: (json['price'] as num?)?.toDouble() ?? 0,
+      priceComment: json['price_comment']?.toString(),
+      isNationwide: json['is_nationwide'] as bool? ?? false,
+      seriesId: json['series_id'] as int?,
+      occurrenceIndex: json['occurrence_index'] as int?,
+      recurrence: json['recurrence'] != null
+          ? EventRecurrence.fromJson(
+              json['recurrence'] as Map<String, dynamic>,
+            )
+          : null,
+    );
   }
 }
 
@@ -182,6 +245,14 @@ class _OccurrenceRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final months = [
+      '',
+      l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+      l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+      l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+      l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
+    ];
     final start = _parseUtc(occurrence['start_datetime']?.toString());
     final end = _parseUtc(occurrence['end_datetime']?.toString());
     final textColor = isPast ? AppColors.textMuted : AppColors.textPrimary;
@@ -224,7 +295,7 @@ class _OccurrenceRow extends StatelessWidget {
                 children: [
                   if (start != null)
                     Text(
-                      _fmtDate(start),
+                      _fmtDate(start, months),
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -262,12 +333,7 @@ class _OccurrenceRow extends StatelessWidget {
     }
   }
 
-  String _fmtDate(DateTime dt) {
-    const months = [
-      '',
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
+  String _fmtDate(DateTime dt, List<String> months) {
     return '${dt.day} ${months[dt.month]} ${dt.year}';
   }
 

@@ -142,23 +142,25 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
         final classId = (json['id'] ?? '').toString();
         final rawCats = json['categories'] as List<dynamic>?;
         final List<String> classCatIds;
+        final List<AppCategory> classCatList;
         final String classCatName;
         if (rawCats != null && rawCats.isNotEmpty) {
-          classCatName = (rawCats.first as Map)['name']?.toString() ?? 'Other';
-          classCatIds = rawCats
-              .map((c) => (c as Map)['id']?.toString())
-              .whereType<String>()
-              .toList();
+          final maps = rawCats.whereType<Map<String, dynamic>>().toList();
+          classCatList = maps.map(AppCategory.fromJson).toList();
+          classCatName = classCatList.isNotEmpty ? classCatList.first.stableNameEn : 'Other';
+          classCatIds = classCatList.map((c) => c.id).toList();
         } else {
           final catId = json['category_id']?.toString();
           classCatName = catId != null ? (catMap[catId] ?? 'Other') : 'Other';
           classCatIds = catId != null ? [catId] : const [];
+          classCatList = const [];
         }
         return OrgClass(
           id: classId,
           name: (json['name'] ?? '').toString(),
           category: classCatName,
           categoryIds: classCatIds,
+          categoryList: classCatList,
           description: (json['description'] ?? '').toString(),
           groups: groupsMap[classId] ?? [],
         );
@@ -171,22 +173,19 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
             DateTime.now();
         final rawCats = json['categories'] as List<dynamic>?;
         final categoryIds = <String>[];
-        final categoryNames = <String>[];
+        final categoryList = <AppCategory>[];
         String categoryName;
         if (rawCats != null && rawCats.isNotEmpty) {
-          categoryName = (rawCats.first as Map)['name']?.toString() ?? 'Other';
-          for (final c in rawCats) {
-            final id = (c as Map)['id']?.toString();
-            if (id != null) categoryIds.add(id);
-            final name = (c as Map)['name']?.toString();
-            if (name != null) categoryNames.add(name);
+          final maps = rawCats.whereType<Map<String, dynamic>>().toList();
+          for (final m in maps) {
+            final cat = AppCategory.fromJson(m);
+            categoryList.add(cat);
+            categoryIds.add(cat.id);
           }
+          categoryName = categoryList.isNotEmpty ? categoryList.first.stableNameEn : 'Other';
         } else {
           categoryName = catId != null ? (catMap[catId] ?? 'Other') : 'Other';
           if (catId != null) categoryIds.add(catId);
-          if (categoryName.isNotEmpty && categoryName != 'Other') {
-            categoryNames.add(categoryName);
-          }
         }
         final endDt = json['end_datetime'] != null
             ? DateTime.tryParse(json['end_datetime'].toString())
@@ -196,7 +195,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
           name: (json['title'] ?? '').toString(),
           category: categoryName,
           categoryIds: categoryIds,
-          categoryNames: categoryNames,
+          categoryList: categoryList,
           imageUrl: json['image_url']?.toString(),
           description: (json['description'] ?? '').toString(),
           date: startDt,
@@ -303,18 +302,10 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
   }
 
   Future<void> _goEditEvent(OrgEvent event) async {
-    final result = await Navigator.of(context).push<OrgEvent>(
+    await Navigator.of(context).push<OrgEvent>(
       slideRoute(builder: (_) => OrgEventFormScreen(event: event)),
     );
-    if (!mounted) return;
-    if (event.seriesId != null) {
-      _loadData();
-    } else if (result != null) {
-      setState(() {
-        final i = _events.indexWhere((e) => e.id == result.id);
-        if (i >= 0) _events[i] = result;
-      });
-    }
+    if (mounted) _loadData();
   }
 
   Future<void> _goDuplicateEvent(OrgEvent source) async {
@@ -341,7 +332,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Failed to delete class. Please try again.',
+              AppLocalizations.of(context)!.failedToDeleteClass,
               style: GoogleFonts.poppins(fontSize: 13),
             ),
             backgroundColor: const Color(0xFFEF4444),
@@ -380,7 +371,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Failed to delete event. Please try again.',
+              AppLocalizations.of(context)!.failedToDeleteEvent,
               style: GoogleFonts.poppins(fontSize: 13),
             ),
             backgroundColor: const Color(0xFFEF4444),
@@ -437,6 +428,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
             onEdit: _goEditEvent,
             onDelete: _deleteEvent,
             onDuplicate: _goDuplicateEvent,
+            onNeedsReload: _loadData,
           ),
           const _MessagesTab(),
           _ProfileTab(
@@ -454,12 +446,13 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
   }
 
   Widget _buildBottomNav() {
-    const items = [
-      _NavItem(Icons.dashboard_rounded, 'Dashboard'),
-      _NavItem(Icons.school_rounded, 'Classes'),
-      _NavItem(Icons.event_rounded, 'Events'),
-      _NavItem(Icons.chat_bubble_outline_rounded, 'Messages'),
-      _NavItem(Icons.business_rounded, 'Profile'),
+    final l10n = AppLocalizations.of(context)!;
+    final items = [
+      _NavItem(Icons.dashboard_rounded, l10n.navDashboard),
+      _NavItem(Icons.school_rounded, l10n.navClasses),
+      _NavItem(Icons.event_rounded, l10n.navEvents),
+      _NavItem(Icons.chat_bubble_outline_rounded, l10n.navMessages),
+      _NavItem(Icons.business_rounded, l10n.navProfile),
     ];
 
     return Container(
@@ -563,6 +556,7 @@ class _DashboardTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final preview2Classes = classes.take(2).toList();
     final preview2Events = events.take(2).toList();
 
@@ -577,7 +571,7 @@ class _DashboardTab extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildStats(),
+                  _buildStats(l10n),
                   if (onInvites != null) ...[
                     const SizedBox(height: 16),
                     _buildInvitesCard(context),
@@ -588,14 +582,14 @@ class _DashboardTab extends StatelessWidget {
                   ],
                   const SizedBox(height: 28),
                   _SectionHeader(
-                    title: 'My Classes',
-                    actionLabel: '+ Add',
+                    title: l10n.myClasses,
+                    actionLabel: l10n.btnAdd,
                     onAction: onAddClass,
                     onSeeAll: classes.length > 2 ? onSwitchClasses : null,
                   ),
                   const SizedBox(height: 12),
                   if (preview2Classes.isEmpty)
-                    _EmptyHint('No classes yet. Tap + Add to create one.')
+                    _EmptyHint(l10n.noClassesHint)
                   else
                     ...preview2Classes.map(
                       (c) => _ClassPreviewCard(
@@ -607,14 +601,14 @@ class _DashboardTab extends StatelessWidget {
                     ),
                   const SizedBox(height: 28),
                   _SectionHeader(
-                    title: 'My Events',
-                    actionLabel: '+ Add',
+                    title: l10n.myEvents,
+                    actionLabel: l10n.btnAdd,
                     onAction: onAddEvent,
                     onSeeAll: events.length > 2 ? onSwitchEvents : null,
                   ),
                   const SizedBox(height: 12),
                   if (preview2Events.isEmpty)
-                    _EmptyHint('No events yet. Tap + Add to create one.')
+                    _EmptyHint(l10n.noEventsHint)
                   else
                     ...preview2Events.map(
                       (e) => _EventPreviewCard(
@@ -625,9 +619,9 @@ class _DashboardTab extends StatelessWidget {
                       ),
                     ),
                   const SizedBox(height: 28),
-                  _sectionTitle('Recent Messages'),
+                  _sectionTitle(l10n.recentMessages),
                   const SizedBox(height: 12),
-                  _buildRecentMessages(),
+                  _buildRecentMessages(l10n),
                 ],
               ),
             ),
@@ -758,6 +752,7 @@ class _DashboardTab extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 14),
       child: Row(
@@ -786,7 +781,7 @@ class _DashboardTab extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  orgName.isNotEmpty ? orgName : 'My Organization',
+                  orgName.isNotEmpty ? orgName : l10n.myOrganizationFallback,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.poppins(
                     fontSize: 16,
@@ -795,7 +790,7 @@ class _DashboardTab extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Organization Dashboard',
+                  l10n.orgDashboardSubtitle,
                   style: GoogleFonts.poppins(
                     fontSize: 11,
                     color: AppColors.textMuted,
@@ -844,30 +839,30 @@ class _DashboardTab extends StatelessWidget {
     );
   }
 
-  Widget _buildStats() {
+  Widget _buildStats(AppLocalizations l10n) {
     final stats = [
       _StatData(
         icon: Icons.school_rounded,
         value: '${classes.length}',
-        label: 'Classes',
+        label: l10n.navClasses,
         color: AppColors.purple,
       ),
       _StatData(
         icon: Icons.group_rounded,
         value: '$_totalGroups',
-        label: 'Groups',
+        label: l10n.statGroups,
         color: const Color(0xFF059669),
       ),
       _StatData(
         icon: Icons.people_rounded,
         value: '$_totalStudents',
-        label: 'Students',
+        label: l10n.statStudents,
         color: const Color(0xFF0EA5E9),
       ),
       _StatData(
         icon: Icons.event_rounded,
         value: '${events.length}',
-        label: 'Events',
+        label: l10n.navEvents,
         color: const Color(0xFFEC4899),
       ),
     ];
@@ -892,7 +887,7 @@ class _DashboardTab extends StatelessWidget {
     ),
   );
 
-  Widget _buildRecentMessages() {
+  Widget _buildRecentMessages(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       decoration: BoxDecoration(
@@ -902,7 +897,7 @@ class _DashboardTab extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          'No messages yet.',
+          l10n.noRecentMessages,
           style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textMuted),
         ),
       ),
@@ -1008,7 +1003,7 @@ class _SectionHeader extends StatelessWidget {
           GestureDetector(
             onTap: onSeeAll,
             child: Text(
-              'See All',
+              AppLocalizations.of(context)!.btnSeeAll,
               style: GoogleFonts.poppins(
                 fontSize: 12,
                 color: AppColors.textMuted,
@@ -1121,13 +1116,19 @@ class _ClassPreviewCard extends StatelessWidget {
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  Text(
-                    '${cls.category} · ${cls.groups.length} group${cls.groups.length != 1 ? 's' : ''}',
-                    style: GoogleFonts.poppins(
-                      fontSize: 11,
-                      color: AppColors.textMuted,
-                    ),
-                  ),
+                  Builder(builder: (ctx) {
+                    final locale = Localizations.localeOf(ctx).languageCode;
+                    final catLabel = cls.categoryList.isNotEmpty
+                        ? cls.categoryList.first.localizedName(locale)
+                        : cls.category;
+                    return Text(
+                      '$catLabel · ${AppLocalizations.of(ctx)!.groupCount(cls.groups.length)}',
+                      style: GoogleFonts.poppins(
+                        fontSize: 11,
+                        color: AppColors.textMuted,
+                      ),
+                    );
+                  }),
                 ],
               ),
             ),
@@ -1141,7 +1142,7 @@ class _ClassPreviewCard extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Manage',
+                AppLocalizations.of(context)!.btnManage,
                 style: GoogleFonts.poppins(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -1278,7 +1279,7 @@ class _EventPreviewCard extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Manage',
+                AppLocalizations.of(context)!.btnManage,
                 style: GoogleFonts.poppins(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -1310,14 +1311,15 @@ class _ClassesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return SafeArea(
       child: Column(
         children: [
-          _TabHeader(title: 'Classes', onAdd: onAdd),
+          _TabHeader(title: l10n.navClasses, addLabel: l10n.btnNewClass, onAdd: onAdd),
           const Divider(height: 1, color: AppColors.divider),
           Expanded(
             child: classes.isEmpty
-                ? _buildEmpty()
+                ? _buildEmpty(l10n)
                 : ListView.builder(
                     padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
                     itemCount: classes.length,
@@ -1333,7 +1335,7 @@ class _ClassesTab extends StatelessWidget {
     );
   }
 
-  Widget _buildEmpty() {
+  Widget _buildEmpty(AppLocalizations l10n) {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1354,7 +1356,7 @@ class _ClassesTab extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            'No Classes Yet',
+            l10n.noClassesYetTitle,
             style: GoogleFonts.poppins(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -1363,7 +1365,7 @@ class _ClassesTab extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'No classes yet. Add your first class!',
+            l10n.noClassesYetBody,
             style: GoogleFonts.poppins(
               fontSize: 13,
               color: AppColors.textMuted,
@@ -1457,18 +1459,24 @@ class _ClassExpandableCardState extends State<_ClassExpandableCard> {
                                 color: cs.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(6),
                               ),
-                              child: Text(
-                                cls.category,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                  color: cs,
-                                ),
-                              ),
+                              child: Builder(builder: (ctx) {
+                                final locale = Localizations.localeOf(ctx).languageCode;
+                                final catLabel = cls.categoryList.isNotEmpty
+                                    ? cls.categoryList.first.localizedName(locale)
+                                    : cls.category;
+                                return Text(
+                                  catLabel,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                    color: cs,
+                                  ),
+                                );
+                              }),
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              '${cls.groups.length} group${cls.groups.length != 1 ? 's' : ''}',
+                              AppLocalizations.of(context)!.groupCount(cls.groups.length),
                               style: GoogleFonts.poppins(
                                 fontSize: 11,
                                 color: AppColors.textMuted,
@@ -1525,13 +1533,16 @@ class _ClassExpandableCardState extends State<_ClassExpandableCard> {
                               color: AppColors.textPrimary,
                             ),
                           ),
-                          Text(
-                            'Ages ${g.minAge}–${g.maxAge} · ₪${g.price.toStringAsFixed(0)}/mo · ${g.capacity} students',
-                            style: GoogleFonts.poppins(
-                              fontSize: 11,
-                              color: AppColors.textMuted,
-                            ),
-                          ),
+                          Builder(builder: (ctx) {
+                            final l = AppLocalizations.of(ctx)!;
+                            return Text(
+                              '${l.agesLabel} ${g.minAge}–${g.maxAge} · ₪${g.price.toStringAsFixed(0)}${l.perMonthSuffix} · ${g.capacity} ${l.studentsLabel}',
+                              style: GoogleFonts.poppins(
+                                fontSize: 11,
+                                color: AppColors.textMuted,
+                              ),
+                            );
+                          }),
                           if (g.schedule.isNotEmpty) ...[
                             const SizedBox(height: 4),
                             Wrap(
@@ -1574,7 +1585,7 @@ class _ClassExpandableCardState extends State<_ClassExpandableCard> {
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 8, 14, 14),
               child: Text(
-                'No groups added yet.',
+                AppLocalizations.of(context)!.noGroupsYet,
                 style: GoogleFonts.poppins(
                   fontSize: 12,
                   color: AppColors.textMuted,
@@ -1596,6 +1607,7 @@ class _EventsTab extends StatefulWidget {
   final void Function(OrgEvent) onEdit;
   final void Function(OrgEvent) onDelete;
   final void Function(OrgEvent) onDuplicate;
+  final VoidCallback? onNeedsReload;
 
   const _EventsTab({
     required this.events,
@@ -1604,6 +1616,7 @@ class _EventsTab extends StatefulWidget {
     required this.onEdit,
     required this.onDelete,
     required this.onDuplicate,
+    this.onNeedsReload,
   });
 
   @override
@@ -1628,7 +1641,7 @@ class _EventsTabState extends State<_EventsTab> {
     return SafeArea(
       child: Column(
         children: [
-          _TabHeader(title: 'Events', onAdd: widget.onAdd),
+          _TabHeader(title: l10n.navEvents, addLabel: l10n.btnNewEvent, onAdd: widget.onAdd),
           const Divider(height: 1, color: AppColors.divider),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
@@ -1660,15 +1673,19 @@ class _EventsTabState extends State<_EventsTab> {
                       onDelete: () => widget.onDelete(shown[i]),
                       onDuplicate: () => widget.onDuplicate(shown[i]),
                       onViewSchedule: shown[i].seriesId != null
-                          ? () => Navigator.of(context).push(
+                          ? () async {
+                              await Navigator.of(context).push(
                                 slideRoute(
                                   builder: (_) => EventScheduleScreen(
                                     seriesId: shown[i].seriesId!,
                                     organizationId: int.tryParse(widget.orgId),
                                     includePast: true,
+                                    isOrganizer: true,
                                   ),
                                 ),
-                              )
+                              );
+                              widget.onNeedsReload?.call();
+                            }
                           : null,
                     ),
                   ),
@@ -1700,7 +1717,7 @@ class _EventsTabState extends State<_EventsTab> {
           ),
           const SizedBox(height: 8),
           Text(
-            _showUpcoming ? 'No upcoming events yet.' : 'No past events.',
+            _showUpcoming ? l10n.noUpcomingEventsYet : l10n.noPastEvents,
             style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textMuted),
           ),
         ],
@@ -1837,19 +1854,21 @@ class _EventCard extends StatelessWidget {
                   ),
                 ],
                 const SizedBox(height: 8),
-                Row(
+                Builder(builder: (ctx) {
+                  final locale = Localizations.localeOf(ctx).languageCode;
+                  return Row(
                   children: [
                     _Chip(
-                      event.categoryNames.isNotEmpty
-                          ? event.categoryNames.first
+                      event.categoryList.isNotEmpty
+                          ? event.categoryList.first.localizedName(locale)
                           : event.category,
                       bgColor: cs.withValues(alpha: 0.12),
                       textColor: cs,
                     ),
-                    if (event.categoryNames.length > 1) ...[
+                    if (event.categoryList.length > 1) ...[
                       const SizedBox(width: 4),
                       _Chip(
-                        '+${event.categoryNames.length - 1}',
+                        '+${event.categoryList.length - 1}',
                         bgColor: cs.withValues(alpha: 0.08),
                         textColor: cs,
                       ),
@@ -1864,12 +1883,13 @@ class _EventCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     _Chip(
-                      '${event.capacity} spots',
+                      l10n.eventSpotsCount(event.capacity),
                       bgColor: const Color(0xFF059669).withValues(alpha: 0.1),
                       textColor: const Color(0xFF059669),
                     ),
                   ],
-                ),
+                );
+                }),
               ],
             ),
           ),
@@ -1938,6 +1958,7 @@ class _MessagesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return SafeArea(
       child: Column(
         children: [
@@ -1946,7 +1967,7 @@ class _MessagesTab extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'Messages',
+                  l10n.navMessages,
                   style: GoogleFonts.poppins(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
@@ -1993,7 +2014,7 @@ class _MessagesTab extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    'No Messages Yet',
+                    l10n.noMessagesYet,
                     style: GoogleFonts.poppins(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -2002,7 +2023,7 @@ class _MessagesTab extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Messages from your clients will appear here',
+                    l10n.noMessagesYetBody,
                     style: GoogleFonts.poppins(
                       fontSize: 13,
                       color: AppColors.textMuted,
@@ -2117,14 +2138,14 @@ class _ProfileTabState extends State<_ProfileTab> {
           ),
         ),
         content: Text(
-          'This feature is coming soon.',
+          AppLocalizations.of(context)!.comingSoon,
           style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textMuted),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: Text(
-              'OK',
+              AppLocalizations.of(context)!.btnOk,
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -2170,7 +2191,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                   Text(
                     widget.orgName.isNotEmpty
                         ? widget.orgName
-                        : 'My Organization',
+                        : l10n.myOrganizationFallback,
                     style: GoogleFonts.poppins(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
@@ -2191,7 +2212,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                       ),
                     ),
                     child: Text(
-                      'Verified Organization',
+                      l10n.verifiedOrganization,
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -2208,24 +2229,24 @@ class _ProfileTabState extends State<_ProfileTab> {
               child: Column(
                 children: [
                   _SettingCard(
-                    title: 'Account Settings',
+                    title: l10n.accountSettings,
                     items: [
                       if (widget.isAdmin)
                         _SettingItem(
                           Icons.edit_rounded,
-                          'Edit Profile',
+                          l10n.editProfile,
                           onTap: _navigateEditProfile,
                         ),
                       _SettingItem(
                         Icons.lock_outline_rounded,
-                        'Change Password',
+                        l10n.changePassword,
                         onTap: _navigateChangePassword,
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
                   _SettingCard(
-                    title: 'Business',
+                    title: l10n.businessSection,
                     items: [
                       if (widget.isAdmin)
                         _SettingItem(
@@ -2241,34 +2262,29 @@ class _ProfileTabState extends State<_ProfileTab> {
                         ),
                       _SettingItem(
                         Icons.notifications_outlined,
-                        'Notifications',
+                        l10n.notifications,
                         onTap: _navigateNotifications,
                       ),
                       _SettingItem(
                         Icons.payments_outlined,
-                        'Billing & Payments',
-                        onTap: () => _showComingSoon('Billing & Payments'),
-                      ),
-                      _SettingItem(
-                        Icons.bar_chart_rounded,
-                        'Analytics',
-                        onTap: () => _showComingSoon('Analytics'),
+                        l10n.billingPayments,
+                        onTap: () => _showComingSoon(l10n.billingPayments),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
                   _SettingCard(
-                    title: 'Support',
+                    title: l10n.supportSection,
                     items: [
                       _SettingItem(
                         Icons.help_outline_rounded,
-                        'Help Center',
-                        onTap: () => _showComingSoon('Help Center'),
+                        l10n.helpCenter,
+                        onTap: () => _showComingSoon(l10n.helpCenter),
                       ),
                       _SettingItem(
                         Icons.policy_outlined,
-                        'Terms & Privacy',
-                        onTap: () => _showComingSoon('Terms & Privacy'),
+                        l10n.termsPrivacy,
+                        onTap: () => _showComingSoon(l10n.termsPrivacy),
                       ),
                     ],
                   ),
@@ -2297,7 +2313,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'Exit Dashboard',
+                            l10n.exitDashboard,
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -2421,9 +2437,10 @@ class _SettingItem {
 
 class _TabHeader extends StatelessWidget {
   final String title;
+  final String addLabel;
   final VoidCallback onAdd;
 
-  const _TabHeader({required this.title, required this.onAdd});
+  const _TabHeader({required this.title, required this.addLabel, required this.onAdd});
 
   @override
   Widget build(BuildContext context) {
@@ -2461,9 +2478,7 @@ class _TabHeader extends StatelessWidget {
                   const Icon(Icons.add_rounded, color: Colors.white, size: 16),
                   const SizedBox(width: 4),
                   Text(
-                    'New $title'
-                        .replaceAll('New Classes', 'New Class')
-                        .replaceAll('New Events', 'New Event'),
+                    addLabel,
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -2525,7 +2540,7 @@ class _ActionMenu extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                'Edit',
+                l10n.btnEdit,
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   color: AppColors.textPrimary,
@@ -2587,7 +2602,7 @@ class _ActionMenu extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                'Delete',
+                l10n.btnDelete,
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   color: Color(0xFFEF4444),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../services/api_service.dart';
+import '../models/app_category.dart';
 import '../l10n/app_localizations.dart';
 import 'activity_details_screen.dart';
 
@@ -13,6 +14,7 @@ class _Activity {
   final String name;
   final String studio;
   final String category;
+  final AppCategory? primaryCategory;
   final double rating;
   final int reviewCount;
   final Color colorStart;
@@ -24,6 +26,7 @@ class _Activity {
     required this.name,
     required this.studio,
     required this.category,
+    this.primaryCategory,
     required this.rating,
     required this.reviewCount,
     required this.colorStart,
@@ -82,7 +85,7 @@ class _SearchScreenState extends State<SearchScreen> {
   bool _showAll = false;
   List<_Activity>? _apiResults;
   bool _searching = false;
-  List<String> _catNames = [];
+  List<AppCategory> _cats = [];
   bool _loadingCats = true;
 
   static const _gradients = [
@@ -133,7 +136,7 @@ class _SearchScreenState extends State<SearchScreen> {
       final cats = await ApiService.getCategories();
       if (mounted) {
         setState(() {
-          _catNames = cats.map((c) => c.name).toList();
+          _cats = cats;
           _loadingCats = false;
         });
       }
@@ -156,6 +159,7 @@ class _SearchScreenState extends State<SearchScreen> {
             name: e.value.title,
             studio: e.value.organizationName,
             category: e.value.category,
+            primaryCategory: e.value.primaryCategory,
             rating: e.value.averageRating,
             reviewCount: e.value.reviewCount,
             colorStart: c.$1,
@@ -251,7 +255,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               key: const ValueKey('empty'),
                               activeTag: _query,
                               onTagTap: _onTagTap,
-                              categories: _catNames,
+                              categories: _cats,
                               loadingCategories: _loadingCats,
                             ),
                     ),
@@ -373,7 +377,7 @@ class _TopBar extends StatelessWidget {
 class _EmptyState extends StatelessWidget {
   final String activeTag;
   final ValueChanged<String> onTagTap;
-  final List<String> categories;
+  final List<AppCategory> categories;
   final bool loadingCategories;
 
   const _EmptyState({
@@ -387,7 +391,7 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final popularTags = [...categories, 'All'];
+    final locale = Localizations.localeOf(context).languageCode;
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 40),
       child: Column(
@@ -398,15 +402,20 @@ class _EmptyState extends StatelessWidget {
           Wrap(
             spacing: 10,
             runSpacing: 10,
-            children: popularTags
-                .map((tag) => _PopularChip(
-                      label: tag,
-                      displayLabel: tag == 'All' ? l10n.allChip : null,
-                      isActive: tag == activeTag ||
-                          (tag == 'All' && activeTag.isEmpty),
-                      onTap: () => onTagTap(tag),
-                    ))
-                .toList(),
+            children: [
+              ...categories.map((cat) => _PopularChip(
+                    label: cat.stableNameEn,
+                    displayLabel: cat.localizedName(locale),
+                    isActive: cat.stableNameEn == activeTag,
+                    onTap: () => onTagTap(cat.stableNameEn),
+                  )),
+              _PopularChip(
+                label: 'All',
+                displayLabel: l10n.allChip,
+                isActive: activeTag.isEmpty,
+                onTap: () => onTagTap('All'),
+              ),
+            ],
           ),
           const SizedBox(height: 30),
           _SectionLabel(l10n.trendingCategories),
@@ -422,8 +431,8 @@ class _EmptyState extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     itemCount: categories.length,
                     itemBuilder: (context, i) => _CategoryCircle(
-                      name: categories[i],
-                      onTap: () => onTagTap(categories[i]),
+                      category: categories[i],
+                      onTap: () => onTagTap(categories[i].stableNameEn),
                     ),
                   ),
                 ),
@@ -502,15 +511,16 @@ class _PopularChip extends StatelessWidget {
 // ─── Category circle ──────────────────────────────────────────────────────────
 
 class _CategoryCircle extends StatelessWidget {
-  final String name;
+  final AppCategory category;
   final VoidCallback? onTap;
 
-  const _CategoryCircle({required this.name, this.onTap});
+  const _CategoryCircle({required this.category, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final color = _catColor(name);
-    final icon = _catIcon(name);
+    final locale = Localizations.localeOf(context).languageCode;
+    final color = _catColor(category.stableNameEn);
+    final icon = _catIcon(category.stableNameEn);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -532,7 +542,7 @@ class _CategoryCircle extends StatelessWidget {
             ),
             const SizedBox(height: 7),
             Text(
-              name,
+              category.localizedName(locale),
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: 11,
@@ -649,6 +659,7 @@ class _ResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context).languageCode;
     return GestureDetector(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
         builder: (_) => ActivityDetailsScreen(
@@ -706,7 +717,7 @@ class _ResultCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(7),
                         ),
                         child: Text(
-                          activity.category,
+                          activity.primaryCategory?.localizedName(locale) ?? activity.category,
                           style: GoogleFonts.poppins(
                             fontSize: 8,
                             fontWeight: FontWeight.w700,

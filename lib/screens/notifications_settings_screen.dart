@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 
 class _ToggleData {
@@ -16,33 +17,6 @@ class _ToggleData {
     required this.subtitle,
   });
 }
-
-const _toggleItems = [
-  _ToggleData(
-    icon: Icons.calendar_today_rounded,
-    iconColor: Color(0xFF0EA5E9),
-    title: 'Appointment Notifications',
-    subtitle: 'Reminders about upcoming classes and bookings',
-  ),
-  _ToggleData(
-    icon: Icons.chat_bubble_rounded,
-    iconColor: Color(0xFF7C3AED),
-    title: 'Chat Notifications',
-    subtitle: 'New messages from organizers',
-  ),
-  _ToggleData(
-    icon: Icons.explore_rounded,
-    iconColor: Color(0xFF059669),
-    title: 'Activity Updates',
-    subtitle: 'Changes to activities you\'ve booked or saved',
-  ),
-  _ToggleData(
-    icon: Icons.local_offer_rounded,
-    iconColor: Color(0xFFF59E0B),
-    title: 'Offers & Promotions',
-    subtitle: 'Flash deals, discounts, and special events',
-  ),
-];
 
 class NotificationsSettingsScreen extends StatefulWidget {
   const NotificationsSettingsScreen({super.key});
@@ -85,15 +59,44 @@ class _NotificationsSettingsScreenState
     await prefs.setBool(_keys[i], v);
   }
 
+  List<_ToggleData> _buildItems(AppLocalizations l10n) => [
+    _ToggleData(
+      icon: Icons.calendar_today_rounded,
+      iconColor: const Color(0xFF0EA5E9),
+      title: l10n.notifAppointmentsTitle,
+      subtitle: l10n.notifAppointmentsSubtitle,
+    ),
+    _ToggleData(
+      icon: Icons.chat_bubble_rounded,
+      iconColor: const Color(0xFF7C3AED),
+      title: l10n.notifChatTitle,
+      subtitle: l10n.notifChatSubtitle,
+    ),
+    _ToggleData(
+      icon: Icons.explore_rounded,
+      iconColor: const Color(0xFF059669),
+      title: l10n.notifActivityTitle,
+      subtitle: l10n.notifActivitySubtitle,
+    ),
+    _ToggleData(
+      icon: Icons.local_offer_rounded,
+      iconColor: const Color(0xFFF59E0B),
+      title: l10n.notifOffersTitle,
+      subtitle: l10n.notifOffersSubtitle,
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final toggleItems = _buildItems(l10n);
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(context),
+            _buildHeader(context, l10n),
             const Divider(height: 1, color: AppColors.divider),
             Expanded(
               child: SingleChildScrollView(
@@ -103,7 +106,7 @@ class _NotificationsSettingsScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Choose which notifications you want to receive',
+                      l10n.notifChooseDesc,
                       style: GoogleFonts.poppins(
                         fontSize: 13,
                         color: AppColors.textMuted,
@@ -118,15 +121,15 @@ class _NotificationsSettingsScreenState
                         border: Border.all(color: AppColors.divider),
                       ),
                       child: Column(
-                        children: List.generate(_toggleItems.length, (i) {
+                        children: List.generate(toggleItems.length, (i) {
                           return Column(
                             children: [
                               _ToggleRow(
-                                data: _toggleItems[i],
+                                data: toggleItems[i],
                                 value: _values[i],
                                 onChanged: (v) => _toggle(i, v),
                               ),
-                              if (i < _toggleItems.length - 1)
+                              if (i < toggleItems.length - 1)
                                 const Divider(
                                   height: 1,
                                   color: AppColors.divider,
@@ -148,7 +151,7 @@ class _NotificationsSettingsScreenState
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, AppLocalizations l10n) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Row(
@@ -172,7 +175,7 @@ class _NotificationsSettingsScreenState
           ),
           const SizedBox(width: 14),
           Text(
-            'Notifications',
+            l10n.notifications,
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w700,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_category.dart';
 import 'event_recurrence.dart';
 
 // ─── Data models ─────────────────────────────────────────────────────────────
@@ -38,6 +39,7 @@ class OrgClass {
   String name;
   String category;
   List<String> categoryIds;
+  List<AppCategory> categoryList;
   String description;
   List<OrgGroup> groups;
 
@@ -46,6 +48,7 @@ class OrgClass {
     required this.name,
     this.category = '',
     this.categoryIds = const [],
+    this.categoryList = const [],
     this.description = '',
     this.groups = const [],
   });
@@ -56,6 +59,7 @@ class OrgEvent {
   String name;
   String category;
   List<String> categoryIds;
+  List<AppCategory> categoryList;
   String description;
   DateTime date;
   TimeOfDay time;
@@ -75,14 +79,13 @@ class OrgEvent {
   int? occurrenceIndex;
   EventRecurrence? recurrence;
   String? imageUrl;
-  List<String> categoryNames;
 
   OrgEvent({
     required this.id,
     required this.name,
     required this.category,
     this.categoryIds = const [],
-    this.categoryNames = const [],
+    this.categoryList = const [],
     this.description = '',
     required this.date,
     required this.time,
@@ -105,7 +108,7 @@ class OrgEvent {
   });
 }
 
-// ─── Category helpers ─────────────────────────────────────────────────────────
+// ─── Category helpers (pass AppCategory.stableNameEn, not localized name) ────
 
 Color catColorStart(String cat) => switch (cat) {
   'Sport' => const Color(0xFF059669),

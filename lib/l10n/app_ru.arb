@@ -36,12 +36,12 @@
 
   "tagline": "Открывай. Учись. Расти.",
 
-  "onboarding1Title": "Найдите лучшие занятия",
-  "onboarding1Subtitle": "Откройте для себя сотни кружков, лагерей и мастер-классов для ваших детей рядом с вами",
-  "onboarding2Title": "Удобная запись",
-  "onboarding2Subtitle": "Записывайтесь на любимые занятия в несколько касаний и управляйте расписанием в одном месте",
-  "onboarding3Title": "Оставайтесь на связи",
-  "onboarding3Subtitle": "Получайте обновления, напоминания и общайтесь с организаторами прямо в приложении",
+  "onboarding1Title": "Откройте занятия",
+  "onboarding1Subtitle": "Найдите лучшие занятия, лагеря и мастер-классы\nдля ваших детей поблизости",
+  "onboarding2Title": "Связывайтесь с организаторами",
+  "onboarding2Subtitle": "Пишите организаторам напрямую, задавайте вопросы\nи получайте быстрые ответы",
+  "onboarding3Title": "Сохраняйте и организуйте",
+  "onboarding3Subtitle": "Добавляйте в избранное, следите за расписанием\nи не пропускайте регистрацию",
 
   "chooseLanguage": "Выбор\nязыка",
   "languageSubtitle": "Выберите предпочитаемый язык для продолжения",
@@ -387,5 +387,327 @@
   "viewSchedule": "Посмотреть расписание",
   "scheduleTitle": "Расписание",
   "noUpcomingOccurrences": "Нет предстоящих событий",
-  "noOccurrences": "Нет событий в этой серии"
+  "noOccurrences": "Нет событий в этой серии",
+
+  "navDashboard": "Панель",
+  "navClasses": "Занятия",
+  "navEvents": "События",
+  "orgDashboardSubtitle": "Панель управления",
+  "myOrganizationFallback": "Моя организация",
+  "statGroups": "Группы",
+  "statStudents": "Учеников",
+  "myClasses": "Мои занятия",
+  "myEvents": "Мои события",
+  "recentMessages": "Последние сообщения",
+  "btnAdd": "+ Добавить",
+  "noClassesHint": "Нет занятий. Нажмите + Добавить для создания.",
+  "noEventsHint": "Нет событий. Нажмите + Добавить для создания.",
+  "noRecentMessages": "Нет сообщений.",
+  "btnManage": "Управлять",
+  "btnNewClass": "Новое занятие",
+  "noClassesYetTitle": "Нет занятий",
+  "noClassesYetBody": "Нет занятий. Добавьте первое занятие!",
+  "agesLabel": "Возраст",
+  "perMonthSuffix": "/мес",
+  "studentsLabel": "уч.",
+  "noGroupsYet": "Групп пока нет.",
+  "btnNewEvent": "Новое событие",
+  "noUpcomingEventsYet": "Нет предстоящих событий.",
+  "noPastEvents": "Нет прошедших событий.",
+  "noMessagesYetBody": "Здесь появятся сообщения от ваших клиентов",
+  "verifiedOrganization": "Проверенная организация",
+  "businessSection": "Бизнес",
+  "billingPayments": "Платежи и счета",
+  "analyticsLabel": "Аналитика",
+  "supportSection": "Поддержка",
+  "termsPrivacy": "Условия и конфиденциальность",
+  "exitDashboard": "Выйти из панели",
+  "comingSoon": "Эта функция скоро появится.",
+  "btnEdit": "Редактировать",
+  "failedToDeleteClass": "Не удалось удалить занятие. Попробуйте снова.",
+  "failedToDeleteEvent": "Не удалось удалить событие. Попробуйте снова.",
+  "groupCount": "{count, plural, one{{count} группа} few{{count} группы} many{{count} групп} other{{count} групп}}",
+  "@groupCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "eventSpotsCount": "{count, plural, one{{count} место} few{{count} места} many{{count} мест} other{{count} мест}}",
+  "@eventSpotsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "btnSeeAll": "Все",
+  "tapToChange": "Нажмите для изменения",
+  "failedToUploadImage": "Не удалось загрузить изображение",
+  "btnDone": "Готово",
+  "editClass": "Редактировать занятие",
+  "uploadClassImage": "Загрузить изображение занятия",
+  "classDetailsSection": "Детали занятия",
+  "classNameHint": "Название занятия",
+  "descriptionHint": "Описание",
+  "errorSelectCategory": "Выберите хотя бы одну категорию",
+  "categoriesLabel": "Категории",
+  "addGroup": "Добавить группу",
+  "createClass": "Создать занятие",
+  "classCreatedSuccess": "Занятие создано",
+  "failedToUpdateClass": "Не удалось обновить занятие",
+  "failedToCreateClass": "Не удалось создать занятие. Попробуйте снова.",
+  "editEvent": "Редактировать событие",
+  "uploadEventImage": "Загрузить изображение события",
+  "eventDetailsSection": "Детали события",
+  "eventNameHint": "Название события",
+  "dateTimeSection": "Дата и время",
+  "selectDate": "Выберите дату",
+  "selectTime": "Выберите время",
+  "locationSection": "Местоположение",
+  "addressHint": "Адрес / место проведения",
+  "cityHint": "Город",
+  "participantsSection": "Участники",
+  "minAgeHint": "Мин. возраст",
+  "maxAgeHint": "Макс. возраст",
+  "maxCapacityHint": "Макс. вместимость",
+  "priceHint": "Цена (₪) — оставьте пустым для бесплатного",
+  "priceCommentHint": "Комментарий к цене (необяз.)",
+  "createEvent": "Создать событие",
+  "eventCreatedSuccess": "Событие создано",
+  "failedToCreateEvent": "Не удалось создать событие. Попробуйте снова.",
+  "editGroup": "Редактировать группу",
+  "newGroup": "Новая группа",
+  "groupDetailsSection": "Детали группы",
+  "groupNameHint": "Название группы (напр. U10)",
+  "ageRangeSection": "Возрастной диапазон",
+  "capacityPriceSection": "Вместимость и цена",
+  "maxStudentsHint": "Макс. учеников",
+  "pricePerMonthHint": "Цена в месяц (₪)",
+  "timeSlotCount": "{count, plural, one{{count} слот} few{{count} слота} many{{count} слотов} other{{count} слотов}}",
+  "@timeSlotCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "addSchedule": "Добавить расписание",
+  "groupCreatedSuccess": "Группа создана",
+  "failedToCreateGroup": "Не удалось создать группу. Попробуйте снова.",
+  "addAnotherTimeSlot": "Добавить ещё слот",
+  "saveSchedule": "Сохранить расписание",
+  "slotLabel": "Слот {number}",
+  "@slotLabel": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+  "dayOfWeekLabel": "День недели",
+  "timeLabel": "Время",
+  "scheduleSavedSuccess": "Расписание сохранено",
+  "failedToSaveSchedule": "Не удалось сохранить расписание. Попробуйте снова.",
+  "daySunAbbrev": "Вс",
+  "dayMonAbbrev": "Пн",
+  "dayTueAbbrev": "Вт",
+  "dayWedAbbrev": "Ср",
+  "dayThuAbbrev": "Чт",
+  "dayFriAbbrev": "Пт",
+  "daySatAbbrev": "Сб",
+  "editProfile": "Редактировать профиль",
+  "orgNameLabel": "Название организации",
+  "orgPhoneHint": "Телефон",
+  "orgEmailHint": "Эл. почта",
+  "websiteHint": "Веб-сайт",
+  "addressLabel": "Адрес",
+  "socialMediaSection": "Социальные сети",
+  "fieldInstagram": "Instagram",
+  "fieldFacebook": "Facebook",
+  "mediaSection": "Медиа",
+  "logoLabel": "Логотип",
+  "bannerLabel": "Баннер",
+  "uploadingLabel": "Загрузка...",
+  "imageSelectedLabel": "Изображение выбрано",
+  "tapToReplace": "Нажмите для замены",
+  "chooseFromGallery": "Выбрать из галереи",
+  "selectCity": "Выберите город",
+  "trialLessonAvailable": "Пробный урок доступен",
+
+  "btnNext": "Далее",
+  "letsConnect": "Начать",
+
+  "typeMessageHint": "Введите сообщение...",
+  "failedToSendMessage": "Не удалось отправить сообщение. Попробуйте ещё раз.",
+
+  "nearbyActivities": "Занятия рядом",
+  "allCategories": "Все категории",
+  "mapActivitiesCount": "{count, plural, one{{count} занятие} few{{count} занятия} many{{count} занятий} other{{count} занятий}}",
+  "@mapActivitiesCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "notifNewMessageTitle": "Новое сообщение",
+  "notifNewMessageBody": "У вас новое сообщение",
+
+  "notificationScreenTitle": "Уведомление",
+  "messageLabel": "Сообщение",
+  "relatedActivityLabel": "Связанная активность",
+  "viewActivityBtn": "Посмотреть активность",
+
+  "notifAppointmentsTitle": "Уведомления о занятиях",
+  "notifAppointmentsSubtitle": "Напоминания о предстоящих занятиях и записях",
+  "notifChatTitle": "Уведомления о чате",
+  "notifChatSubtitle": "Новые сообщения от организаторов",
+  "notifActivityTitle": "Обновления активностей",
+  "notifActivitySubtitle": "Изменения в активностях, которые вы забронировали или сохранили",
+  "notifOffersTitle": "Предложения и акции",
+  "notifOffersSubtitle": "Срочные предложения, скидки и специальные мероприятия",
+  "notifChooseDesc": "Выберите, какие уведомления вы хотите получать",
+
+  "imageUnavailable": "Изображение недоступно",
+
+  "reviewsTitle": "Отзывы",
+  "writeBtn": "Написать",
+  "reviewsCount": "{count, plural, one{{count} отзыв} few{{count} отзыва} many{{count} отзывов} other{{count} отзыва}}",
+  "@reviewsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noReviewsYetSimple": "Отзывов пока нет",
+  "beFirstReview": "Будьте первым, кто поделится впечатлениями",
+  "anonymousReviewer": "Аноним",
+
+  "anyAge": "Любой возраст",
+  "ageFromTo": "{from} – {to} лет",
+  "@ageFromTo": {
+    "placeholders": {
+      "from": { "type": "int" },
+      "to": { "type": "int" }
+    }
+  },
+  "ageFromOnly": "{from}+ лет",
+  "@ageFromOnly": {
+    "placeholders": {
+      "from": { "type": "int" }
+    }
+  },
+  "upToCapacity": "До {total}",
+  "@upToCapacity": {
+    "placeholders": {
+      "total": { "type": "int" }
+    }
+  },
+  "groupFallback": "Группа",
+  "ageFromToShort": "{from}–{to} лет",
+  "@ageFromToShort": {
+    "placeholders": {
+      "from": { "type": "int" },
+      "to": { "type": "int" }
+    }
+  },
+  "ageFromOnlyShort": "{from}+ лет",
+  "@ageFromOnlyShort": {
+    "placeholders": {
+      "from": { "type": "int" }
+    }
+  },
+
+  "filtersTitle": "Фильтры",
+  "btnReset": "Сбросить",
+  "filterPriceRange": "Диапазон цен",
+  "filterCategory": "Категория",
+  "filterDistance": "Расстояние",
+  "ageSuffix": "лет",
+  "upToKm": "До {distance} км",
+  "@upToKm": {
+    "placeholders": {
+      "distance": { "type": "int" }
+    }
+  },
+  "maxKmLabel": "макс. 20 км",
+  "btnShowResults": "Показать результаты",
+
+  "failedUploadPhoto": "Не удалось загрузить фото. Попробуйте ещё раз.",
+  "alreadyReviewed": "Вы уже оставили отзыв об этой организации",
+  "failedSubmitReview": "Не удалось отправить отзыв. Попробуйте ещё раз.",
+  "reviewingExperience": "Оставьте отзыв о вашем опыте",
+  "yourRatingLabel": "Ваша оценка",
+  "ratingPoor": "Плохо",
+  "ratingFair": "Средне",
+  "ratingGood": "Хорошо",
+  "ratingGreat": "Отлично",
+  "ratingExcellent": "Превосходно",
+  "yourReviewLabel": "Ваш отзыв",
+  "reviewHint": "Поделитесь впечатлениями об этой активности...",
+  "photosLabel": "Фотографии",
+  "photoOptionalCount": "(необязательно, {current}/{max})",
+  "@photoOptionalCount": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "addBtn": "Добавить",
+  "submitReviewBtn": "Отправить отзыв",
+  "reviewSubmittedTitle": "Отзыв отправлен!",
+  "reviewSubmittedBody": "Спасибо за отзыв. Ваше мнение поможет другим семьям сделать правильный выбор.",
+  "backToReviewsBtn": "Назад к отзывам",
+
+  "monthJanAbbrev": "Янв",
+  "monthFebAbbrev": "Фев",
+  "monthMarAbbrev": "Мар",
+  "monthAprAbbrev": "Апр",
+  "monthMayAbbrev": "Май",
+  "monthJunAbbrev": "Июн",
+  "monthJulAbbrev": "Июл",
+  "monthAugAbbrev": "Авг",
+  "monthSepAbbrev": "Сен",
+  "monthOctAbbrev": "Окт",
+  "monthNovAbbrev": "Ноя",
+  "monthDecAbbrev": "Дек",
+
+  "failedToLoadEvent": "Не удалось загрузить мероприятие",
+  "checkOutEventMsg": "Посмотрите \"{title}\" на HobbyLab!",
+  "@checkOutEventMsg": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "checkOutEventDefault": "Посмотрите это мероприятие на HobbyLab!",
+  "dateLabel": "Дата",
+  "detailsSection": "Подробности",
+  "eventAgesFormat": "Возраст {min}–{max}",
+  "@eventAgesFormat": {
+    "placeholders": {
+      "min": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "organizationFallback": "Организация",
+  "otherEventsSection": "Другие мероприятия",
+  "failedToLoadSchedule": "Не удалось загрузить расписание",
+  "categoryOther": "Другое",
+
+  "actionMessage": "Сообщение",
+  "ourClassesSection": "Наши занятия",
+  "noClassesAvailable": "Занятий пока нет",
+  "upcomingEventsSection": "Предстоящие мероприятия",
+  "noUpcomingEvents": "Предстоящих мероприятий нет",
+  "unnamedClass": "Без названия",
+  "retryBtn": "Повторить",
+  "pleaseWaitUpload": "Подождите, пока загрузится изображение",
+  "imageUploadFailed": "Ошибка загрузки — попробуйте ещё раз или удалите фото",
+
+  "failedToRegister": "Не удалось зарегистрироваться. Попробуйте ещё раз.",
+  "orgDetailsSection": "Сведения об организации",
+  "contactInfoSection": "Контактная информация",
+  "workingHoursSection": "Часы работы",
+  "becomeProvider": "Стать поставщиком",
+  "uploadLogo": "Загрузить логотип",
+  "submitApplication": "Отправить заявку",
+  "statusClosed": "Закрыто",
+  "unnamedEvent": "Без названия",
+  "accountSecuritySection": "БЕЗОПАСНОСТЬ АККАУНТА",
+  "timeNow": "Сейчас",
+  "changesSavedSuccess": "Изменения сохранены",
+  "failedToSaveChanges": "Не удалось сохранить изменения"
 }

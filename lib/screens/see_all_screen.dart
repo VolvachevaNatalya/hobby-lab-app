@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../services/api_service.dart';
+import '../models/app_category.dart';
 import '../models/app_class.dart';
 import 'activity_details_screen.dart';
 import 'filters_screen.dart';
@@ -47,11 +48,11 @@ IconData _catIcon(String cat) => switch (cat.toLowerCase()) {
 
 class SeeAllScreen extends StatefulWidget {
   final String title;
-  final String? initialCategory;
+  final String? initialCategoryId;
   final int? categoryId;
   final int? cityId;
 
-  const SeeAllScreen({super.key, required this.title, this.initialCategory, this.categoryId, this.cityId});
+  const SeeAllScreen({super.key, required this.title, this.initialCategoryId, this.categoryId, this.cityId});
 
   @override
   State<SeeAllScreen> createState() => _SeeAllScreenState();
@@ -60,15 +61,15 @@ class SeeAllScreen extends StatefulWidget {
 class _SeeAllScreenState extends State<SeeAllScreen> {
   final _ctrl = TextEditingController();
   String _query = '';
-  String? _cat;
+  String? _selectedCatId;
   bool _loading = true;
   List<AppClass> _classes = [];
-  List<String> _chips = ['All'];
+  List<AppCategory> _cats = [];
 
   @override
   void initState() {
     super.initState();
-    _cat = widget.initialCategory;
+    _selectedCatId = widget.initialCategoryId;
     _loadData();
   }
 
@@ -87,7 +88,7 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
       if (mounted) {
         setState(() {
           _classes = classes;
-          _chips = ['All', ...cats.map((c) => c.name)];
+          _cats = cats;
           _loading = false;
         });
       }
@@ -98,8 +99,11 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
 
   List<AppClass> get _filtered {
     var list = _classes;
-    if (_cat != null) {
-      list = list.where((a) => a.category.toLowerCase() == _cat!.toLowerCase()).toList();
+    if (_selectedCatId != null) {
+      list = list.where((a) =>
+        a.categoryIds.contains(_selectedCatId) ||
+        (a.categoryIds.isEmpty && a.categoryId == _selectedCatId),
+      ).toList();
     }
     if (_query.isNotEmpty) {
       final q = _query.toLowerCase();
@@ -262,17 +266,23 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
   }
 
   Widget _buildChips() {
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).languageCode;
+    final items = <({String? id, String label})>[
+      (id: null, label: l10n.allChip),
+      ..._cats.map((c) => (id: c.id, label: c.localizedName(locale))),
+    ];
     return SizedBox(
       height: 36,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        itemCount: _chips.length,
+        itemCount: items.length,
         itemBuilder: (_, i) {
-          final c = _chips[i];
-          final active = c == 'All' ? _cat == null : _cat == c;
+          final item = items[i];
+          final active = _selectedCatId == item.id;
           return GestureDetector(
-            onTap: () => setState(() => _cat = c == 'All' ? null : c),
+            onTap: () => setState(() => _selectedCatId = item.id),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 180),
               margin: const EdgeInsets.only(right: 8),
@@ -289,11 +299,10 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
               ),
               child: Center(
                 child: Text(
-                  c == 'All' ? AppLocalizations.of(context)!.allChip : c,
+                  item.label,
                   style: GoogleFonts.poppins(
                     fontSize: 12,
-                    fontWeight:
-                        active ? FontWeight.w600 : FontWeight.w400,
+                    fontWeight: active ? FontWeight.w600 : FontWeight.w400,
                     color: active
                         ? AppColors.purpleLight
                         : AppColors.textSecondary,
@@ -351,6 +360,7 @@ class _ActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context).languageCode;
     final cs = _catColorStart(cls.category);
     final ce = _catColorEnd(cls.category);
     final icon = _catIcon(cls.category);
@@ -428,7 +438,7 @@ class _ActivityCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            cls.category,
+                            cls.primaryCategory?.localizedName(locale) ?? cls.category,
                             style: GoogleFonts.poppins(
                               fontSize: 9,
                               fontWeight: FontWeight.w600,

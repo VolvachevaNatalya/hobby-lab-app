@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
+import '../models/app_category.dart';
 import '../theme/app_theme.dart';
 import '../services/api_service.dart';
 
-const _days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const _dayKeys = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 class FiltersScreen extends StatefulWidget {
   const FiltersScreen({super.key});
@@ -17,9 +18,9 @@ class _FiltersScreenState extends State<FiltersScreen> {
   RangeValues _age = const RangeValues(3, 120);
   RangeValues _price = const RangeValues(0, 500);
   double _distance = 10;
-  final Set<String> _selectedCats = {};
+  final Set<String> _selectedCatIds = {};
   final Set<String> _selectedDays = {};
-  List<String> _cats = [];
+  List<AppCategory> _cats = [];
   bool _loadingCats = true;
 
   @override
@@ -33,7 +34,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
       final cats = await ApiService.getCategories();
       if (mounted) {
         setState(() {
-          _cats = cats.map((c) => c.name).toList();
+          _cats = cats;
           _loadingCats = false;
         });
       }
@@ -46,7 +47,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
         _age = const RangeValues(3, 120);
         _price = const RangeValues(0, 500);
         _distance = 10;
-        _selectedCats.clear();
+        _selectedCatIds.clear();
         _selectedDays.clear();
       });
 
@@ -54,18 +55,27 @@ class _FiltersScreenState extends State<FiltersScreen> {
       (_age != const RangeValues(3, 120) ? 1 : 0) +
       (_price != const RangeValues(0, 500) ? 1 : 0) +
       (_distance != 10 ? 1 : 0) +
-      _selectedCats.length +
+      _selectedCatIds.length +
       _selectedDays.length;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final localDays = [
+      l10n.daySunAbbrev,
+      l10n.dayMonAbbrev,
+      l10n.dayTueAbbrev,
+      l10n.dayWedAbbrev,
+      l10n.dayThuAbbrev,
+      l10n.dayFriAbbrev,
+      l10n.daySatAbbrev,
+    ];
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(context),
+            _buildHeader(context, l10n),
             const Divider(height: 1, color: AppColors.divider),
             Expanded(
               child: SingleChildScrollView(
@@ -74,11 +84,11 @@ class _FiltersScreenState extends State<FiltersScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Age range
-                    _buildSectionLabel('Age Range'),
+                    _buildSectionLabel(l10n.ageRangeSection),
                     const SizedBox(height: 6),
                     _buildRangeDisplay(
-                      '${_age.start.round()} yrs',
-                      '${_age.end.round()} yrs',
+                      '${_age.start.round()} ${l10n.ageSuffix}',
+                      '${_age.end.round()} ${l10n.ageSuffix}',
                     ),
                     _buildRangeSlider(
                       values: _age,
@@ -89,7 +99,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
                     ),
                     const SizedBox(height: 24),
                     // Price range
-                    _buildSectionLabel('Price Range'),
+                    _buildSectionLabel(l10n.filterPriceRange),
                     const SizedBox(height: 6),
                     _buildRangeDisplay(
                       _price.start == 0
@@ -106,63 +116,67 @@ class _FiltersScreenState extends State<FiltersScreen> {
                     ),
                     const SizedBox(height: 24),
                     // Categories
-                    _buildSectionLabel('Category'),
+                    _buildSectionLabel(l10n.filterCategory),
                     const SizedBox(height: 12),
                     _loadingCats
                         ? const SizedBox(
                             height: 40,
                             child: Center(child: CircularProgressIndicator()),
                           )
-                        : Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: _cats
-                                .map((c) => _ToggleChip(
-                                      label: c,
-                                      selected: _selectedCats.contains(c),
-                                      onTap: () => setState(() {
-                                        if (_selectedCats.contains(c)) {
-                                          _selectedCats.remove(c);
-                                        } else {
-                                          _selectedCats.add(c);
-                                        }
-                                      }),
-                                    ))
-                                .toList(),
-                          ),
+                        : Builder(builder: (context) {
+                            final locale = Localizations.localeOf(context).languageCode;
+                            return Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: _cats
+                                  .map((c) => _ToggleChip(
+                                        label: c.localizedName(locale),
+                                        selected: _selectedCatIds.contains(c.id),
+                                        onTap: () => setState(() {
+                                          if (_selectedCatIds.contains(c.id)) {
+                                            _selectedCatIds.remove(c.id);
+                                          } else {
+                                            _selectedCatIds.add(c.id);
+                                          }
+                                        }),
+                                      ))
+                                  .toList(),
+                            );
+                          }),
                     const SizedBox(height: 24),
                     // Day of week
-                    _buildSectionLabel('Day of Week'),
+                    _buildSectionLabel(l10n.dayOfWeekLabel),
                     const SizedBox(height: 12),
                     Row(
-                      children: _days
-                          .map((d) => Expanded(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 2),
-                                  child: _DayChip(
-                                    label: d,
-                                    selected: _selectedDays.contains(d),
-                                    onTap: () => setState(() {
-                                      if (_selectedDays.contains(d)) {
-                                        _selectedDays.remove(d);
-                                      } else {
-                                        _selectedDays.add(d);
-                                      }
-                                    }),
-                                  ),
-                                ),
-                              ))
-                          .toList(),
+                      children: List.generate(_dayKeys.length, (i) {
+                        final key = _dayKeys[i];
+                        return Expanded(
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 2),
+                            child: _DayChip(
+                              label: localDays[i],
+                              selected: _selectedDays.contains(key),
+                              onTap: () => setState(() {
+                                if (_selectedDays.contains(key)) {
+                                  _selectedDays.remove(key);
+                                } else {
+                                  _selectedDays.add(key);
+                                }
+                              }),
+                            ),
+                          ),
+                        );
+                      }),
                     ),
                     const SizedBox(height: 24),
                     // Distance
-                    _buildSectionLabel('Distance'),
+                    _buildSectionLabel(l10n.filterDistance),
                     const SizedBox(height: 6),
                     Row(
                       children: [
                         Text(
-                          'Up to ${_distance.round()} km',
+                          l10n.upToKm(_distance.round()),
                           style: GoogleFonts.poppins(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -171,7 +185,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
                         ),
                         const Spacer(),
                         Text(
-                          '20 km max',
+                          l10n.maxKmLabel,
                           style: GoogleFonts.poppins(
                               fontSize: 12, color: AppColors.textMuted),
                         ),
@@ -208,7 +222,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, AppLocalizations l10n) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
       child: Row(
@@ -230,7 +244,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Filters',
+              l10n.filtersTitle,
               style: GoogleFonts.poppins(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -258,7 +272,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
           GestureDetector(
             onTap: _reset,
             child: Text(
-              'Reset',
+              l10n.btnReset,
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -353,7 +367,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
           ),
           child: Center(
             child: Text(
-              'Show Results',
+              AppLocalizations.of(context)!.btnShowResults,
               style: GoogleFonts.poppins(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,

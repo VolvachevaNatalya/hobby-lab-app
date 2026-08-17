@@ -121,11 +121,11 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
         }
 
         if (!mounted) return;
-        _showSnack('Group created successfully', const Color(0xFF059669));
+        _showSnack(AppLocalizations.of(context)!.groupCreatedSuccess, const Color(0xFF059669));
         Navigator.of(context).pop();
       } catch (_) {
         if (!mounted) return;
-        _showSnack('Failed to create group. Please try again.',
+        _showSnack(AppLocalizations.of(context)!.failedToCreateGroup,
             const Color(0xFFEF4444));
       } finally {
         if (mounted) setState(() => _saving = false);
@@ -164,7 +164,7 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _sectionLabel('Group Details'),
+                    _sectionLabel(l10n.groupDetailsSection),
                     const SizedBox(height: 12),
                     _buildFieldCard(
                       key: _nameKey,
@@ -172,7 +172,7 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
                       children: [
                         _inlineField(
                           ctrl: _nameCtrl,
-                          hint: 'Group name (e.g. U10 Group)',
+                          hint: l10n.groupNameHint,
                           icon: Icons.group_rounded,
                           isRequired: true,
                           error: _submitted && _nameCtrl.text.trim().isEmpty,
@@ -182,16 +182,16 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
                     if (_submitted && _nameCtrl.text.trim().isEmpty)
                       _errorLabel(l10n.fieldRequired),
                     const SizedBox(height: 20),
-                    _sectionLabel('Age Range'),
+                    _sectionLabel(l10n.ageRangeSection),
                     const SizedBox(height: 12),
                     _buildFieldCard(children: [_ageRangeRow()]),
                     const SizedBox(height: 20),
-                    _sectionLabel('Capacity & Price'),
+                    _sectionLabel(l10n.capacityPriceSection),
                     const SizedBox(height: 12),
                     _buildFieldCard(children: [
                       _inlineField(
                         ctrl: _capacityCtrl,
-                        hint: 'Max students',
+                        hint: l10n.maxStudentsHint,
                         icon: Icons.people_rounded,
                         type: TextInputType.number,
                         formatters: [FilteringTextInputFormatter.digitsOnly],
@@ -199,7 +199,7 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
                       _divider(),
                       _inlineField(
                         ctrl: _priceCtrl,
-                        hint: 'Price per month (₪)',
+                        hint: l10n.pricePerMonthHint,
                         icon: Icons.payments_rounded,
                         type: TextInputType.number,
                         formatters: [FilteringTextInputFormatter.digitsOnly],
@@ -207,7 +207,7 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
                       ),
                     ]),
                     const SizedBox(height: 20),
-                    _sectionLabel('Schedule'),
+                    _sectionLabel(l10n.scheduleSection),
                     const SizedBox(height: 12),
                     _buildScheduleSection(),
                     const SizedBox(height: 36),
@@ -245,7 +245,9 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
           ),
           const SizedBox(width: 12),
           Text(
-            _isEdit ? 'Edit Group' : 'New Group',
+            _isEdit
+                ? AppLocalizations.of(context)!.editGroup
+                : AppLocalizations.of(context)!.newGroup,
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -349,6 +351,7 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
   }
 
   Widget _ageRangeRow() {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
@@ -366,7 +369,7 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
                   color: AppColors.textPrimary, fontSize: 14),
               cursorColor: AppColors.purple,
               decoration: InputDecoration(
-                hintText: 'Min age',
+                hintText: l10n.minAgeHint,
                 hintStyle: GoogleFonts.poppins(
                     color: AppColors.textMuted, fontSize: 14),
                 border: InputBorder.none,
@@ -388,7 +391,7 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
                   color: AppColors.textPrimary, fontSize: 14),
               cursorColor: AppColors.purple,
               decoration: InputDecoration(
-                hintText: 'Max age',
+                hintText: l10n.maxAgeHint,
                 hintStyle: GoogleFonts.poppins(
                     color: AppColors.textMuted, fontSize: 14),
                 border: InputBorder.none,
@@ -402,7 +405,19 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
     );
   }
 
+  String _localizeDay(String day, AppLocalizations l10n) => switch (day) {
+    'Sun' => l10n.daySunAbbrev,
+    'Mon' => l10n.dayMonAbbrev,
+    'Tue' => l10n.dayTueAbbrev,
+    'Wed' => l10n.dayWedAbbrev,
+    'Thu' => l10n.dayThuAbbrev,
+    'Fri' => l10n.dayFriAbbrev,
+    'Sat' => l10n.daySatAbbrev,
+    _ => day,
+  };
+
   Widget _buildScheduleSection() {
+    final l10n = AppLocalizations.of(context)!;
     if (_schedule.isEmpty) {
       return GestureDetector(
         onTap: _editSchedule,
@@ -424,7 +439,7 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
                 shaderCallback: (b) =>
                     AppColors.brandGradient.createShader(b),
                 child: Text(
-                  'Add Schedule',
+                  l10n.addSchedule,
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -451,7 +466,7 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
           Row(
             children: [
               Text(
-                '${_schedule.length} time slot${_schedule.length != 1 ? 's' : ''}',
+                l10n.timeSlotCount(_schedule.length),
                 style: GoogleFonts.poppins(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -465,7 +480,7 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
                   shaderCallback: (b) =>
                       AppColors.brandGradient.createShader(b),
                   child: Text(
-                    'Edit',
+                    l10n.btnEdit,
                     style: GoogleFonts.poppins(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -491,7 +506,7 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
                       color: AppColors.purple.withValues(alpha: 0.3)),
                 ),
                 child: Text(
-                  '${s.day} ${fmtTime(s.start)}–${fmtTime(s.end)}',
+                  '${_localizeDay(s.day, l10n)} ${fmtTime(s.start)}–${fmtTime(s.end)}',
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -536,14 +551,17 @@ class _OrgGroupFormScreenState extends State<OrgGroupFormScreen> {
                   child: CircularProgressIndicator(
                       strokeWidth: 2.5, color: Colors.white),
                 )
-              : Text(
-                  _isEdit ? 'Save Changes' : 'Add Group',
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
+              : Builder(builder: (ctx) {
+                  final l10n = AppLocalizations.of(ctx)!;
+                  return Text(
+                    _isEdit ? l10n.btnSaveChanges : l10n.addGroup,
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  );
+                }),
         ),
       ),
     );

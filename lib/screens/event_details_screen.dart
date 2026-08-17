@@ -4,15 +4,26 @@ import 'package:share_plus/share_plus.dart';
 import '../theme/app_theme.dart';
 import '../models/app_event.dart';
 import '../models/event_recurrence.dart';
+import '../models/org_models.dart';
 import '../services/api_service.dart';
 import '../services/saved_activities.dart';
 import '../l10n/app_localizations.dart';
+import '../widgets/event_scope_dialog.dart';
 import 'chat_screen.dart';
 import 'org_profile_screen.dart';
+import 'org_event_form_screen.dart';
 import 'event_schedule_screen.dart';
 import '../routing/transitions.dart';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
+
+String _resolveEventBadge(String badge, AppLocalizations l10n) {
+  switch (badge.toLowerCase()) {
+    case 'active': return l10n.activeStatus;
+    case 'inactive': return l10n.inactiveStatus;
+    default: return badge;
+  }
+}
 
 String _initials(String name) {
   final words = name.trim().split(RegExp(r'\s+'));
@@ -27,6 +38,7 @@ class EventDetailsScreen extends StatefulWidget {
   final Color colorStart;
   final Color colorEnd;
   final IconData icon;
+  final OrgEvent? orgEvent;
 
   const EventDetailsScreen({
     super.key,
@@ -34,6 +46,7 @@ class EventDetailsScreen extends StatefulWidget {
     this.colorStart = const Color(0xFF7C3AED),
     this.colorEnd = const Color(0xFFEC4899),
     this.icon = Icons.event_rounded,
+    this.orgEvent,
   });
 
   @override
@@ -46,6 +59,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   String? _error;
   bool _isSaved = false;
   bool _savingInProgress = false;
+  bool _savedFromEdit = false;
 
   Map<String, dynamic>? _orgData;
   String _orgName = '';
@@ -94,7 +108,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         });
       }
     } catch (_) {
-      if (mounted) setState(() => _error = 'Failed to load event');
+      if (mounted) setState(() => _error = AppLocalizations.of(context)!.failedToLoadEvent);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -245,8 +259,15 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             ),
           ),
         ),
-        // ── Contact bottom bar ──
-        if (orgId != null)
+        // ── Bottom bar: organizer actions or contact ──
+        if (widget.orgEvent != null)
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: _OrgActionsBar(onEdit: _goEdit, onDelete: _goDelete),
+          )
+        else if (orgId != null)
           Positioned(
             bottom: 0,
             left: 0,
@@ -376,11 +397,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         const Spacer(),
         _HeaderBtn(
           icon: Icons.share_rounded,
-          onTap: () => Share.share(
-            event != null
-                ? 'Check out "${event.title}" on HobbyLab!'
-                : 'Check out this event on HobbyLab!',
-          ),
+          onTap: () {
+            final l10n = AppLocalizations.of(context)!;
+            Share.share(
+              event != null
+                  ? l10n.checkOutEventMsg(event.title)
+                  : l10n.checkOutEventDefault,
+            );
+          },
         ),
         const SizedBox(width: 8),
         _HeaderBtn(
@@ -397,10 +421,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   // ── Badge row ────────────────────────────────────────────────────────────────
 
   Widget _buildBadgeRow(AppEvent event) {
+    final locale = Localizations.localeOf(context).languageCode;
     return Row(
       children: [
-        ...event.categoryNames.take(2).map(
-          (name) => Padding(
+        ...event.categories.take(2).map(
+          (cat) => Padding(
             padding: const EdgeInsets.only(right: 6),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
@@ -412,7 +437,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 ),
               ),
               child: Text(
-                name,
+                cat.localizedName(locale),
                 style: GoogleFonts.poppins(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -422,7 +447,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             ),
           ),
         ),
-        if (event.categoryNames.length > 2)
+        if (event.categories.length > 2)
           Padding(
             padding: const EdgeInsets.only(right: 6),
             child: Container(
@@ -433,7 +458,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 border: Border.all(color: AppColors.purple.withValues(alpha: 0.2)),
               ),
               child: Text(
-                '+${event.categoryNames.length - 2}',
+                '+${event.categories.length - 2}',
                 style: GoogleFonts.poppins(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -482,6 +507,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   // ── Info cards ───────────────────────────────────────────────────────────────
 
   Widget _buildInfoCards(AppEvent event) {
+    final l10n = AppLocalizations.of(context)!;
     final items = <_InfoItem>[];
 
     if (event.startDatetime != null) {
@@ -490,15 +516,15 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         items.add(
           _InfoItem(
             icon: Icons.calendar_today_rounded,
-            label: 'Date',
-            value: _fmtDate(dt),
+            label: l10n.dateLabel,
+            value: _fmtDate(dt, l10n),
             color: const Color(0xFF0EA5E9),
           ),
         );
         items.add(
           _InfoItem(
             icon: Icons.access_time_rounded,
-            label: 'Time',
+            label: l10n.timeLabel,
             value: _fmtTime(dt),
             color: AppColors.purple,
           ),
@@ -507,7 +533,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     }
 
     final hasAddress = event.address != null && event.address!.isNotEmpty;
-    final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context).languageCode;
     String? cityLabel;
     if (event.isNationwide) {
@@ -528,7 +553,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       items.add(
         _InfoItem(
           icon: Icons.location_on_rounded,
-          label: 'Location',
+          label: l10n.locationSection,
           value: loc,
           color: const Color(0xFFEC4899),
         ),
@@ -735,10 +760,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   // ── Details chips ────────────────────────────────────────────────────────────
 
   Widget _buildDetailsSection(AppEvent event) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _sectionTitle('Details'),
+        _sectionTitle(l10n.detailsSection),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8,
@@ -746,13 +772,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           children: [
             if (event.minAge != null && event.maxAge != null)
               _chip(
-                'Ages ${event.minAge}–${event.maxAge}',
+                l10n.eventAgesFormat(event.minAge!, event.maxAge!),
                 AppColors.purple.withValues(alpha: 0.12),
                 AppColors.purpleLight,
               ),
             if (event.capacity != null)
               _chip(
-                '${event.capacity} spots',
+                l10n.upToCapacity(event.capacity!),
                 const Color(0xFF059669).withValues(alpha: 0.12),
                 const Color(0xFF059669),
               ),
@@ -765,7 +791,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   // ── Org card ─────────────────────────────────────────────────────────────────
 
   Widget _buildOrgCard(int orgId) {
-    final name = _orgName.isNotEmpty ? _orgName : 'Organization';
+    final name = _orgName.isNotEmpty ? _orgName : AppLocalizations.of(context)!.organizationFallback;
     final logoUrl = _orgData?['logo_url'] as String?;
     return GestureDetector(
       onTap: () => _openOrgProfile(orgId),
@@ -871,7 +897,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   }
 
   void _openOrgProfile(int orgId) {
-    final name = _orgName.isNotEmpty ? _orgName : 'Organization';
+    final name = _orgName.isNotEmpty ? _orgName : AppLocalizations.of(context)!.organizationFallback;
     Navigator.of(context).push(
       slideRoute(
         builder: (_) => OrgProfileScreen(
@@ -885,6 +911,53 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     );
   }
 
+  Future<void> _goEdit() async {
+    _savedFromEdit = false;
+    await Navigator.of(context).push(
+      slideRoute(
+        builder: (_) => OrgEventFormScreen(
+          event: widget.orgEvent!,
+          onSaved: () => _savedFromEdit = true,
+        ),
+      ),
+    );
+    if (mounted && _savedFromEdit) Navigator.of(context).pop(true);
+  }
+
+  Future<void> _goDelete() async {
+    final orgEvent = widget.orgEvent!;
+    final id = int.tryParse(orgEvent.id);
+    if (id == null) return;
+    final l10n = AppLocalizations.of(context)!;
+    String? scope;
+    if (orgEvent.seriesId != null) {
+      scope = await showEventScopeDialog(context, title: l10n.deleteEventScopeTitle);
+      if (scope == null || !mounted) return;
+    }
+    try {
+      await ApiService.deleteEvent(id, scope: scope);
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              l10n.failedToDeleteEvent,
+              style: GoogleFonts.poppins(fontSize: 13),
+            ),
+            backgroundColor: const Color(0xFFEF4444),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            margin: const EdgeInsets.all(16),
+          ),
+        );
+      }
+      return;
+    }
+    if (mounted) Navigator.of(context).pop(true);
+  }
+
   // ── Other events ─────────────────────────────────────────────────────────────
 
   Widget _buildOtherEventsSection() {
@@ -893,7 +966,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       children: [
         _divider(),
         const SizedBox(height: 24),
-        _sectionTitle('Other Events'),
+        _sectionTitle(AppLocalizations.of(context)!.otherEventsSection),
         const SizedBox(height: 14),
         ..._otherEvents.map(
           (e) => _OtherEventCard(
@@ -937,21 +1010,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     );
   }
 
-  String _fmtDate(DateTime dt) {
-    const months = [
+  String _fmtDate(DateTime dt, AppLocalizations l10n) {
+    final months = [
       '',
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+      l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+      l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+      l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+      l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
     ];
     return '${dt.day} ${months[dt.month]} ${dt.year}';
   }
@@ -1065,25 +1130,10 @@ class _OtherEventCard extends StatelessWidget {
     required this.colorEnd,
   });
 
-  String _fmtDate(String? iso) {
+  String _fmtDate(String? iso, List<String> months) {
     if (iso == null) return '';
     try {
       final dt = DateTime.parse(iso);
-      const months = [
-        '',
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
-      ];
       return '${dt.day} ${months[dt.month]}';
     } catch (_) {
       return '';
@@ -1092,8 +1142,16 @@ class _OtherEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final months = [
+      '',
+      l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+      l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+      l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+      l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
+    ];
     final title = (event['title'] ?? event['name'] ?? '').toString();
-    final dateStr = _fmtDate(event['start_datetime']?.toString());
+    final dateStr = _fmtDate(event['start_datetime']?.toString(), months);
     final city = (event['city'] ?? '').toString();
     final badge = (event['badge'] ?? event['status'] ?? '')
         .toString()
@@ -1203,7 +1261,7 @@ class _OtherEventCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  badge,
+                  _resolveEventBadge(badge, l10n),
                   style: GoogleFonts.poppins(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
@@ -1213,6 +1271,91 @@ class _OtherEventCard extends StatelessWidget {
               ),
             ],
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Organizer action bar ─────────────────────────────────────────────────────
+
+class _OrgActionsBar extends StatelessWidget {
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+
+  const _OrgActionsBar({required this.onEdit, required this.onDelete});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: const Border(
+          top: BorderSide(color: AppColors.divider, width: 1),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.3),
+            blurRadius: 20,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+          child: Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: onEdit,
+                  child: Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                      gradient: AppColors.brandGradient,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.edit_rounded, color: Colors.white, size: 18),
+                        const SizedBox(width: 8),
+                        Text(
+                          AppLocalizations.of(context)!.btnEdit,
+                          style: GoogleFonts.poppins(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              GestureDetector(
+                onTap: onDelete,
+                child: Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEF4444).withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: const Color(0xFFEF4444).withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: Color(0xFFEF4444),
+                    size: 22,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1261,7 +1404,7 @@ class _ContactBarState extends State<_ContactBar> {
       slideRoute(
         builder: (_) => ChatScreen(
           conversationId: conversationId,
-          name: widget.orgName.isNotEmpty ? widget.orgName : 'Organization',
+          name: widget.orgName.isNotEmpty ? widget.orgName : AppLocalizations.of(context)!.organizationFallback,
           initials: _abbr.isNotEmpty ? _abbr : '?',
           avatarColor: widget.colorStart,
         ),

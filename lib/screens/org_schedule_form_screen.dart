@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../models/org_models.dart';
 import '../services/api_service.dart';
@@ -88,11 +89,11 @@ class _OrgScheduleFormScreenState extends State<OrgScheduleFormScreen> {
           );
         }
         if (!mounted) return;
-        _showSnack('Schedule saved successfully', const Color(0xFF059669));
+        _showSnack(AppLocalizations.of(context)!.scheduleSavedSuccess, const Color(0xFF059669));
         Navigator.of(context).pop();
       } catch (_) {
         if (!mounted) return;
-        _showSnack('Failed to save schedule. Please try again.',
+        _showSnack(AppLocalizations.of(context)!.failedToSaveSchedule,
             const Color(0xFFEF4444));
       } finally {
         if (mounted) setState(() => _saving = false);
@@ -169,7 +170,7 @@ class _OrgScheduleFormScreenState extends State<OrgScheduleFormScreen> {
           ),
           const SizedBox(width: 12),
           Text(
-            'Add Schedule',
+            AppLocalizations.of(context)!.addSchedule,
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -201,7 +202,7 @@ class _OrgScheduleFormScreenState extends State<OrgScheduleFormScreen> {
               shaderCallback: (b) =>
                   AppColors.brandGradient.createShader(b),
               child: Text(
-                'Add Another Time Slot',
+                AppLocalizations.of(context)!.addAnotherTimeSlot,
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -240,7 +241,7 @@ class _OrgScheduleFormScreenState extends State<OrgScheduleFormScreen> {
                       strokeWidth: 2.5, color: Colors.white),
                 )
               : Text(
-                  'Save Schedule',
+                  AppLocalizations.of(context)!.saveSchedule,
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -276,6 +277,11 @@ class _SlotCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final localDays = [
+      l10n.daySunAbbrev, l10n.dayMonAbbrev, l10n.dayTueAbbrev,
+      l10n.dayWedAbbrev, l10n.dayThuAbbrev, l10n.dayFriAbbrev, l10n.daySatAbbrev,
+    ];
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -296,7 +302,7 @@ class _SlotCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  'Slot ${index + 1}',
+                  l10n.slotLabel(index + 1),
                   style: GoogleFonts.poppins(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -324,7 +330,7 @@ class _SlotCard extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           Text(
-            'Day of week',
+            l10n.dayOfWeekLabel,
             style: GoogleFonts.poppins(
               fontSize: 11,
               fontWeight: FontWeight.w600,
@@ -336,7 +342,9 @@ class _SlotCard extends StatelessWidget {
           Wrap(
             spacing: 6,
             runSpacing: 6,
-            children: _kDays.map((day) {
+            children: _kDays.asMap().entries.map((e) {
+              final day = e.value;
+              final displayDay = localDays[e.key];
               final sel = slot.day == day;
               return GestureDetector(
                 onTap: () => onDayChanged(day),
@@ -364,7 +372,7 @@ class _SlotCard extends StatelessWidget {
                         : null,
                   ),
                   child: Text(
-                    day,
+                    displayDay,
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -378,7 +386,7 @@ class _SlotCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Time',
+            l10n.timeLabel,
             style: GoogleFonts.poppins(
               fontSize: 11,
               fontWeight: FontWeight.w600,

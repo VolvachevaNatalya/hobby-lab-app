@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../services/api_service.dart';
 import 'write_review_screen.dart';
@@ -134,7 +135,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Reviews',
+              AppLocalizations.of(context)!.reviewsTitle,
               style: GoogleFonts.poppins(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -148,7 +149,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
               child: ShaderMask(
                 shaderCallback: (b) => AppColors.brandGradient.createShader(b),
                 child: Text(
-                  'Write',
+                  AppLocalizations.of(context)!.writeBtn,
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -191,7 +192,9 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
               _stars(_currentCount > 0 ? _currentRating : 0),
               const SizedBox(height: 4),
               Text(
-                _currentCount > 0 ? '$_currentCount reviews' : 'No reviews yet',
+                _currentCount > 0
+                    ? AppLocalizations.of(context)!.reviewsCount(_currentCount)
+                    : AppLocalizations.of(context)!.noReviewsYetSimple,
                 style: GoogleFonts.poppins(
                     fontSize: 11, color: AppColors.textMuted),
               ),
@@ -211,7 +214,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
               size: 48, color: AppColors.textMuted),
           const SizedBox(height: 12),
           Text(
-            'No reviews yet',
+            AppLocalizations.of(context)!.noReviewsYetSimple,
             style: GoogleFonts.poppins(
               fontSize: 15,
               fontWeight: FontWeight.w600,
@@ -220,7 +223,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
           ),
           const SizedBox(height: 6),
           Text(
-            'Be the first to share your experience',
+            AppLocalizations.of(context)!.beFirstReview,
             style: GoogleFonts.poppins(
                 fontSize: 13, color: AppColors.textMuted),
           ),
@@ -261,7 +264,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                       color: Colors.white, size: 18),
                   const SizedBox(width: 8),
                   Text(
-                    'Write a Review',
+                    AppLocalizations.of(context)!.writeReview,
                     style: GoogleFonts.poppins(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -286,7 +289,8 @@ class _ReviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final rating = (review['rating'] ?? 0) as num;
     final comment = (review['comment'] ?? '').toString();
-    final reviewerName = (review['reviewer_name'] ?? review['user_name'] ?? 'Anonymous').toString();
+    final l10n = AppLocalizations.of(context)!;
+    final reviewerName = (review['reviewer_name'] ?? review['user_name'] ?? l10n.anonymousReviewer).toString();
     final createdAt = review['created_at']?.toString() ?? '';
     final dateStr = createdAt.isNotEmpty
         ? _fmtDate(createdAt)

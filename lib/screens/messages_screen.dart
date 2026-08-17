@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../services/api_service.dart';
 import 'main_shell.dart';
@@ -154,7 +155,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
       child: Row(
         children: [
           Text(
-            'Messages',
+            AppLocalizations.of(context)!.messages,
             style: GoogleFonts.poppins(
               fontSize: 20,
               fontWeight: FontWeight.w700,
@@ -200,7 +201,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
           ),
           cursorColor: AppColors.purple,
           decoration: InputDecoration(
-            hintText: 'Search conversations...',
+            hintText: AppLocalizations.of(context)!.searchConversations,
             hintStyle: GoogleFonts.poppins(
               color: AppColors.textMuted,
               fontSize: 14,
@@ -253,7 +254,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
           ),
           const SizedBox(height: 20),
           Text(
-            'No Messages Yet',
+            AppLocalizations.of(context)!.noMessagesYet,
             style: GoogleFonts.poppins(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -264,7 +265,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 48),
             child: Text(
-              'You can contact an organizer,\nyour conversations will appear here',
+              AppLocalizations.of(context)!.noMessagesSubtitle,
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: 13,

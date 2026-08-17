@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../models/app_category.dart';
 import '../models/app_class.dart';
@@ -16,9 +17,9 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  String _selectedCategory = 'All';
+  String? _selectedCategoryId;
   final _sheetController = DraggableScrollableController();
-  List<String> _categoryNames = ['All'];
+  List<AppCategory> _categories = [];
   List<AppClass> _classes = [];
 
   @override
@@ -35,8 +36,7 @@ class _MapScreenState extends State<MapScreen> {
       ]);
       if (mounted) {
         setState(() {
-          final cats = results[0] as List<AppCategory>;
-          _categoryNames = ['All', ...cats.map((c) => c.name)];
+          _categories = results[0] as List<AppCategory>;
           _classes = results[1] as List<AppClass>;
         });
       }
@@ -44,10 +44,11 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   List<AppClass> get _filteredClasses {
-    if (_selectedCategory == 'All') return _classes;
+    if (_selectedCategoryId == null) return _classes;
     return _classes
         .where((c) =>
-            c.category.toLowerCase() == _selectedCategory.toLowerCase())
+            c.categoryIds.contains(_selectedCategoryId) ||
+            (c.categoryIds.isEmpty && c.categoryId == _selectedCategoryId))
         .toList();
   }
 
@@ -134,24 +135,34 @@ class _MapScreenState extends State<MapScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
                         children: [
-                          Text(
-                            '${_filteredClasses.length} Activities',
-                            style: GoogleFonts.poppins(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
+                          Builder(builder: (context) {
+                            final l10n = AppLocalizations.of(context)!;
+                            return Text(
+                              l10n.mapActivitiesCount(_filteredClasses.length),
+                              style: GoogleFonts.poppins(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textPrimary,
+                              ),
+                            );
+                          }),
                           const Spacer(),
-                          Text(
-                            _selectedCategory == 'All'
-                                ? 'All categories'
-                                : _selectedCategory,
-                            style: GoogleFonts.poppins(
-                              fontSize: 12,
-                              color: AppColors.textMuted,
-                            ),
-                          ),
+                          Builder(builder: (context) {
+                            final l10n = AppLocalizations.of(context)!;
+                            final locale = Localizations.localeOf(context).languageCode;
+                            final selCat = _selectedCategoryId == null
+                                ? null
+                                : _categories.where((c) => c.id == _selectedCategoryId).firstOrNull;
+                            return Text(
+                              selCat == null
+                                  ? l10n.allCategories
+                                  : selCat.localizedName(locale),
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: AppColors.textMuted,
+                              ),
+                            );
+                          }),
                         ],
                       ),
                     ),
@@ -176,7 +187,7 @@ class _MapScreenState extends State<MapScreen> {
                                   ),
                                   const SizedBox(height: 14),
                                   Text(
-                                    'No activities found',
+                                    AppLocalizations.of(context)!.noActivitiesFound,
                                     style: GoogleFonts.poppins(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
@@ -310,7 +321,7 @@ class _MapScreenState extends State<MapScreen> {
                       color: AppColors.textMuted, size: 18),
                   const SizedBox(width: 8),
                   Text(
-                    'Nearby Activities',
+                    AppLocalizations.of(context)!.nearbyActivities,
                     style: GoogleFonts.poppins(
                       fontSize: 13,
                       color: AppColors.textMuted,
@@ -344,17 +355,23 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _buildCategoryChips() {
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).languageCode;
+    final items = <({String? id, String label})>[
+      (id: null, label: l10n.allCategories),
+      ..._categories.map((c) => (id: c.id, label: c.localizedName(locale))),
+    ];
     return SizedBox(
       height: 38,
       child: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         scrollDirection: Axis.horizontal,
-        itemCount: _categoryNames.length,
+        itemCount: items.length,
         itemBuilder: (_, i) {
-          final cat = _categoryNames[i];
-          final isSelected = _selectedCategory == cat;
+          final item = items[i];
+          final isSelected = _selectedCategoryId == item.id;
           return GestureDetector(
-            onTap: () => setState(() => _selectedCategory = cat),
+            onTap: () => setState(() => _selectedCategoryId = item.id),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               margin: const EdgeInsets.only(right: 8),
@@ -376,7 +393,7 @@ class _MapScreenState extends State<MapScreen> {
                 ],
               ),
               child: Text(
-                cat,
+                item.label,
                 style: GoogleFonts.poppins(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,

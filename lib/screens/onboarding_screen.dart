@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import 'language_selection_screen.dart';
 
@@ -17,30 +18,6 @@ class _OnboardingPage {
     required this.iconColor,
   });
 }
-
-const _pages = [
-  _OnboardingPage(
-    title: 'Discover Activities',
-    subtitle:
-        'Find the best classes, camps, and workshops\nfor your children nearby',
-    icon: Icons.explore_rounded,
-    iconColor: AppColors.purple,
-  ),
-  _OnboardingPage(
-    title: 'Connect with\nOrganizers',
-    subtitle:
-        'Message organizers directly, ask questions,\nand get quick responses',
-    icon: Icons.chat_bubble_rounded,
-    iconColor: AppColors.pink,
-  ),
-  _OnboardingPage(
-    title: 'Save & Organize',
-    subtitle:
-        'Bookmark your favourites, track schedules,\nand never miss a registration',
-    icon: Icons.bookmark_rounded,
-    iconColor: AppColors.purpleLight,
-  ),
-];
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -60,7 +37,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _next() {
-    if (_currentPage < _pages.length - 1) {
+    if (_currentPage < 2) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
@@ -83,6 +60,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final pages = [
+      _OnboardingPage(
+        title: l10n.onboarding1Title,
+        subtitle: l10n.onboarding1Subtitle,
+        icon: Icons.explore_rounded,
+        iconColor: AppColors.purple,
+      ),
+      _OnboardingPage(
+        title: l10n.onboarding2Title,
+        subtitle: l10n.onboarding2Subtitle,
+        icon: Icons.chat_bubble_rounded,
+        iconColor: AppColors.pink,
+      ),
+      _OnboardingPage(
+        title: l10n.onboarding3Title,
+        subtitle: l10n.onboarding3Subtitle,
+        icon: Icons.bookmark_rounded,
+        iconColor: AppColors.purpleLight,
+      ),
+    ];
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
@@ -96,7 +94,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   child: TextButton(
                     onPressed: _goToLanguageSelection,
                     child: Text(
-                      'Skip',
+                      l10n.btnSkip,
                       style: GoogleFonts.poppins(
                         color: AppColors.textMuted,
                         fontSize: 14,
@@ -109,9 +107,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               Expanded(
                 child: PageView.builder(
                   controller: _pageController,
-                  itemCount: _pages.length,
+                  itemCount: pages.length,
                   onPageChanged: (i) => setState(() => _currentPage = i),
-                  itemBuilder: (context, i) => _PageContent(page: _pages[i]),
+                  itemBuilder: (context, i) => _PageContent(page: pages[i]),
                 ),
               ),
               Padding(
@@ -120,7 +118,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   children: [
                     SmoothPageIndicator(
                       controller: _pageController,
-                      count: _pages.length,
+                      count: pages.length,
                       effect: ExpandingDotsEffect(
                         activeDotColor: AppColors.purple,
                         dotColor: AppColors.divider,
@@ -131,9 +129,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                     const SizedBox(height: 32),
                     _GradientButton(
-                      label: _currentPage == _pages.length - 1
-                          ? "Let's Connect"
-                          : 'Next',
+                      label: _currentPage == pages.length - 1
+                          ? l10n.letsConnect
+                          : l10n.btnNext,
                       onTap: _next,
                     ),
                   ],

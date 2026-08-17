@@ -36,12 +36,12 @@
 
   "tagline": "Discover. Learn. Grow.",
 
-  "onboarding1Title": "Find the Best Activities",
-  "onboarding1Subtitle": "Discover hundreds of classes, camps and workshops for your children nearby",
-  "onboarding2Title": "Easy Booking",
-  "onboarding2Subtitle": "Book your favourite activities in a few taps and manage all schedules in one place",
-  "onboarding3Title": "Stay Connected",
-  "onboarding3Subtitle": "Get updates, reminders and communicate with organizers directly in the app",
+  "onboarding1Title": "Discover Activities",
+  "onboarding1Subtitle": "Find the best classes, camps, and workshops\nfor your children nearby",
+  "onboarding2Title": "Connect with Organizers",
+  "onboarding2Subtitle": "Message organizers directly, ask questions,\nand get quick responses",
+  "onboarding3Title": "Save & Organize",
+  "onboarding3Subtitle": "Bookmark your favourites, track schedules,\nand never miss a registration",
 
   "chooseLanguage": "Choose\nLanguage",
   "languageSubtitle": "Select your preferred language to continue",
@@ -387,5 +387,327 @@
   "viewSchedule": "View schedule",
   "scheduleTitle": "Schedule",
   "noUpcomingOccurrences": "No upcoming occurrences",
-  "noOccurrences": "No events in this series"
+  "noOccurrences": "No events in this series",
+
+  "navDashboard": "Dashboard",
+  "navClasses": "Classes",
+  "navEvents": "Events",
+  "orgDashboardSubtitle": "Organization Dashboard",
+  "myOrganizationFallback": "My Organization",
+  "statGroups": "Groups",
+  "statStudents": "Students",
+  "myClasses": "My Classes",
+  "myEvents": "My Events",
+  "recentMessages": "Recent Messages",
+  "btnAdd": "+ Add",
+  "noClassesHint": "No classes yet. Tap + Add to create one.",
+  "noEventsHint": "No events yet. Tap + Add to create one.",
+  "noRecentMessages": "No messages yet.",
+  "btnManage": "Manage",
+  "btnNewClass": "New Class",
+  "noClassesYetTitle": "No Classes Yet",
+  "noClassesYetBody": "No classes yet. Add your first class!",
+  "agesLabel": "Ages",
+  "perMonthSuffix": "/mo",
+  "studentsLabel": "students",
+  "noGroupsYet": "No groups added yet.",
+  "btnNewEvent": "New Event",
+  "noUpcomingEventsYet": "No upcoming events yet.",
+  "noPastEvents": "No past events.",
+  "noMessagesYetBody": "Messages from your clients will appear here",
+  "verifiedOrganization": "Verified Organization",
+  "businessSection": "Business",
+  "billingPayments": "Billing & Payments",
+  "analyticsLabel": "Analytics",
+  "supportSection": "Support",
+  "termsPrivacy": "Terms & Privacy",
+  "exitDashboard": "Exit Dashboard",
+  "comingSoon": "This feature is coming soon.",
+  "btnEdit": "Edit",
+  "failedToDeleteClass": "Failed to delete class. Please try again.",
+  "failedToDeleteEvent": "Failed to delete event. Please try again.",
+  "groupCount": "{count, plural, =1{1 group} other{{count} groups}}",
+  "@groupCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "eventSpotsCount": "{count, plural, =1{1 spot} other{{count} spots}}",
+  "@eventSpotsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "btnSeeAll": "See All",
+  "tapToChange": "Tap to change",
+  "failedToUploadImage": "Failed to upload image",
+  "btnDone": "Done",
+  "editClass": "Edit Class",
+  "uploadClassImage": "Upload Class Image",
+  "classDetailsSection": "Class Details",
+  "classNameHint": "Class name",
+  "descriptionHint": "Description",
+  "errorSelectCategory": "Please select at least one category",
+  "categoriesLabel": "Categories",
+  "addGroup": "Add Group",
+  "createClass": "Create Class",
+  "classCreatedSuccess": "Class created successfully",
+  "failedToUpdateClass": "Failed to update class",
+  "failedToCreateClass": "Failed to create class. Please try again.",
+  "editEvent": "Edit Event",
+  "uploadEventImage": "Upload Event Image",
+  "eventDetailsSection": "Event Details",
+  "eventNameHint": "Event name",
+  "dateTimeSection": "Date & Time",
+  "selectDate": "Select date",
+  "selectTime": "Select time",
+  "locationSection": "Location",
+  "addressHint": "Address / venue name",
+  "cityHint": "City",
+  "participantsSection": "Participants",
+  "minAgeHint": "Min age",
+  "maxAgeHint": "Max age",
+  "maxCapacityHint": "Max capacity",
+  "priceHint": "Price (₪) — leave blank if free",
+  "priceCommentHint": "Price comment (optional)",
+  "createEvent": "Create Event",
+  "eventCreatedSuccess": "Event created successfully",
+  "failedToCreateEvent": "Failed to create event. Please try again.",
+  "editGroup": "Edit Group",
+  "newGroup": "New Group",
+  "groupDetailsSection": "Group Details",
+  "groupNameHint": "Group name (e.g. U10 Group)",
+  "ageRangeSection": "Age Range",
+  "capacityPriceSection": "Capacity & Price",
+  "maxStudentsHint": "Max students",
+  "pricePerMonthHint": "Price per month (₪)",
+  "timeSlotCount": "{count, plural, =1{1 time slot} other{{count} time slots}}",
+  "@timeSlotCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "addSchedule": "Add Schedule",
+  "groupCreatedSuccess": "Group created successfully",
+  "failedToCreateGroup": "Failed to create group. Please try again.",
+  "addAnotherTimeSlot": "Add Another Time Slot",
+  "saveSchedule": "Save Schedule",
+  "slotLabel": "Slot {number}",
+  "@slotLabel": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+  "dayOfWeekLabel": "Day of week",
+  "timeLabel": "Time",
+  "scheduleSavedSuccess": "Schedule saved successfully",
+  "failedToSaveSchedule": "Failed to save schedule. Please try again.",
+  "daySunAbbrev": "Sun",
+  "dayMonAbbrev": "Mon",
+  "dayTueAbbrev": "Tue",
+  "dayWedAbbrev": "Wed",
+  "dayThuAbbrev": "Thu",
+  "dayFriAbbrev": "Fri",
+  "daySatAbbrev": "Sat",
+  "editProfile": "Edit Profile",
+  "orgNameLabel": "Organization Name",
+  "orgPhoneHint": "Phone",
+  "orgEmailHint": "Email",
+  "websiteHint": "Website",
+  "addressLabel": "Address",
+  "socialMediaSection": "Social Media",
+  "fieldInstagram": "Instagram",
+  "fieldFacebook": "Facebook",
+  "mediaSection": "Media",
+  "logoLabel": "Logo",
+  "bannerLabel": "Banner",
+  "uploadingLabel": "Uploading...",
+  "imageSelectedLabel": "Image selected",
+  "tapToReplace": "Tap to replace",
+  "chooseFromGallery": "Choose from gallery",
+  "selectCity": "Select city",
+  "trialLessonAvailable": "Trial lesson available",
+
+  "btnNext": "Next",
+  "letsConnect": "Let's Connect",
+
+  "typeMessageHint": "Type a message...",
+  "failedToSendMessage": "Failed to send message. Please try again.",
+
+  "nearbyActivities": "Nearby Activities",
+  "allCategories": "All categories",
+  "mapActivitiesCount": "{count} Activities",
+  "@mapActivitiesCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "notifNewMessageTitle": "New message",
+  "notifNewMessageBody": "You have a new message",
+
+  "notificationScreenTitle": "Notification",
+  "messageLabel": "Message",
+  "relatedActivityLabel": "Related Activity",
+  "viewActivityBtn": "View Activity",
+
+  "notifAppointmentsTitle": "Appointment Notifications",
+  "notifAppointmentsSubtitle": "Reminders about upcoming classes and bookings",
+  "notifChatTitle": "Chat Notifications",
+  "notifChatSubtitle": "New messages from organizers",
+  "notifActivityTitle": "Activity Updates",
+  "notifActivitySubtitle": "Changes to activities you've booked or saved",
+  "notifOffersTitle": "Offers & Promotions",
+  "notifOffersSubtitle": "Flash deals, discounts, and special events",
+  "notifChooseDesc": "Choose which notifications you want to receive",
+
+  "imageUnavailable": "Image unavailable",
+
+  "reviewsTitle": "Reviews",
+  "writeBtn": "Write",
+  "reviewsCount": "{count, plural, =1{1 review} other{{count} reviews}}",
+  "@reviewsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noReviewsYetSimple": "No reviews yet",
+  "beFirstReview": "Be the first to share your experience",
+  "anonymousReviewer": "Anonymous",
+
+  "anyAge": "Any age",
+  "ageFromTo": "{from} – {to} years",
+  "@ageFromTo": {
+    "placeholders": {
+      "from": { "type": "int" },
+      "to": { "type": "int" }
+    }
+  },
+  "ageFromOnly": "{from}+ years",
+  "@ageFromOnly": {
+    "placeholders": {
+      "from": { "type": "int" }
+    }
+  },
+  "upToCapacity": "Up to {total}",
+  "@upToCapacity": {
+    "placeholders": {
+      "total": { "type": "int" }
+    }
+  },
+  "groupFallback": "Group",
+  "ageFromToShort": "{from}–{to} yrs",
+  "@ageFromToShort": {
+    "placeholders": {
+      "from": { "type": "int" },
+      "to": { "type": "int" }
+    }
+  },
+  "ageFromOnlyShort": "{from}+ yrs",
+  "@ageFromOnlyShort": {
+    "placeholders": {
+      "from": { "type": "int" }
+    }
+  },
+
+  "filtersTitle": "Filters",
+  "btnReset": "Reset",
+  "filterPriceRange": "Price Range",
+  "filterCategory": "Category",
+  "filterDistance": "Distance",
+  "ageSuffix": "yrs",
+  "upToKm": "Up to {distance} km",
+  "@upToKm": {
+    "placeholders": {
+      "distance": { "type": "int" }
+    }
+  },
+  "maxKmLabel": "20 km max",
+  "btnShowResults": "Show Results",
+
+  "failedUploadPhoto": "Failed to upload photo. Please try again.",
+  "alreadyReviewed": "You have already reviewed this organization",
+  "failedSubmitReview": "Failed to submit review. Please try again.",
+  "reviewingExperience": "Reviewing your experience",
+  "yourRatingLabel": "Your Rating",
+  "ratingPoor": "Poor",
+  "ratingFair": "Fair",
+  "ratingGood": "Good",
+  "ratingGreat": "Great",
+  "ratingExcellent": "Excellent",
+  "yourReviewLabel": "Your Review",
+  "reviewHint": "Share your experience with this activity...",
+  "photosLabel": "Photos",
+  "photoOptionalCount": "(optional, {current}/{max})",
+  "@photoOptionalCount": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "addBtn": "Add",
+  "submitReviewBtn": "Submit Review",
+  "reviewSubmittedTitle": "Review Submitted!",
+  "reviewSubmittedBody": "Thank you for sharing your experience. Your review helps other families make the right choice.",
+  "backToReviewsBtn": "Back to Reviews",
+
+  "monthJanAbbrev": "Jan",
+  "monthFebAbbrev": "Feb",
+  "monthMarAbbrev": "Mar",
+  "monthAprAbbrev": "Apr",
+  "monthMayAbbrev": "May",
+  "monthJunAbbrev": "Jun",
+  "monthJulAbbrev": "Jul",
+  "monthAugAbbrev": "Aug",
+  "monthSepAbbrev": "Sep",
+  "monthOctAbbrev": "Oct",
+  "monthNovAbbrev": "Nov",
+  "monthDecAbbrev": "Dec",
+
+  "failedToLoadEvent": "Failed to load event",
+  "checkOutEventMsg": "Check out \"{title}\" on HobbyLab!",
+  "@checkOutEventMsg": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "checkOutEventDefault": "Check out this event on HobbyLab!",
+  "dateLabel": "Date",
+  "detailsSection": "Details",
+  "eventAgesFormat": "Ages {min}–{max}",
+  "@eventAgesFormat": {
+    "placeholders": {
+      "min": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "organizationFallback": "Organization",
+  "otherEventsSection": "Other Events",
+  "failedToLoadSchedule": "Failed to load schedule",
+  "categoryOther": "Other",
+
+  "actionMessage": "Message",
+  "ourClassesSection": "Our Classes",
+  "noClassesAvailable": "No classes available yet",
+  "upcomingEventsSection": "Upcoming Events",
+  "noUpcomingEvents": "No upcoming events",
+  "unnamedClass": "Unnamed Class",
+  "retryBtn": "Retry",
+  "pleaseWaitUpload": "Please wait for image upload to finish",
+  "imageUploadFailed": "Image upload failed — please try again or remove the photo",
+
+  "failedToRegister": "Failed to register. Please try again.",
+  "orgDetailsSection": "Organization Details",
+  "contactInfoSection": "Contact Information",
+  "workingHoursSection": "Working Hours",
+  "becomeProvider": "Become a Provider",
+  "uploadLogo": "Upload Logo",
+  "submitApplication": "Submit Application",
+  "statusClosed": "Closed",
+  "unnamedEvent": "Unnamed Event",
+  "accountSecuritySection": "ACCOUNT SECURITY",
+  "timeNow": "Now",
+  "changesSavedSuccess": "Changes saved successfully",
+  "failedToSaveChanges": "Failed to save changes"
 }

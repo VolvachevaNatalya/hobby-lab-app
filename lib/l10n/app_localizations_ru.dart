@@ -86,25 +86,25 @@ class AppLocalizationsRu extends AppLocalizations {
   String get tagline => 'Открывай. Учись. Расти.';
 
   @override
-  String get onboarding1Title => 'Найдите лучшие занятия';
+  String get onboarding1Title => 'Откройте занятия';
 
   @override
   String get onboarding1Subtitle =>
-      'Откройте для себя сотни кружков, лагерей и мастер-классов для ваших детей рядом с вами';
+      'Найдите лучшие занятия, лагеря и мастер-классы\nдля ваших детей поблизости';
 
   @override
-  String get onboarding2Title => 'Удобная запись';
+  String get onboarding2Title => 'Связывайтесь с организаторами';
 
   @override
   String get onboarding2Subtitle =>
-      'Записывайтесь на любимые занятия в несколько касаний и управляйте расписанием в одном месте';
+      'Пишите организаторам напрямую, задавайте вопросы\nи получайте быстрые ответы';
 
   @override
-  String get onboarding3Title => 'Оставайтесь на связи';
+  String get onboarding3Title => 'Сохраняйте и организуйте';
 
   @override
   String get onboarding3Subtitle =>
-      'Получайте обновления, напоминания и общайтесь с организаторами прямо в приложении';
+      'Добавляйте в избранное, следите за расписанием\nи не пропускайте регистрацию';
 
   @override
   String get chooseLanguage => 'Выбор\nязыка';
@@ -941,4 +941,762 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get noOccurrences => 'Нет событий в этой серии';
+
+  @override
+  String get navDashboard => 'Панель';
+
+  @override
+  String get navClasses => 'Занятия';
+
+  @override
+  String get navEvents => 'События';
+
+  @override
+  String get orgDashboardSubtitle => 'Панель управления';
+
+  @override
+  String get myOrganizationFallback => 'Моя организация';
+
+  @override
+  String get statGroups => 'Группы';
+
+  @override
+  String get statStudents => 'Учеников';
+
+  @override
+  String get myClasses => 'Мои занятия';
+
+  @override
+  String get myEvents => 'Мои события';
+
+  @override
+  String get recentMessages => 'Последние сообщения';
+
+  @override
+  String get btnAdd => '+ Добавить';
+
+  @override
+  String get noClassesHint => 'Нет занятий. Нажмите + Добавить для создания.';
+
+  @override
+  String get noEventsHint => 'Нет событий. Нажмите + Добавить для создания.';
+
+  @override
+  String get noRecentMessages => 'Нет сообщений.';
+
+  @override
+  String get btnManage => 'Управлять';
+
+  @override
+  String get btnNewClass => 'Новое занятие';
+
+  @override
+  String get noClassesYetTitle => 'Нет занятий';
+
+  @override
+  String get noClassesYetBody => 'Нет занятий. Добавьте первое занятие!';
+
+  @override
+  String get agesLabel => 'Возраст';
+
+  @override
+  String get perMonthSuffix => '/мес';
+
+  @override
+  String get studentsLabel => 'уч.';
+
+  @override
+  String get noGroupsYet => 'Групп пока нет.';
+
+  @override
+  String get btnNewEvent => 'Новое событие';
+
+  @override
+  String get noUpcomingEventsYet => 'Нет предстоящих событий.';
+
+  @override
+  String get noPastEvents => 'Нет прошедших событий.';
+
+  @override
+  String get noMessagesYetBody => 'Здесь появятся сообщения от ваших клиентов';
+
+  @override
+  String get verifiedOrganization => 'Проверенная организация';
+
+  @override
+  String get businessSection => 'Бизнес';
+
+  @override
+  String get billingPayments => 'Платежи и счета';
+
+  @override
+  String get analyticsLabel => 'Аналитика';
+
+  @override
+  String get supportSection => 'Поддержка';
+
+  @override
+  String get termsPrivacy => 'Условия и конфиденциальность';
+
+  @override
+  String get exitDashboard => 'Выйти из панели';
+
+  @override
+  String get comingSoon => 'Эта функция скоро появится.';
+
+  @override
+  String get btnEdit => 'Редактировать';
+
+  @override
+  String get failedToDeleteClass =>
+      'Не удалось удалить занятие. Попробуйте снова.';
+
+  @override
+  String get failedToDeleteEvent =>
+      'Не удалось удалить событие. Попробуйте снова.';
+
+  @override
+  String groupCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count групп',
+      many: '$count групп',
+      few: '$count группы',
+      one: '$count группа',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String eventSpotsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count мест',
+      many: '$count мест',
+      few: '$count места',
+      one: '$count место',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tapToChange => 'Нажмите для изменения';
+
+  @override
+  String get failedToUploadImage => 'Не удалось загрузить изображение';
+
+  @override
+  String get btnDone => 'Готово';
+
+  @override
+  String get editClass => 'Редактировать занятие';
+
+  @override
+  String get uploadClassImage => 'Загрузить изображение занятия';
+
+  @override
+  String get classDetailsSection => 'Детали занятия';
+
+  @override
+  String get classNameHint => 'Название занятия';
+
+  @override
+  String get descriptionHint => 'Описание';
+
+  @override
+  String get errorSelectCategory => 'Выберите хотя бы одну категорию';
+
+  @override
+  String get categoriesLabel => 'Категории';
+
+  @override
+  String get addGroup => 'Добавить группу';
+
+  @override
+  String get createClass => 'Создать занятие';
+
+  @override
+  String get classCreatedSuccess => 'Занятие создано';
+
+  @override
+  String get failedToUpdateClass => 'Не удалось обновить занятие';
+
+  @override
+  String get failedToCreateClass =>
+      'Не удалось создать занятие. Попробуйте снова.';
+
+  @override
+  String get editEvent => 'Редактировать событие';
+
+  @override
+  String get uploadEventImage => 'Загрузить изображение события';
+
+  @override
+  String get eventDetailsSection => 'Детали события';
+
+  @override
+  String get eventNameHint => 'Название события';
+
+  @override
+  String get dateTimeSection => 'Дата и время';
+
+  @override
+  String get selectDate => 'Выберите дату';
+
+  @override
+  String get selectTime => 'Выберите время';
+
+  @override
+  String get locationSection => 'Местоположение';
+
+  @override
+  String get addressHint => 'Адрес / место проведения';
+
+  @override
+  String get cityHint => 'Город';
+
+  @override
+  String get participantsSection => 'Участники';
+
+  @override
+  String get minAgeHint => 'Мин. возраст';
+
+  @override
+  String get maxAgeHint => 'Макс. возраст';
+
+  @override
+  String get maxCapacityHint => 'Макс. вместимость';
+
+  @override
+  String get priceHint => 'Цена (₪) — оставьте пустым для бесплатного';
+
+  @override
+  String get priceCommentHint => 'Комментарий к цене (необяз.)';
+
+  @override
+  String get createEvent => 'Создать событие';
+
+  @override
+  String get eventCreatedSuccess => 'Событие создано';
+
+  @override
+  String get failedToCreateEvent =>
+      'Не удалось создать событие. Попробуйте снова.';
+
+  @override
+  String get editGroup => 'Редактировать группу';
+
+  @override
+  String get newGroup => 'Новая группа';
+
+  @override
+  String get groupDetailsSection => 'Детали группы';
+
+  @override
+  String get groupNameHint => 'Название группы (напр. U10)';
+
+  @override
+  String get ageRangeSection => 'Возрастной диапазон';
+
+  @override
+  String get capacityPriceSection => 'Вместимость и цена';
+
+  @override
+  String get maxStudentsHint => 'Макс. учеников';
+
+  @override
+  String get pricePerMonthHint => 'Цена в месяц (₪)';
+
+  @override
+  String timeSlotCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count слотов',
+      many: '$count слотов',
+      few: '$count слота',
+      one: '$count слот',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get addSchedule => 'Добавить расписание';
+
+  @override
+  String get groupCreatedSuccess => 'Группа создана';
+
+  @override
+  String get failedToCreateGroup =>
+      'Не удалось создать группу. Попробуйте снова.';
+
+  @override
+  String get addAnotherTimeSlot => 'Добавить ещё слот';
+
+  @override
+  String get saveSchedule => 'Сохранить расписание';
+
+  @override
+  String slotLabel(int number) {
+    return 'Слот $number';
+  }
+
+  @override
+  String get dayOfWeekLabel => 'День недели';
+
+  @override
+  String get timeLabel => 'Время';
+
+  @override
+  String get scheduleSavedSuccess => 'Расписание сохранено';
+
+  @override
+  String get failedToSaveSchedule =>
+      'Не удалось сохранить расписание. Попробуйте снова.';
+
+  @override
+  String get daySunAbbrev => 'Вс';
+
+  @override
+  String get dayMonAbbrev => 'Пн';
+
+  @override
+  String get dayTueAbbrev => 'Вт';
+
+  @override
+  String get dayWedAbbrev => 'Ср';
+
+  @override
+  String get dayThuAbbrev => 'Чт';
+
+  @override
+  String get dayFriAbbrev => 'Пт';
+
+  @override
+  String get daySatAbbrev => 'Сб';
+
+  @override
+  String get orgNameLabel => 'Название организации';
+
+  @override
+  String get orgPhoneHint => 'Телефон';
+
+  @override
+  String get orgEmailHint => 'Эл. почта';
+
+  @override
+  String get websiteHint => 'Веб-сайт';
+
+  @override
+  String get addressLabel => 'Адрес';
+
+  @override
+  String get socialMediaSection => 'Социальные сети';
+
+  @override
+  String get fieldInstagram => 'Instagram';
+
+  @override
+  String get fieldFacebook => 'Facebook';
+
+  @override
+  String get mediaSection => 'Медиа';
+
+  @override
+  String get logoLabel => 'Логотип';
+
+  @override
+  String get bannerLabel => 'Баннер';
+
+  @override
+  String get uploadingLabel => 'Загрузка...';
+
+  @override
+  String get imageSelectedLabel => 'Изображение выбрано';
+
+  @override
+  String get tapToReplace => 'Нажмите для замены';
+
+  @override
+  String get chooseFromGallery => 'Выбрать из галереи';
+
+  @override
+  String get selectCity => 'Выберите город';
+
+  @override
+  String get trialLessonAvailable => 'Пробный урок доступен';
+
+  @override
+  String get btnNext => 'Далее';
+
+  @override
+  String get letsConnect => 'Начать';
+
+  @override
+  String get typeMessageHint => 'Введите сообщение...';
+
+  @override
+  String get failedToSendMessage =>
+      'Не удалось отправить сообщение. Попробуйте ещё раз.';
+
+  @override
+  String get nearbyActivities => 'Занятия рядом';
+
+  @override
+  String get allCategories => 'Все категории';
+
+  @override
+  String mapActivitiesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count занятий',
+      many: '$count занятий',
+      few: '$count занятия',
+      one: '$count занятие',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get notifNewMessageTitle => 'Новое сообщение';
+
+  @override
+  String get notifNewMessageBody => 'У вас новое сообщение';
+
+  @override
+  String get notificationScreenTitle => 'Уведомление';
+
+  @override
+  String get messageLabel => 'Сообщение';
+
+  @override
+  String get relatedActivityLabel => 'Связанная активность';
+
+  @override
+  String get viewActivityBtn => 'Посмотреть активность';
+
+  @override
+  String get notifAppointmentsTitle => 'Уведомления о занятиях';
+
+  @override
+  String get notifAppointmentsSubtitle =>
+      'Напоминания о предстоящих занятиях и записях';
+
+  @override
+  String get notifChatTitle => 'Уведомления о чате';
+
+  @override
+  String get notifChatSubtitle => 'Новые сообщения от организаторов';
+
+  @override
+  String get notifActivityTitle => 'Обновления активностей';
+
+  @override
+  String get notifActivitySubtitle =>
+      'Изменения в активностях, которые вы забронировали или сохранили';
+
+  @override
+  String get notifOffersTitle => 'Предложения и акции';
+
+  @override
+  String get notifOffersSubtitle =>
+      'Срочные предложения, скидки и специальные мероприятия';
+
+  @override
+  String get notifChooseDesc =>
+      'Выберите, какие уведомления вы хотите получать';
+
+  @override
+  String get imageUnavailable => 'Изображение недоступно';
+
+  @override
+  String get reviewsTitle => 'Отзывы';
+
+  @override
+  String get writeBtn => 'Написать';
+
+  @override
+  String reviewsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count отзыва',
+      many: '$count отзывов',
+      few: '$count отзыва',
+      one: '$count отзыв',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noReviewsYetSimple => 'Отзывов пока нет';
+
+  @override
+  String get beFirstReview => 'Будьте первым, кто поделится впечатлениями';
+
+  @override
+  String get anonymousReviewer => 'Аноним';
+
+  @override
+  String get anyAge => 'Любой возраст';
+
+  @override
+  String ageFromTo(int from, int to) {
+    return '$from – $to лет';
+  }
+
+  @override
+  String ageFromOnly(int from) {
+    return '$from+ лет';
+  }
+
+  @override
+  String upToCapacity(int total) {
+    return 'До $total';
+  }
+
+  @override
+  String get groupFallback => 'Группа';
+
+  @override
+  String ageFromToShort(int from, int to) {
+    return '$from–$to лет';
+  }
+
+  @override
+  String ageFromOnlyShort(int from) {
+    return '$from+ лет';
+  }
+
+  @override
+  String get filtersTitle => 'Фильтры';
+
+  @override
+  String get btnReset => 'Сбросить';
+
+  @override
+  String get filterPriceRange => 'Диапазон цен';
+
+  @override
+  String get filterCategory => 'Категория';
+
+  @override
+  String get filterDistance => 'Расстояние';
+
+  @override
+  String get ageSuffix => 'лет';
+
+  @override
+  String upToKm(int distance) {
+    return 'До $distance км';
+  }
+
+  @override
+  String get maxKmLabel => 'макс. 20 км';
+
+  @override
+  String get btnShowResults => 'Показать результаты';
+
+  @override
+  String get failedUploadPhoto =>
+      'Не удалось загрузить фото. Попробуйте ещё раз.';
+
+  @override
+  String get alreadyReviewed => 'Вы уже оставили отзыв об этой организации';
+
+  @override
+  String get failedSubmitReview =>
+      'Не удалось отправить отзыв. Попробуйте ещё раз.';
+
+  @override
+  String get reviewingExperience => 'Оставьте отзыв о вашем опыте';
+
+  @override
+  String get yourRatingLabel => 'Ваша оценка';
+
+  @override
+  String get ratingPoor => 'Плохо';
+
+  @override
+  String get ratingFair => 'Средне';
+
+  @override
+  String get ratingGood => 'Хорошо';
+
+  @override
+  String get ratingGreat => 'Отлично';
+
+  @override
+  String get ratingExcellent => 'Превосходно';
+
+  @override
+  String get yourReviewLabel => 'Ваш отзыв';
+
+  @override
+  String get reviewHint => 'Поделитесь впечатлениями об этой активности...';
+
+  @override
+  String get photosLabel => 'Фотографии';
+
+  @override
+  String photoOptionalCount(int current, int max) {
+    return '(необязательно, $current/$max)';
+  }
+
+  @override
+  String get addBtn => 'Добавить';
+
+  @override
+  String get submitReviewBtn => 'Отправить отзыв';
+
+  @override
+  String get reviewSubmittedTitle => 'Отзыв отправлен!';
+
+  @override
+  String get reviewSubmittedBody =>
+      'Спасибо за отзыв. Ваше мнение поможет другим семьям сделать правильный выбор.';
+
+  @override
+  String get backToReviewsBtn => 'Назад к отзывам';
+
+  @override
+  String get monthJanAbbrev => 'Янв';
+
+  @override
+  String get monthFebAbbrev => 'Фев';
+
+  @override
+  String get monthMarAbbrev => 'Мар';
+
+  @override
+  String get monthAprAbbrev => 'Апр';
+
+  @override
+  String get monthMayAbbrev => 'Май';
+
+  @override
+  String get monthJunAbbrev => 'Июн';
+
+  @override
+  String get monthJulAbbrev => 'Июл';
+
+  @override
+  String get monthAugAbbrev => 'Авг';
+
+  @override
+  String get monthSepAbbrev => 'Сен';
+
+  @override
+  String get monthOctAbbrev => 'Окт';
+
+  @override
+  String get monthNovAbbrev => 'Ноя';
+
+  @override
+  String get monthDecAbbrev => 'Дек';
+
+  @override
+  String get failedToLoadEvent => 'Не удалось загрузить мероприятие';
+
+  @override
+  String checkOutEventMsg(String title) {
+    return 'Посмотрите \"$title\" на HobbyLab!';
+  }
+
+  @override
+  String get checkOutEventDefault => 'Посмотрите это мероприятие на HobbyLab!';
+
+  @override
+  String get dateLabel => 'Дата';
+
+  @override
+  String get detailsSection => 'Подробности';
+
+  @override
+  String eventAgesFormat(int min, int max) {
+    return 'Возраст $min–$max';
+  }
+
+  @override
+  String get organizationFallback => 'Организация';
+
+  @override
+  String get otherEventsSection => 'Другие мероприятия';
+
+  @override
+  String get failedToLoadSchedule => 'Не удалось загрузить расписание';
+
+  @override
+  String get categoryOther => 'Другое';
+
+  @override
+  String get actionMessage => 'Сообщение';
+
+  @override
+  String get ourClassesSection => 'Наши занятия';
+
+  @override
+  String get noClassesAvailable => 'Занятий пока нет';
+
+  @override
+  String get upcomingEventsSection => 'Предстоящие мероприятия';
+
+  @override
+  String get noUpcomingEvents => 'Предстоящих мероприятий нет';
+
+  @override
+  String get unnamedClass => 'Без названия';
+
+  @override
+  String get retryBtn => 'Повторить';
+
+  @override
+  String get pleaseWaitUpload => 'Подождите, пока загрузится изображение';
+
+  @override
+  String get imageUploadFailed =>
+      'Ошибка загрузки — попробуйте ещё раз или удалите фото';
+
+  @override
+  String get failedToRegister =>
+      'Не удалось зарегистрироваться. Попробуйте ещё раз.';
+
+  @override
+  String get orgDetailsSection => 'Сведения об организации';
+
+  @override
+  String get contactInfoSection => 'Контактная информация';
+
+  @override
+  String get workingHoursSection => 'Часы работы';
+
+  @override
+  String get becomeProvider => 'Стать поставщиком';
+
+  @override
+  String get uploadLogo => 'Загрузить логотип';
+
+  @override
+  String get submitApplication => 'Отправить заявку';
+
+  @override
+  String get statusClosed => 'Закрыто';
+
+  @override
+  String get unnamedEvent => 'Без названия';
+
+  @override
+  String get accountSecuritySection => 'БЕЗОПАСНОСТЬ АККАУНТА';
+
+  @override
+  String get timeNow => 'Сейчас';
+
+  @override
+  String get changesSavedSuccess => 'Изменения сохранены';
+
+  @override
+  String get failedToSaveChanges => 'Не удалось сохранить изменения';
 }

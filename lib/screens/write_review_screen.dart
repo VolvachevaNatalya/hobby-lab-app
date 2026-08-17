@@ -55,7 +55,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         content: Text(
-          'Failed to upload photo. Please try again.',
+          AppLocalizations.of(context)!.failedUploadPhoto,
           style: GoogleFonts.poppins(fontSize: 13, color: Colors.white),
         ),
       ));
@@ -111,8 +111,8 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           content: Text(
             isAlreadyReviewed
-                ? 'You have already reviewed this organization'
-                : 'Failed to submit review. Please try again.',
+                ? AppLocalizations.of(context)!.alreadyReviewed
+                : AppLocalizations.of(context)!.failedSubmitReview,
             style: GoogleFonts.poppins(fontSize: 13, color: Colors.white),
           ),
         ),
@@ -188,7 +188,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
           ),
           const SizedBox(width: 12),
           Text(
-            'Write a Review',
+            AppLocalizations.of(context)!.writeReview,
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -242,7 +242,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  'Reviewing your experience',
+                  AppLocalizations.of(context)!.reviewingExperience,
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: AppColors.textMuted,
@@ -257,12 +257,13 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
   }
 
   Widget _buildStarRating() {
-    const labels = ['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent'];
+    final l10n = AppLocalizations.of(context)!;
+    final labels = ['', l10n.ratingPoor, l10n.ratingFair, l10n.ratingGood, l10n.ratingGreat, l10n.ratingExcellent];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Your Rating',
+          l10n.yourRatingLabel,
           style: GoogleFonts.poppins(
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -321,7 +322,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Your Review',
+          AppLocalizations.of(context)!.yourReviewLabel,
           style: GoogleFonts.poppins(
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -345,7 +346,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
             ),
             cursorColor: AppColors.purple,
             decoration: InputDecoration(
-              hintText: 'Share your experience with this activity...',
+              hintText: AppLocalizations.of(context)!.reviewHint,
               hintStyle: GoogleFonts.poppins(
                 color: AppColors.textMuted,
                 fontSize: 14,
@@ -368,7 +369,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
         Row(
           children: [
             Text(
-              'Photos',
+              AppLocalizations.of(context)!.photosLabel,
               style: GoogleFonts.poppins(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -377,7 +378,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
             ),
             const SizedBox(width: 6),
             Text(
-              '(optional, ${_photoUrls.length}/$_maxPhotos)',
+              AppLocalizations.of(context)!.photoOptionalCount(_photoUrls.length, _maxPhotos),
               style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textMuted),
             ),
           ],
@@ -467,7 +468,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Add',
+                    AppLocalizations.of(context)!.addBtn,
                     style: GoogleFonts.poppins(
                         fontSize: 10, color: AppColors.textMuted),
                   ),
@@ -503,7 +504,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                       strokeWidth: 2.5, color: Colors.white),
                 )
               : Text(
-                  'Submit Review',
+                  AppLocalizations.of(context)!.submitReviewBtn,
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -541,7 +542,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
             ),
             const SizedBox(height: 28),
             Text(
-              'Review Submitted!',
+              AppLocalizations.of(context)!.reviewSubmittedTitle,
               style: GoogleFonts.poppins(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
@@ -550,7 +551,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Thank you for sharing your experience. Your review helps other families make the right choice.',
+              AppLocalizations.of(context)!.reviewSubmittedBody,
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: 14,
@@ -570,7 +571,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                 ),
                 child: Center(
                   child: Text(
-                    'Back to Reviews',
+                    AppLocalizations.of(context)!.backToReviewsBtn,
                     style: GoogleFonts.poppins(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,

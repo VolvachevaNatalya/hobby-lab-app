@@ -1,3 +1,4 @@
+import 'app_category.dart';
 import 'event_recurrence.dart';
 
 class AppEvent {
@@ -28,7 +29,7 @@ class AppEvent {
   final String? originalStartDatetime;
   final EventRecurrence? recurrence;
   final String? imageUrl;
-  final List<String> categoryNames;
+  final List<AppCategory> categories;
 
   const AppEvent({
     required this.id,
@@ -58,7 +59,7 @@ class AppEvent {
     this.originalStartDatetime,
     this.recurrence,
     this.imageUrl,
-    this.categoryNames = const [],
+    this.categories = const [],
   });
 
   factory AppEvent.fromJson(Map<String, dynamic> json) => AppEvent(
@@ -93,16 +94,16 @@ class AppEvent {
         ? EventRecurrence.fromJson(json['recurrence'] as Map<String, dynamic>)
         : null,
     imageUrl: json['image_url']?.toString(),
-    categoryNames: _parseCategoryNames(json),
+    categories: _parseCategories(json),
   );
 }
 
-List<String> _parseCategoryNames(Map<String, dynamic> json) {
+List<AppCategory> _parseCategories(Map<String, dynamic> json) {
   final cats = json['categories'];
   if (cats is List && cats.isNotEmpty) {
     return cats
-        .map((c) => (c as Map<String, dynamic>)['name']?.toString())
-        .whereType<String>()
+        .whereType<Map<String, dynamic>>()
+        .map(AppCategory.fromJson)
         .toList();
   }
   return const [];

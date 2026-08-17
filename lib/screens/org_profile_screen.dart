@@ -224,6 +224,23 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
   }
 
   String get _displayName => (_orgData?['name'] as String?) ?? widget.name;
+
+  String? _localizedCategory(String locale) {
+    final cats = _orgData?['categories'];
+    if (cats is List && cats.isNotEmpty) {
+      final first = cats.first as Map<String, dynamic>?;
+      if (first != null) {
+        final localized = switch (locale) {
+          'he' => first['name_he'] as String?,
+          'ru' => first['name_ru'] as String?,
+          _ => first['name_en'] as String?,
+        };
+        if (localized != null && localized.isNotEmpty) return localized;
+        return first['name_en'] as String? ?? first['name'] as String?;
+      }
+    }
+    return widget.category.isNotEmpty ? widget.category : null;
+  }
   String get _initials => _orgInitials(_displayName);
   String? get _website => _orgData?['website'] as String?;
   String? get _address {
@@ -571,14 +588,19 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                 color: widget.colorStart.withValues(alpha: 0.3),
               ),
             ),
-            child: Text(
-              widget.category,
-              style: GoogleFonts.poppins(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: widget.colorStart,
-              ),
-            ),
+            child: Builder(builder: (ctx) {
+              final locale = Localizations.localeOf(ctx).languageCode;
+              final catLabel = _localizedCategory(locale);
+              if (catLabel == null || catLabel.isEmpty) return const SizedBox.shrink();
+              return Text(
+                catLabel,
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: widget.colorStart,
+                ),
+              );
+            }),
           ),
         ),
         const SizedBox(height: 12),
@@ -597,7 +619,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
             ),
             const SizedBox(width: 4),
             Text(
-              '($_reviewCount reviews)',
+              '(${AppLocalizations.of(context)!.reviewsCount(_reviewCount)})',
               style: GoogleFonts.poppins(
                 fontSize: 12,
                 color: AppColors.textMuted,
@@ -713,7 +735,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                 )
               : _ActionBtn(
                   icon: Icons.chat_bubble_rounded,
-                  label: 'Message',
+                  label: AppLocalizations.of(context)!.actionMessage,
                   isGradient: true,
                   colorStart: widget.colorStart,
                   colorEnd: widget.colorEnd,
@@ -725,7 +747,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
           Expanded(
             child: _ActionBtn(
               icon: Icons.language_rounded,
-              label: 'Website',
+              label: AppLocalizations.of(context)!.actionWebsite,
               onTap: () => _openWebsite(context, website),
             ),
           ),
@@ -734,7 +756,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
         Expanded(
           child: _ActionBtn(
             icon: Icons.directions_rounded,
-            label: 'Directions',
+            label: AppLocalizations.of(context)!.actionDirections,
             onTap: _address != null && _address!.isNotEmpty
                 ? () async {
                     final uri = Uri.parse(
@@ -756,7 +778,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionHeader(title: 'Photos'),
+        _SectionHeader(title: AppLocalizations.of(context)!.photosLabel),
         const SizedBox(height: 14),
         SizedBox(
           height: 110,
@@ -797,7 +819,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionHeader(title: 'Trial Lesson'),
+        _SectionHeader(title: AppLocalizations.of(context)!.trialLesson),
         const SizedBox(height: 12),
         Container(
           width: double.infinity,
@@ -827,7 +849,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    'Trial lesson available',
+                    AppLocalizations.of(context)!.trialLessonAvailable,
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -875,7 +897,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionHeader(title: 'Our Classes'),
+        _SectionHeader(title: AppLocalizations.of(context)!.ourClassesSection),
         const SizedBox(height: 14),
         if (_classes.isEmpty)
           Container(
@@ -887,7 +909,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
               border: Border.all(color: AppColors.divider),
             ),
             child: Text(
-              'No classes available yet',
+              AppLocalizations.of(context)!.noClassesAvailable,
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: 13,
@@ -939,7 +961,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionHeader(title: 'Upcoming Events'),
+        _SectionHeader(title: AppLocalizations.of(context)!.upcomingEventsSection),
         const SizedBox(height: 14),
         if (grouped.isEmpty)
           Container(
@@ -951,7 +973,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
               border: Border.all(color: AppColors.divider),
             ),
             child: Text(
-              'No upcoming events',
+              AppLocalizations.of(context)!.noUpcomingEvents,
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: 13,
@@ -989,6 +1011,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
   // ── Reviews ──────────────────────────────────────────────────────────────────
 
   Widget _buildReviewsSection(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final orgIdInt = widget.orgId != null ? int.tryParse(widget.orgId!) : null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -996,7 +1019,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
         Row(
           children: [
             Text(
-              'Reviews',
+              l10n.reviewsTitle,
               style: GoogleFonts.poppins(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -1021,7 +1044,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
               child: ShaderMask(
                 shaderCallback: (b) => AppColors.brandGradient.createShader(b),
                 child: Text(
-                  'See All',
+                  l10n.btnSeeAll,
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -1037,7 +1060,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
         if (_reviews.isEmpty) ...[
           const SizedBox(height: 12),
           Text(
-            'No reviews yet',
+            l10n.noReviewsYetSimple,
             style: GoogleFonts.poppins(
               fontSize: 13,
               color: AppColors.textMuted,
@@ -1086,7 +1109,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                   shaderCallback: (b) =>
                       AppColors.brandGradient.createShader(b),
                   child: Text(
-                    'Write a Review',
+                    l10n.writeReview,
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -1159,8 +1182,9 @@ class _OrgReviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final rating = (review['rating'] ?? 0) as num;
     final comment = (review['comment'] ?? '').toString();
+    final l10n = AppLocalizations.of(context)!;
     final reviewerName =
-        (review['reviewer_name'] ?? review['user_name'] ?? 'Anonymous')
+        (review['reviewer_name'] ?? review['user_name'] ?? l10n.anonymousReviewer)
             .toString();
     final createdAt = review['created_at']?.toString() ?? '';
     String dateStr = '';
@@ -1420,7 +1444,8 @@ class _ClassTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final name = (cls['name'] ?? 'Unnamed Class').toString();
+    final l10n = AppLocalizations.of(context)!;
+    final name = (cls['name'] ?? l10n.unnamedClass).toString();
     final description = (cls['description'] ?? '').toString();
     final price = cls['price'];
     final ageMin = cls['age_min'];
@@ -1517,7 +1542,8 @@ class _EventTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final name = (event['title'] ?? event['name'] ?? 'Unnamed Event')
+    final l10n = AppLocalizations.of(context)!;
+    final name = (event['title'] ?? event['name'] ?? l10n.unnamedEvent)
         .toString();
     final description = (event['description'] ?? '').toString();
     final startDt = event['start_datetime'];
@@ -1527,12 +1553,18 @@ class _EventTile extends StatelessWidget {
         final dt = DateTime.parse(startDt.toString());
         final timeStr =
             '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
-        dateStr = '${dt.day} ${_monthName(dt.month)} ${dt.year} · $timeStr';
+        final months = [
+          '',
+          l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+          l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+          l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+          l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
+        ];
+        dateStr = '${dt.day} ${months[dt.month]} ${dt.year} · $timeStr';
       } catch (_) {
         dateStr = startDt.toString();
       }
     }
-    final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context).languageCode;
     final String cityLabel;
     if (event['is_nationwide'] == true) {
@@ -1673,24 +1705,6 @@ class _EventTile extends StatelessWidget {
     );
   }
 
-  String _monthName(int month) {
-    const months = [
-      '',
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return months[month];
-  }
 }
 
 // ─── Small chip ───────────────────────────────────────────────────────────────
@@ -1806,7 +1820,7 @@ class _RatingSummaryCard extends StatelessWidget {
           _stars(reviewCount > 0 ? rating : 0, size: 14),
           const SizedBox(height: 3),
           Text(
-            '$reviewCount reviews',
+            AppLocalizations.of(context)!.reviewsCount(reviewCount),
             style: GoogleFonts.poppins(
               fontSize: 10,
               color: AppColors.textMuted,

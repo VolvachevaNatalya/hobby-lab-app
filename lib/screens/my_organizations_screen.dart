@@ -123,7 +123,14 @@ class _MyOrganizationsScreenState extends State<MyOrganizationsScreen> {
         final id = (org['id'] ?? '').toString();
         final name = (org['name'] ?? '').toString();
         final category = (org['category'] ?? '').toString();
-        final city = (org['city'] ?? '').toString();
+        final locale = Localizations.localeOf(context).languageCode;
+        final city = (locale == 'he'
+                ? org['city_name_he']
+                : locale == 'ru'
+                    ? org['city_name_ru']
+                    : org['city_name_en'] ?? org['city'])
+            ?.toString()
+            .trim() ?? '';
         final subtitle = [
           if (category.isNotEmpty) category,
           if (city.isNotEmpty) city,

@@ -27,15 +27,15 @@ import '../l10n/app_localizations.dart';
 import '../routing/transitions.dart';
 import '../utils/event_grouping.dart';
 
-// ─── Data classes ─────────────────────────────────────────────────────────────
-
-class _Category {
-  final String id;
-  final String name;
-  final IconData icon;
-  final Color color;
-  const _Category({required this.id, required this.name, required this.icon, required this.color});
+String _resolveEventBadge(String badge, AppLocalizations l10n) {
+  switch (badge.toLowerCase()) {
+    case 'active': return l10n.activeStatus;
+    case 'inactive': return l10n.inactiveStatus;
+    default: return badge;
+  }
 }
+
+// ─── Data classes ─────────────────────────────────────────────────────────────
 
 class _Activity {
   final String id;
@@ -43,6 +43,7 @@ class _Activity {
   final String studio;
   final String categoryId;
   final String category;
+  final AppCategory? primaryCategory;
   final double rating;
   final int reviewCount;
   final Color colorStart;
@@ -54,6 +55,7 @@ class _Activity {
     required this.studio,
     required this.categoryId,
     required this.category,
+    this.primaryCategory,
     required this.rating,
     required this.reviewCount,
     required this.colorStart,
@@ -68,7 +70,7 @@ class _Banner {
   final String subtitle;
   final String badge;
   final String? categoryId;
-  final List<String> categoryNames;
+  final List<AppCategory> categories;
   final Color colorStart;
   final Color colorEnd;
   final IconData icon;
@@ -78,7 +80,7 @@ class _Banner {
     required this.subtitle,
     required this.badge,
     this.categoryId,
-    this.categoryNames = const [],
+    this.categories = const [],
     required this.colorStart,
     required this.colorEnd,
     required this.icon,
@@ -98,7 +100,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<AppClass> _apiClasses = [];
   List<AppEvent> _apiEvents = [];
-  List<_Category> _apiCategories = [];
+  List<AppCategory> _apiCategories = [];
   List<Organization> _apiOrganizations = [];
   bool _loadingClasses = true;
   int _unreadCount = 0;
@@ -163,22 +165,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _fetchData(userLat: lat, userLng: lng);
   }
 
-  static _Category _categoryFromAppCat(AppCategory c) {
-    switch (c.name.toLowerCase()) {
-      case 'art': return _Category(id: c.id, name: c.name, icon: Icons.palette_rounded, color: const Color(0xFFE040FB));
-      case 'sport': return _Category(id: c.id, name: c.name, icon: Icons.sports_soccer_rounded, color: const Color(0xFF4CAF50));
-      case 'music': return _Category(id: c.id, name: c.name, icon: Icons.music_note_rounded, color: const Color(0xFFFF9100));
-      case 'education': return _Category(id: c.id, name: c.name, icon: Icons.menu_book_rounded, color: const Color(0xFF40C4FF));
-      case 'theater': return _Category(id: c.id, name: c.name, icon: Icons.theater_comedy_rounded, color: const Color(0xFFFF4081));
-      case 'dance': return _Category(id: c.id, name: c.name, icon: Icons.self_improvement_rounded, color: const Color(0xFFEC4899));
-      default:
-        if (c.name.toLowerCase().contains('master')) {
-          return _Category(id: c.id, name: c.name, icon: Icons.workspace_premium_rounded, color: const Color(0xFFFFD740));
-        }
-        return _Category(id: c.id, name: c.name, icon: Icons.category_rounded, color: const Color(0xFF9CA3AF));
-    }
-  }
-
   Future<void> _fetchData({double? userLat, double? userLng}) async {
     _fetchedLat = userLat;
     _fetchedLng = userLng;
@@ -229,6 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 name: e.value.title,
                 studio: e.value.organizationName,
                 category: e.value.category,
+                primaryCategory: e.value.primaryCategory,
                 rating: e.value.averageRating,
                 reviewCount: e.value.reviewCount,
                 colorStart: g.$1,
@@ -241,9 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           _apiClasses = classes;
           _apiEvents = results[1] as List<AppEvent>;
-          _apiCategories = (results[2] as List<AppCategory>)
-              .map(_categoryFromAppCat)
-              .toList();
+          _apiCategories = results[2] as List<AppCategory>;
           final notifs = results[3] as List<AppNotification>;
           _unreadCount = notifs.where((n) => !n.isRead).length;
           _apiOrganizations = results[5] as List<Organization>;
@@ -285,6 +270,12 @@ class _HomeScreenState extends State<HomeScreen> {
         studio: e.value.organizationName,
         categoryId: e.value.categoryId,
         category: e.value.category,
+        primaryCategory: _apiCategories.isNotEmpty
+            ? _apiCategories.firstWhere(
+                (cat) => cat.id == (e.value.primaryCategory?.id ?? e.value.categoryId),
+                orElse: () => e.value.primaryCategory ?? AppCategory(id: e.value.categoryId, name: e.value.category),
+              )
+            : e.value.primaryCategory,
         rating: e.value.averageRating,
         reviewCount: e.value.reviewCount,
         colorStart: c.$1,
@@ -297,14 +288,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onCategoryTap(String name, String id) {
     final cat = _apiCategories.firstWhere(
       (c) => c.id == id,
-      orElse: () => _Category(id: id, name: name, icon: Icons.category_rounded, color: AppColors.purple),
+      orElse: () => AppCategory(id: id, name: name),
     );
     Navigator.of(context).push(
       slideRoute(builder: (_) => CategoryScreen(
         categoryId: id,
         categoryName: name,
-        categoryIcon: cat.icon,
-        categoryColor: cat.color,
+        categoryIcon: _homeCatIcon(cat.stableNameEn),
+        categoryColor: _homeCatColor(cat.stableNameEn),
         classes: _apiClasses
             .where((c) =>
                 c.categoryIds.contains(id) ||
@@ -430,7 +421,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 16),
               _CategoriesRow(
-                selected: null,
+                selectedId: null,
                 onSelect: _onCategoryTap,
                 categories: _apiCategories,
               ),
@@ -707,7 +698,7 @@ class _BannersSection extends StatelessWidget {
         subtitle: e.value.subtitle,
         badge: e.value.badge,
         categoryId: e.value.categoryId,
-        categoryNames: e.value.categoryNames,
+        categories: e.value.categories,
         colorStart: s.$1,
         colorEnd: s.$2,
         icon: s.$3,
@@ -788,11 +779,14 @@ class _BannerCard extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.22),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text(
-                        banner.categoryNames.isNotEmpty
-                            ? banner.categoryNames.first
-                            : banner.badge,
-                        style: GoogleFonts.poppins(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white, letterSpacing: 1)),
+                    child: Builder(builder: (ctx) {
+                      final locale = Localizations.localeOf(ctx).languageCode;
+                      return Text(
+                        banner.categories.isNotEmpty
+                            ? banner.categories.first.localizedName(locale)
+                            : _resolveEventBadge(banner.badge, AppLocalizations.of(ctx)!),
+                        style: GoogleFonts.poppins(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white, letterSpacing: 1));
+                    }),
                   ),
                   const SizedBox(height: 8),
                   Text(banner.title,
@@ -813,15 +807,16 @@ class _BannerCard extends StatelessWidget {
 // ─── Categories ───────────────────────────────────────────────────────────────
 
 class _CategoriesRow extends StatelessWidget {
-  final String? selected;
+  final String? selectedId;
   final void Function(String name, String id) onSelect;
-  final List<_Category> categories;
+  final List<AppCategory> categories;
 
-  const _CategoriesRow({required this.selected, required this.onSelect, required this.categories});
+  const _CategoriesRow({required this.selectedId, required this.onSelect, required this.categories});
 
   @override
   Widget build(BuildContext context) {
     if (categories.isEmpty) return const SizedBox(height: 96);
+    final locale = Localizations.localeOf(context).languageCode;
     return SizedBox(
       height: 96,
       child: ListView.builder(
@@ -830,10 +825,12 @@ class _CategoriesRow extends StatelessWidget {
         itemCount: categories.length,
         itemBuilder: (context, i) {
           final cat = categories[i];
+          final label = cat.localizedName(locale);
           return _CategoryItem(
             category: cat,
-            isSelected: selected == cat.name,
-            onTap: () => onSelect(cat.name, cat.id),
+            isSelected: selectedId == cat.id,
+            label: label,
+            onTap: () => onSelect(label, cat.id),
           );
         },
       ),
@@ -841,15 +838,42 @@ class _CategoriesRow extends StatelessWidget {
   }
 }
 
+Color _homeCatColor(String stableNameEn) => switch (stableNameEn.toLowerCase()) {
+  'art' => const Color(0xFFE040FB),
+  'sport' => const Color(0xFF4CAF50),
+  'music' => const Color(0xFFFF9100),
+  'education' => const Color(0xFF40C4FF),
+  'theater' => const Color(0xFFFF4081),
+  'dance' => const Color(0xFFEC4899),
+  _ => stableNameEn.toLowerCase().contains('master')
+      ? const Color(0xFFFFD740)
+      : const Color(0xFF9CA3AF),
+};
+
+IconData _homeCatIcon(String stableNameEn) => switch (stableNameEn.toLowerCase()) {
+  'art' => Icons.palette_rounded,
+  'sport' => Icons.sports_soccer_rounded,
+  'music' => Icons.music_note_rounded,
+  'education' => Icons.menu_book_rounded,
+  'theater' => Icons.theater_comedy_rounded,
+  'dance' => Icons.self_improvement_rounded,
+  _ => stableNameEn.toLowerCase().contains('master')
+      ? Icons.workspace_premium_rounded
+      : Icons.category_rounded,
+};
+
 class _CategoryItem extends StatelessWidget {
-  final _Category category;
+  final AppCategory category;
   final bool isSelected;
+  final String label;
   final VoidCallback onTap;
 
-  const _CategoryItem({required this.category, required this.isSelected, required this.onTap});
+  const _CategoryItem({required this.category, required this.isSelected, required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
+    final color = _homeCatColor(category.stableNameEn);
+    final icon = _homeCatIcon(category.stableNameEn);
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -863,23 +887,23 @@ class _CategoryItem extends StatelessWidget {
               height: 60,
               decoration: BoxDecoration(
                 color: isSelected
-                    ? category.color.withValues(alpha: 0.25)
-                    : category.color.withValues(alpha: 0.12),
+                    ? color.withValues(alpha: 0.25)
+                    : color.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isSelected ? category.color : category.color.withValues(alpha: 0.3),
+                  color: isSelected ? color : color.withValues(alpha: 0.3),
                   width: isSelected ? 2.5 : 1.5,
                 ),
                 boxShadow: isSelected
-                    ? [BoxShadow(color: category.color.withValues(alpha: 0.35), blurRadius: 12, offset: const Offset(0, 4))]
+                    ? [BoxShadow(color: color.withValues(alpha: 0.35), blurRadius: 12, offset: const Offset(0, 4))]
                     : null,
               ),
-              child: Icon(category.icon,
-                  color: isSelected ? category.color : category.color.withValues(alpha: 0.8), size: 26),
+              child: Icon(icon,
+                  color: isSelected ? color : color.withValues(alpha: 0.8), size: 26),
             ),
             const SizedBox(height: 7),
             Text(
-              category.name,
+              label,
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: 11,
@@ -1044,8 +1068,12 @@ class _ActivityCardState extends State<_ActivityCard> {
                           color: Colors.black.withValues(alpha: 0.35),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Text(widget.activity.category,
-                            style: GoogleFonts.poppins(fontSize: 9, fontWeight: FontWeight.w600, color: Colors.white, letterSpacing: 0.3)),
+                        child: Builder(builder: (ctx) {
+                          final locale = Localizations.localeOf(ctx).languageCode;
+                          return Text(
+                            widget.activity.primaryCategory?.localizedName(locale) ?? widget.activity.category,
+                            style: GoogleFonts.poppins(fontSize: 9, fontWeight: FontWeight.w600, color: Colors.white, letterSpacing: 0.3));
+                        }),
                       ),
                     ),
                     Positioned(

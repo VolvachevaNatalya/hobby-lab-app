@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 
 class PhotoViewerScreen extends StatefulWidget {
   final List<String> photoUrls;
@@ -164,7 +165,7 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
             size: 60, color: Colors.white.withValues(alpha: 0.4)),
         const SizedBox(height: 8),
         Text(
-          'Image unavailable',
+          AppLocalizations.of(context)!.imageUnavailable,
           style: GoogleFonts.poppins(
               fontSize: 13, color: Colors.white.withValues(alpha: 0.4)),
         ),

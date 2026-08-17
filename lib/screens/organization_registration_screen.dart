@@ -275,7 +275,7 @@ class _OrganizationRegistrationScreenState
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Center(
-                          child: Text('Done',
+                          child: Text(l10n.btnDone,
                               style: GoogleFonts.poppins(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
@@ -401,7 +401,7 @@ class _OrganizationRegistrationScreenState
       );
     } catch (_) {
       if (!mounted) return;
-      _showSnack('Failed to register. Please try again.', const Color(0xFFEF4444));
+      _showSnack(AppLocalizations.of(context)!.failedToRegister, const Color(0xFFEF4444));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -424,6 +424,7 @@ class _OrganizationRegistrationScreenState
   // ── Form ─────────────────────────────────────────────────────────────────
 
   Widget _buildForm() {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         _buildHeader(),
@@ -437,53 +438,53 @@ class _OrganizationRegistrationScreenState
                 const SizedBox(height: 28),
                 _buildLogoUpload(),
                 const SizedBox(height: 28),
-                _sectionLabel('Organization Details'),
+                _sectionLabel(l10n.orgDetailsSection),
                 const SizedBox(height: 12),
                 _buildNameCard(),
                 const SizedBox(height: 20),
-                _sectionLabel('Contact Information'),
+                _sectionLabel(l10n.contactInfoSection),
                 const SizedBox(height: 12),
                 _buildCard([
                   _buildInlineField(
                     controller: _phoneController,
-                    hint: 'Phone number',
+                    hint: l10n.phoneHint,
                     icon: Icons.phone_outlined,
                     type: TextInputType.phone,
                   ),
                   _cardDivider(),
                   _buildInlineField(
                     controller: _emailController,
-                    hint: 'Email',
+                    hint: l10n.emailHint,
                     icon: Icons.email_outlined,
                     type: TextInputType.emailAddress,
                   ),
                   _cardDivider(),
                   _buildInlineField(
                     controller: _websiteController,
-                    hint: 'Website (optional)',
+                    hint: l10n.websiteHint,
                     icon: Icons.language_rounded,
                     type: TextInputType.url,
                   ),
                 ]),
                 const SizedBox(height: 20),
-                _sectionLabel('Location'),
+                _sectionLabel(l10n.locationSection),
                 const SizedBox(height: 12),
                 _buildCard([
                   _buildInlineField(
                     controller: _addressController,
-                    hint: 'Address',
+                    hint: l10n.addressLabel,
                     icon: Icons.location_on_outlined,
                   ),
                   _cardDivider(),
                   _buildCityPickerRow(),
                 ]),
                 const SizedBox(height: 20),
-                _sectionLabel('Social Media'),
+                _sectionLabel(l10n.socialMediaSection),
                 const SizedBox(height: 12),
                 _buildCard([
                   _buildInlineField(
                     controller: _instagramController,
-                    hint: 'Instagram',
+                    hint: l10n.fieldInstagram,
                     icon: Icons.camera_alt_rounded,
                     customIcon: const Icon(Icons.camera_alt_rounded,
                         size: 20, color: Color(0xFFE1306C)),
@@ -492,7 +493,7 @@ class _OrganizationRegistrationScreenState
                   _cardDivider(),
                   _buildInlineField(
                     controller: _facebookController,
-                    hint: 'Facebook',
+                    hint: l10n.fieldFacebook,
                     icon: Icons.thumb_up_alt_rounded,
                     customIcon: const Icon(Icons.thumb_up_alt_rounded,
                         size: 20, color: Color(0xFF1877F2)),
@@ -501,7 +502,7 @@ class _OrganizationRegistrationScreenState
                   _cardDivider(),
                   _buildInlineField(
                     controller: _telegramController,
-                    hint: 'Telegram',
+                    hint: l10n.fieldTelegram,
                     icon: Icons.send_rounded,
                     customIcon: const Icon(Icons.send_rounded,
                         size: 20, color: Color(0xFF229ED9)),
@@ -510,7 +511,7 @@ class _OrganizationRegistrationScreenState
                   _cardDivider(),
                   _buildInlineField(
                     controller: _youtubeController,
-                    hint: 'YouTube',
+                    hint: l10n.fieldYouTube,
                     icon: Icons.smart_display_rounded,
                     customIcon: const Icon(Icons.smart_display_rounded,
                         size: 20, color: Color(0xFFFF0000)),
@@ -519,7 +520,7 @@ class _OrganizationRegistrationScreenState
                   _cardDivider(),
                   _buildInlineField(
                     controller: _tiktokController,
-                    hint: 'TikTok',
+                    hint: l10n.fieldTikTok,
                     icon: Icons.music_note_rounded,
                     customIcon: const FaIcon(FontAwesomeIcons.tiktok,
                         size: 18, color: Color(0xFF010101)),
@@ -528,7 +529,7 @@ class _OrganizationRegistrationScreenState
                   _cardDivider(),
                   _buildInlineField(
                     controller: _whatsappController,
-                    hint: 'WhatsApp',
+                    hint: l10n.fieldWhatsApp,
                     icon: Icons.chat_rounded,
                     customIcon: const FaIcon(FontAwesomeIcons.whatsapp,
                         size: 18, color: Color(0xFF25D366)),
@@ -537,7 +538,7 @@ class _OrganizationRegistrationScreenState
                   ),
                 ]),
                 const SizedBox(height: 20),
-                _sectionLabel('Working Hours'),
+                _sectionLabel(l10n.workingHoursSection),
                 const SizedBox(height: 12),
                 _buildWorkingHours(),
                 const SizedBox(height: 32),
@@ -575,7 +576,7 @@ class _OrganizationRegistrationScreenState
           ),
           const SizedBox(width: 14),
           Text(
-            'Become a Provider',
+            AppLocalizations.of(context)!.becomeProvider,
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -615,7 +616,7 @@ class _OrganizationRegistrationScreenState
               ),
               const SizedBox(height: 7),
               Text(
-                'Upload Logo',
+                AppLocalizations.of(context)!.uploadLogo,
                 style: GoogleFonts.poppins(
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
@@ -674,7 +675,7 @@ class _OrganizationRegistrationScreenState
             children: [
               _buildInlineField(
                 controller: _nameController,
-                hint: 'Organization name',
+                hint: l10n.orgNameLabel,
                 icon: Icons.business_rounded,
                 isRequired: true,
                 error: nameError,
@@ -698,7 +699,7 @@ class _OrganizationRegistrationScreenState
           Padding(
             padding: const EdgeInsets.only(left: 4, top: 4),
             child: Text(
-              'Please select at least one category',
+              l10n.errorSelectCategory,
               style: GoogleFonts.poppins(fontSize: 11, color: const Color(0xFFEF4444)),
             ),
           ),
@@ -784,6 +785,7 @@ class _OrganizationRegistrationScreenState
   }
 
   Widget _buildDescriptionField() {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -806,7 +808,7 @@ class _OrganizationRegistrationScreenState
                   color: AppColors.textPrimary, fontSize: 14),
               cursorColor: AppColors.purple,
               decoration: InputDecoration(
-                hintText: 'Description',
+                hintText: l10n.descriptionHint,
                 hintStyle: GoogleFonts.poppins(
                     color: AppColors.textMuted, fontSize: 14),
                 border: InputBorder.none,
@@ -820,6 +822,7 @@ class _OrganizationRegistrationScreenState
   }
 
   Widget _buildCategoryField({bool error = false}) {
+    final l10n = AppLocalizations.of(context)!;
     final empty = _selectedCategories.isEmpty;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -841,7 +844,7 @@ class _OrganizationRegistrationScreenState
                   ? Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: Text(
-                        'Categories',
+                        l10n.categoriesLabel,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: error
@@ -921,6 +924,7 @@ class _OrganizationRegistrationScreenState
   }
 
   Widget _buildCityPickerRow() {
+    final l10n = AppLocalizations.of(context)!;
     final lang = Localizations.localeOf(context).languageCode;
     final label = _selectedCity?.displayName(lang);
     return GestureDetector(
@@ -934,7 +938,7 @@ class _OrganizationRegistrationScreenState
             const SizedBox(width: 14),
             Expanded(
               child: Text(
-                label ?? 'City',
+                label ?? l10n.cityHint,
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   color: label != null ? AppColors.textPrimary : AppColors.textMuted,
@@ -1003,7 +1007,7 @@ class _OrganizationRegistrationScreenState
                       strokeWidth: 2.5, color: Colors.white),
                 )
               : Text(
-                  'Submit Application',
+                  AppLocalizations.of(context)!.submitApplication,
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -1037,6 +1041,15 @@ class _DayRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final localDays = [
+      l10n.daySunAbbrev, l10n.dayMonAbbrev, l10n.dayTueAbbrev,
+      l10n.dayWedAbbrev, l10n.dayThuAbbrev, l10n.dayFriAbbrev,
+      l10n.daySatAbbrev,
+    ];
+    const apiDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    final idx = apiDays.indexOf(day);
+    final displayDay = idx >= 0 ? localDays[idx] : day;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
       child: Row(
@@ -1046,7 +1059,7 @@ class _DayRow extends StatelessWidget {
           SizedBox(
             width: 34,
             child: Text(
-              day,
+              displayDay,
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -1070,7 +1083,7 @@ class _DayRow extends StatelessWidget {
             _TimeChip(time: schedule.close, onTap: onPickClose),
           ] else
             Text(
-              'Closed',
+              l10n.statusClosed,
               style: GoogleFonts.poppins(
                   fontSize: 12, color: AppColors.textMuted),
             ),

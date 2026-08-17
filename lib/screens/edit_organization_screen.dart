@@ -410,7 +410,7 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
                         ),
                         child: Center(
                           child: Text(
-                            'Done',
+                            AppLocalizations.of(sheetCtx)!.btnDone,
                             style: GoogleFonts.poppins(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
@@ -463,7 +463,7 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Failed to upload photo',
+              AppLocalizations.of(context)!.failedToUploadImage,
               style: GoogleFonts.poppins(fontSize: 13, color: Colors.white),
             ),
             backgroundColor: const Color(0xFFEF4444),
@@ -538,7 +538,7 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
       });
     } catch (_) {
       if (!mounted) return;
-      _showSnack('Failed to upload image', const Color(0xFFEF4444));
+      _showSnack(AppLocalizations.of(context)!.failedToUploadImage, const Color(0xFFEF4444));
       setState(() {
         if (isLogo)
           _logoPath = null;
@@ -620,11 +620,11 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
             : null,
       );
       if (!mounted) return;
-      _showSnack('Changes saved successfully', const Color(0xFF059669));
+      _showSnack(AppLocalizations.of(context)!.changesSavedSuccess, const Color(0xFF059669));
       Navigator.of(context).pop(updated);
     } catch (_) {
       if (mounted)
-        _showSnack('Failed to save changes', const Color(0xFFEF4444));
+        _showSnack(AppLocalizations.of(context)!.failedToSaveChanges, const Color(0xFFEF4444));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -758,52 +758,52 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _field(
-                          'Organization Name',
+                          l10n.orgNameLabel,
                           _nameCtrl,
                           key: _nameKey,
                           required: true,
                           hasError: _submitted && _nameCtrl.text.trim().isEmpty,
                         ),
                         const SizedBox(height: 16),
-                        _field('Description', _descCtrl, maxLines: 3),
+                        _field(l10n.descriptionHint, _descCtrl, maxLines: 3),
                         const SizedBox(height: 16),
                         _field(
-                          'Phone',
+                          l10n.orgPhoneHint,
                           _phoneCtrl,
                           keyboardType: TextInputType.phone,
                           prefixIcon: Icons.phone_outlined,
                         ),
                         const SizedBox(height: 16),
                         _field(
-                          'Email',
+                          l10n.orgEmailHint,
                           _emailCtrl,
                           keyboardType: TextInputType.emailAddress,
                           prefixIcon: Icons.email_outlined,
                         ),
                         const SizedBox(height: 16),
                         _field(
-                          'Website',
+                          l10n.websiteHint,
                           _websiteCtrl,
                           keyboardType: TextInputType.url,
                           prefixIcon: Icons.language_rounded,
                         ),
                         const SizedBox(height: 16),
                         _field(
-                          'Address',
+                          l10n.addressLabel,
                           _addressCtrl,
                           prefixIcon: Icons.location_on_outlined,
                         ),
                         const SizedBox(height: 16),
                         _buildCityPickerRow(),
                         const SizedBox(height: 24),
-                        _sectionLabel('Categories'),
+                        _sectionLabel(l10n.categoriesLabel),
                         const SizedBox(height: 12),
                         _categoryField(),
                         const SizedBox(height: 24),
-                        _sectionLabel('Social Media'),
+                        _sectionLabel(l10n.socialMediaSection),
                         const SizedBox(height: 12),
                         _field(
-                          'Instagram',
+                          l10n.fieldInstagram,
                           _instagramCtrl,
                           prefixWidget: const FaIcon(
                             FontAwesomeIcons.instagram,
@@ -814,7 +814,7 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
                         ),
                         const SizedBox(height: 16),
                         _field(
-                          'Facebook',
+                          l10n.fieldFacebook,
                           _facebookCtrl,
                           prefixWidget: const FaIcon(
                             FontAwesomeIcons.facebook,
@@ -874,7 +874,11 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
                             keyboardType: const TextInputType.numberWithOptions(
                               decimal: true,
                             ),
-                            prefixIcon: Icons.attach_money_rounded,
+                            prefixWidget: Text('₪',
+                                style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.textMuted)),
                             fieldHint: '0.00',
                           ),
                           const SizedBox(height: 16),
@@ -885,10 +889,10 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
                           ),
                         ],
                         const SizedBox(height: 24),
-                        _sectionLabel('Media'),
+                        _sectionLabel(l10n.mediaSection),
                         const SizedBox(height: 12),
                         _imagePicker(
-                          label: 'Logo',
+                          label: l10n.logoLabel,
                           imagePath: _logoPath,
                           existingUrl: _logoUrl,
                           onPick: () => _pickImage(true),
@@ -896,7 +900,7 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
                         ),
                         const SizedBox(height: 16),
                         _imagePicker(
-                          label: 'Banner',
+                          label: l10n.bannerLabel,
                           imagePath: _bannerPath,
                           existingUrl: _bannerUrl,
                           onPick: () => _pickImage(false),
@@ -944,7 +948,7 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
           ),
           const SizedBox(width: 12),
           Text(
-            'Edit Profile',
+            AppLocalizations.of(context)!.editProfile,
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -982,7 +986,7 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
             const SizedBox(width: 10),
             Expanded(
               child: Text(
-                '${l10n.trialLesson} available',
+                l10n.trialLessonAvailable,
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -1020,6 +1024,7 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
     required VoidCallback onPick,
     bool isUploading = false,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     final hasLocal = imagePath != null;
     final hasRemote = existingUrl != null && existingUrl.isNotEmpty;
 
@@ -1073,10 +1078,10 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
                     children: [
                       Text(
                         isUploading
-                            ? 'Uploading...'
+                            ? l10n.uploadingLabel
                             : (hasLocal || hasRemote)
-                            ? (hasLocal ? 'Image selected' : 'Tap to replace')
-                            : 'Choose from gallery',
+                            ? (hasLocal ? l10n.imageSelectedLabel : l10n.tapToReplace)
+                            : l10n.chooseFromGallery,
                         style: GoogleFonts.poppins(
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
@@ -1258,6 +1263,7 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
   }
 
   Widget _categoryField() {
+    final l10n = AppLocalizations.of(context)!;
     final empty = _selectedCategories.isEmpty;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1288,7 +1294,7 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
                 Expanded(
                   child: empty
                       ? Text(
-                          'Select categories',
+                          l10n.selectCategories,
                           style: GoogleFonts.poppins(
                             fontSize: 14,
                             color: AppColors.textMuted,
@@ -1540,13 +1546,14 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
   }
 
   Widget _buildCityPickerRow() {
+    final l10n = AppLocalizations.of(context)!;
     final lang = Localizations.localeOf(context).languageCode;
     final label = _selectedCity?.displayName(lang);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'City',
+          l10n.cityHint,
           style: GoogleFonts.poppins(
             fontSize: 13,
             fontWeight: FontWeight.w600,
@@ -1574,7 +1581,7 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    label ?? 'Select city',
+                    label ?? l10n.selectCity,
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       color: label != null
@@ -1624,7 +1631,7 @@ class _EditOrganizationScreenState extends State<EditOrganizationScreen> {
                   ),
                 )
               : Text(
-                  'Save Changes',
+                  AppLocalizations.of(context)!.btnSaveChanges,
                   style: GoogleFonts.poppins(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,

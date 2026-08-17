@@ -88,20 +88,31 @@ class _MainShellState extends State<MainShell> {
           label: l10n.navProfile),
     ];
 
-    return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
-      bottomNavigationBar: _BottomNav(
-        currentIndex: _currentIndex,
-        items: navItems,
-        unreadMessages: _unreadMessages,
-        onTap: (i) {
-          setState(() => _currentIndex = i);
-          MainShell.tabNotifier.value = i;
-          if (i == 1) _refreshUnread();
-        },
+    return PopScope(
+      // Allow the system back to exit only when already on Home (index 0).
+      canPop: _currentIndex == 0,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          // Back pressed on a non-Home tab → go to Home instead of exiting.
+          setState(() => _currentIndex = 0);
+          MainShell.tabNotifier.value = 0;
+        }
+      },
+      child: Scaffold(
+        body: IndexedStack(
+          index: _currentIndex,
+          children: _screens,
+        ),
+        bottomNavigationBar: _BottomNav(
+          currentIndex: _currentIndex,
+          items: navItems,
+          unreadMessages: _unreadMessages,
+          onTap: (i) {
+            setState(() => _currentIndex = i);
+            MainShell.tabNotifier.value = i;
+            if (i == 1) _refreshUnread();
+          },
+        ),
       ),
     );
   }
