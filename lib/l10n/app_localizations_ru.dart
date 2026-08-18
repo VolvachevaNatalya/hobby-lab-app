@@ -388,6 +388,47 @@ class AppLocalizationsRu extends AppLocalizations {
   String get contactUs => 'Связаться с нами';
 
   @override
+  String get supportSubjectLabel => 'Тема';
+
+  @override
+  String get supportSubjectAppProblem => 'Проблема с приложением';
+
+  @override
+  String get supportSubjectQuestion => 'Вопрос';
+
+  @override
+  String get supportSubjectOrgEvent => 'Организация / Мероприятие';
+
+  @override
+  String get supportSubjectAccount => 'Аккаунт';
+
+  @override
+  String get supportSubjectSuggestion => 'Предложение';
+
+  @override
+  String get supportSubjectOther => 'Другое';
+
+  @override
+  String get supportMessageLabel => 'Сообщение';
+
+  @override
+  String get supportMessageHint => 'Опишите вашу проблему или вопрос...';
+
+  @override
+  String get supportSendBtn => 'Отправить';
+
+  @override
+  String get supportSuccessMessage =>
+      'Запрос отправлен. Спасибо за обратную связь!';
+
+  @override
+  String get supportErrorMessage =>
+      'Не удалось отправить запрос. Попробуйте ещё раз.';
+
+  @override
+  String get supportMessageRequired => 'Сообщение не может быть пустым';
+
+  @override
   String get sectionDangerZone => 'ОПАСНАЯ ЗОНА';
 
   @override

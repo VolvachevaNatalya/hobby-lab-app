@@ -5,6 +5,7 @@ import '../l10n/app_localizations.dart';
 import '../locale_provider.dart';
 import 'edit_profile_screen.dart';
 import 'language_selection_screen.dart';
+import 'support_request_screen.dart';
 import '../routing/transitions.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -115,7 +116,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         icon: Icons.help_outline_rounded,
                         iconColor: const Color(0xFF0EA5E9),
                         label: l10n.helpCenter,
-                        onTap: () {},
+                        onTap: () => Navigator.of(context).push(slideRoute(builder: (_) => const SupportRequestScreen())),
                       ),
                       _NavRow(
                         icon: Icons.mail_outline_rounded,

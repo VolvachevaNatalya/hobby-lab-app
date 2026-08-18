@@ -386,6 +386,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contactUs => 'Contact Us';
 
   @override
+  String get supportSubjectLabel => 'Subject';
+
+  @override
+  String get supportSubjectAppProblem => 'App problem';
+
+  @override
+  String get supportSubjectQuestion => 'Question';
+
+  @override
+  String get supportSubjectOrgEvent => 'Organization / Event';
+
+  @override
+  String get supportSubjectAccount => 'Account';
+
+  @override
+  String get supportSubjectSuggestion => 'Suggestion';
+
+  @override
+  String get supportSubjectOther => 'Other';
+
+  @override
+  String get supportMessageLabel => 'Message';
+
+  @override
+  String get supportMessageHint => 'Describe your issue or question...';
+
+  @override
+  String get supportSendBtn => 'Send';
+
+  @override
+  String get supportSuccessMessage =>
+      'Request sent. Thank you for your feedback!';
+
+  @override
+  String get supportErrorMessage => 'Failed to send request. Please try again.';
+
+  @override
+  String get supportMessageRequired => 'Message cannot be empty';
+
+  @override
   String get sectionDangerZone => 'DANGER ZONE';
 
   @override

@@ -820,6 +820,84 @@ abstract class AppLocalizations {
   /// **'Contact Us'**
   String get contactUs;
 
+  /// No description provided for @supportSubjectLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject'**
+  String get supportSubjectLabel;
+
+  /// No description provided for @supportSubjectAppProblem.
+  ///
+  /// In en, this message translates to:
+  /// **'App problem'**
+  String get supportSubjectAppProblem;
+
+  /// No description provided for @supportSubjectQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Question'**
+  String get supportSubjectQuestion;
+
+  /// No description provided for @supportSubjectOrgEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization / Event'**
+  String get supportSubjectOrgEvent;
+
+  /// No description provided for @supportSubjectAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get supportSubjectAccount;
+
+  /// No description provided for @supportSubjectSuggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestion'**
+  String get supportSubjectSuggestion;
+
+  /// No description provided for @supportSubjectOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get supportSubjectOther;
+
+  /// No description provided for @supportMessageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get supportMessageLabel;
+
+  /// No description provided for @supportMessageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your issue or question...'**
+  String get supportMessageHint;
+
+  /// No description provided for @supportSendBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get supportSendBtn;
+
+  /// No description provided for @supportSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent. Thank you for your feedback!'**
+  String get supportSuccessMessage;
+
+  /// No description provided for @supportErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send request. Please try again.'**
+  String get supportErrorMessage;
+
+  /// No description provided for @supportMessageRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Message cannot be empty'**
+  String get supportMessageRequired;
+
   /// No description provided for @sectionDangerZone.
   ///
   /// In en, this message translates to:

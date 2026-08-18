@@ -651,6 +651,22 @@ class ApiService {
     }
   }
 
+  // ── Support ────────────────────────────────────────────────────────────────
+
+  static Future<void> submitSupportRequest({
+    required String subject,
+    required String message,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/support/'),
+      headers: await _authHeaders(),
+      body: jsonEncode({'subject': subject, 'message': message}),
+    );
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to submit support request');
+    }
+  }
+
   // ── User ───────────────────────────────────────────────────────────────────
 
   static Future<UserProfile> getMe() async {

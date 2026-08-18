@@ -381,6 +381,45 @@ class AppLocalizationsHe extends AppLocalizations {
   String get contactUs => 'צור קשר';
 
   @override
+  String get supportSubjectLabel => 'נושא';
+
+  @override
+  String get supportSubjectAppProblem => 'בעיה באפליקציה';
+
+  @override
+  String get supportSubjectQuestion => 'שאלה';
+
+  @override
+  String get supportSubjectOrgEvent => 'ארגון / אירוע';
+
+  @override
+  String get supportSubjectAccount => 'חשבון';
+
+  @override
+  String get supportSubjectSuggestion => 'הצעה';
+
+  @override
+  String get supportSubjectOther => 'אחר';
+
+  @override
+  String get supportMessageLabel => 'הודעה';
+
+  @override
+  String get supportMessageHint => 'תאר את הבעיה או השאלה שלך...';
+
+  @override
+  String get supportSendBtn => 'שלח';
+
+  @override
+  String get supportSuccessMessage => 'הבקשה נשלחה. תודה על המשוב!';
+
+  @override
+  String get supportErrorMessage => 'שליחת הבקשה נכשלה. נסה שוב.';
+
+  @override
+  String get supportMessageRequired => 'ההודעה לא יכולה להיות ריקה';
+
+  @override
   String get sectionDangerZone => 'אזור סכנה';
 
   @override
