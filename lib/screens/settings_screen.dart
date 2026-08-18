@@ -118,12 +118,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         label: l10n.helpCenter,
                         onTap: () => Navigator.of(context).push(slideRoute(builder: (_) => const SupportRequestScreen())),
                       ),
-                      _NavRow(
-                        icon: Icons.mail_outline_rounded,
-                        iconColor: AppColors.purple,
-                        label: l10n.contactUs,
-                        onTap: () {},
-                      ),
                     ]),
                     const SizedBox(height: 32),
                     _sectionLabel(l10n.sectionDangerZone),

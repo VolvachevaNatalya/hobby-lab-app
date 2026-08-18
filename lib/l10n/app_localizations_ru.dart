@@ -382,7 +382,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sectionSupport => 'ПОДДЕРЖКА';
 
   @override
-  String get helpCenter => 'Центр помощи';
+  String get helpCenter => 'Написать в поддержку';
 
   @override
   String get contactUs => 'Связаться с нами';

@@ -811,7 +811,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpCenter.
   ///
   /// In en, this message translates to:
-  /// **'Help Center'**
+  /// **'Contact Support'**
   String get helpCenter;
 
   /// No description provided for @contactUs.

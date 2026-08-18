@@ -380,7 +380,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sectionSupport => 'SUPPORT';
 
   @override
-  String get helpCenter => 'Help Center';
+  String get helpCenter => 'Contact Support';
 
   @override
   String get contactUs => 'Contact Us';

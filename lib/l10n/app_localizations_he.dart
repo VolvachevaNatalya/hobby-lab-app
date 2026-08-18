@@ -375,7 +375,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get sectionSupport => 'תמיכה';
 
   @override
-  String get helpCenter => 'מרכז עזרה';
+  String get helpCenter => 'פנייה לתמיכה';
 
   @override
   String get contactUs => 'צור קשר';
