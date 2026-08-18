@@ -11,6 +11,7 @@ import 'settings_screen.dart';
 import 'organization_registration_screen.dart';
 import 'my_organizations_screen.dart';
 import 'join_organization_screen.dart';
+import 'about_us_screen.dart';
 import 'splash_screen.dart';
 import '../routing/transitions.dart';
 
@@ -530,10 +531,12 @@ class _GeneralSettingsSection extends StatelessWidget {
         ),
       ),
       _SettingItem(
-        icon: Icons.lock_rounded,
+        icon: Icons.info_outline_rounded,
         iconColor: const Color(0xFFEC4899),
-        label: l10n.security,
-        onTap: () {},
+        label: l10n.aboutUs,
+        onTap: () => Navigator.of(context).push(
+          slideRoute(builder: (_) => const AboutUsScreen()),
+        ),
       ),
     ];
 

@@ -466,6 +466,90 @@ abstract class AppLocalizations {
   /// **'Security'**
   String get security;
 
+  /// No description provided for @aboutUs.
+  ///
+  /// In en, this message translates to:
+  /// **'About Us'**
+  String get aboutUs;
+
+  /// No description provided for @aboutIntroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'HobbyLab - where interests bring people together.'**
+  String get aboutIntroTitle;
+
+  /// No description provided for @aboutIntroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re building a platform that brings people, organizations, and events together in one place. Here you can discover classes, clubs, activities, and events nearby - for children and adults.'**
+  String get aboutIntroBody;
+
+  /// No description provided for @aboutOurGoalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Our Goal'**
+  String get aboutOurGoalTitle;
+
+  /// No description provided for @aboutOurGoalBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We want to make discovering interesting activities simple and convenient. Instead of searching through dozens of websites, groups, and pages - you can find options, learn more, and choose what suits you in one place.'**
+  String get aboutOurGoalBody;
+
+  /// No description provided for @aboutForParticipantsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'For Participants'**
+  String get aboutForParticipantsTitle;
+
+  /// No description provided for @aboutForParticipantsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Find activities and events by interest, category, and location, save your favorites, and discover new opportunities nearby.'**
+  String get aboutForParticipantsBody;
+
+  /// No description provided for @aboutForOrgsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'For Organizations'**
+  String get aboutForOrgsTitle;
+
+  /// No description provided for @aboutForOrgsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'HobbyLab helps organizations and instructors introduce themselves, publish classes and events, and reach new participants.'**
+  String get aboutForOrgsBody;
+
+  /// No description provided for @aboutBizServicesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional Services for Businesses'**
+  String get aboutBizServicesTitle;
+
+  /// No description provided for @aboutBizServicesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We also help businesses grow and promote themselves - from social media management and digital marketing to content creation and digital products. SMM, targeted advertising, photo and video production, Reels, website and app development - everything your business needs to become more visible and attract new customers.'**
+  String get aboutBizServicesBody;
+
+  /// No description provided for @aboutContactTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Have a Question?'**
+  String get aboutContactTitle;
+
+  /// No description provided for @aboutContactBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re always happy to hear from you - whether you have a question, suggestion, or idea.'**
+  String get aboutContactBody;
+
+  /// No description provided for @aboutContactBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Support'**
+  String get aboutContactBtn;
+
   /// No description provided for @joinAsProvider.
   ///
   /// In en, this message translates to:

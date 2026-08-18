@@ -198,6 +198,54 @@ class AppLocalizationsRu extends AppLocalizations {
   String get security => 'Безопасность';
 
   @override
+  String get aboutUs => 'О нас';
+
+  @override
+  String get aboutIntroTitle => 'HobbyLab - место, где интересы находят людей.';
+
+  @override
+  String get aboutIntroBody =>
+      'Мы создаём платформу, которая объединяет людей, организации и события в одном месте. Здесь можно находить занятия, кружки, клубы и мероприятия рядом с собой - для детей и взрослых.';
+
+  @override
+  String get aboutOurGoalTitle => 'Наша цель';
+
+  @override
+  String get aboutOurGoalBody =>
+      'Мы хотим сделать поиск интересных занятий простым и удобным. Вместо десятков сайтов, групп и страниц - одно место, где можно посмотреть варианты, узнать подробности и выбрать то, что подходит именно вам.';
+
+  @override
+  String get aboutForParticipantsTitle => 'Для участников';
+
+  @override
+  String get aboutForParticipantsBody =>
+      'Ищите занятия и события по интересам, категории и местоположению, сохраняйте понравившееся и открывайте для себя новые возможности рядом.';
+
+  @override
+  String get aboutForOrgsTitle => 'Для организаций';
+
+  @override
+  String get aboutForOrgsBody =>
+      'HobbyLab помогает организациям и преподавателям рассказывать о себе, публиковать занятия и события и находить новых участников.';
+
+  @override
+  String get aboutBizServicesTitle => 'Дополнительные услуги для бизнеса';
+
+  @override
+  String get aboutBizServicesBody =>
+      'Мы также помогаем бизнесам развиваться и продвигать себя - от ведения социальных сетей и digital-маркетинга до создания контента и цифровых продуктов. SMM, таргетированная реклама, фото- и видеосъёмка, Reels, создание сайтов и приложений - всё, что помогает вашему бизнесу стать заметнее и привлекать новых клиентов.';
+
+  @override
+  String get aboutContactTitle => 'Есть вопрос?';
+
+  @override
+  String get aboutContactBody =>
+      'Мы всегда рады обратной связи - вопросам, предложениям и идеям.';
+
+  @override
+  String get aboutContactBtn => 'Написать в поддержку';
+
+  @override
   String get joinAsProvider => 'Стать организатором';
 
   @override

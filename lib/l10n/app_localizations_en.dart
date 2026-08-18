@@ -198,6 +198,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String get security => 'Security';
 
   @override
+  String get aboutUs => 'About Us';
+
+  @override
+  String get aboutIntroTitle =>
+      'HobbyLab - where interests bring people together.';
+
+  @override
+  String get aboutIntroBody =>
+      'We\'re building a platform that brings people, organizations, and events together in one place. Here you can discover classes, clubs, activities, and events nearby - for children and adults.';
+
+  @override
+  String get aboutOurGoalTitle => 'Our Goal';
+
+  @override
+  String get aboutOurGoalBody =>
+      'We want to make discovering interesting activities simple and convenient. Instead of searching through dozens of websites, groups, and pages - you can find options, learn more, and choose what suits you in one place.';
+
+  @override
+  String get aboutForParticipantsTitle => 'For Participants';
+
+  @override
+  String get aboutForParticipantsBody =>
+      'Find activities and events by interest, category, and location, save your favorites, and discover new opportunities nearby.';
+
+  @override
+  String get aboutForOrgsTitle => 'For Organizations';
+
+  @override
+  String get aboutForOrgsBody =>
+      'HobbyLab helps organizations and instructors introduce themselves, publish classes and events, and reach new participants.';
+
+  @override
+  String get aboutBizServicesTitle => 'Additional Services for Businesses';
+
+  @override
+  String get aboutBizServicesBody =>
+      'We also help businesses grow and promote themselves - from social media management and digital marketing to content creation and digital products. SMM, targeted advertising, photo and video production, Reels, website and app development - everything your business needs to become more visible and attract new customers.';
+
+  @override
+  String get aboutContactTitle => 'Have a Question?';
+
+  @override
+  String get aboutContactBody =>
+      'We\'re always happy to hear from you - whether you have a question, suggestion, or idea.';
+
+  @override
+  String get aboutContactBtn => 'Contact Support';
+
+  @override
   String get joinAsProvider => 'Join as a service provider';
 
   @override

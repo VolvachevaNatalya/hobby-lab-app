@@ -197,6 +197,55 @@ class AppLocalizationsHe extends AppLocalizations {
   String get security => 'אבטחה';
 
   @override
+  String get aboutUs => 'אודותינו';
+
+  @override
+  String get aboutIntroTitle =>
+      'HobbyLab - המקום שבו תחומי עניין מחברים בין אנשים.';
+
+  @override
+  String get aboutIntroBody =>
+      'אנחנו בונים פלטפורמה שמחברת בין אנשים, ארגונים ואירועים במקום אחד. כאן אפשר למצוא חוגים, פעילויות, מועדונים ואירועים באזור שלכם - לילדים ולמבוגרים.';
+
+  @override
+  String get aboutOurGoalTitle => 'המטרה שלנו';
+
+  @override
+  String get aboutOurGoalBody =>
+      'אנחנו רוצים להפוך את החיפוש אחר פעילויות מעניינות לפשוט ונוח. במקום לחפש בעשרות אתרים, קבוצות ועמודים - אפשר לראות אפשרויות, לקבל מידע ולבחור את מה שמתאים לכם במקום אחד.';
+
+  @override
+  String get aboutForParticipantsTitle => 'למשתתפים';
+
+  @override
+  String get aboutForParticipantsBody =>
+      'מצאו פעילויות ואירועים לפי תחומי עניין, קטגוריה ומיקום, שמרו את המועדפים שלכם וגלו אפשרויות חדשות באזור.';
+
+  @override
+  String get aboutForOrgsTitle => 'לארגונים';
+
+  @override
+  String get aboutForOrgsBody =>
+      'HobbyLab עוזרת לארגונים ולמדריכים להציג את עצמם, לפרסם חוגים ואירועים ולהגיע למשתתפים חדשים.';
+
+  @override
+  String get aboutBizServicesTitle => 'שירותים נוספים לעסקים';
+
+  @override
+  String get aboutBizServicesBody =>
+      'אנחנו גם עוזרים לעסקים להתפתח ולקדם את עצמם - מניהול רשתות חברתיות ושיווק דיגיטלי ועד ליצירת תוכן ומוצרים דיגיטליים. ניהול סושיאל, פרסום ממומן וממוקד, צילום וידאו ותמונות, יצירת Reels, בניית אתרים ופיתוח אפליקציות - כל מה שיכול לעזור לעסק שלכם לבלוט ולהגיע ללקוחות חדשים.';
+
+  @override
+  String get aboutContactTitle => 'יש לכם שאלה?';
+
+  @override
+  String get aboutContactBody =>
+      'אנחנו תמיד שמחים לשמוע מכם - שאלות, הצעות ורעיונות.';
+
+  @override
+  String get aboutContactBtn => 'פנייה לתמיכה';
+
+  @override
   String get joinAsProvider => 'הצטרף כספק שירות';
 
   @override
