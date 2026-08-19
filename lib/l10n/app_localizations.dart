@@ -2230,6 +2230,390 @@ abstract class AppLocalizations {
   /// **'Terms & Privacy'**
   String get termsPrivacy;
 
+  /// No description provided for @touTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Use'**
+  String get touTitle;
+
+  /// No description provided for @touLastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: August 2026'**
+  String get touLastUpdated;
+
+  /// No description provided for @touS1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'1. About HobbyLab'**
+  String get touS1Title;
+
+  /// No description provided for @touS1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'HobbyLab is a platform for discovering, publishing, and organizing classes, clubs, events, and other activities. The service helps users discover activities that interest them and enables organizations, instructors, and other service providers to present their services and connect with potential participants.\n\nBy using HobbyLab, you agree to use the service lawfully and in good faith.'**
+  String get touS1Body;
+
+  /// No description provided for @touS2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'2. User Accounts'**
+  String get touS2Title;
+
+  /// No description provided for @touS2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Some HobbyLab features may require an account.\n\nYou are responsible for providing accurate information, maintaining the security of your account, and activities performed through your account.\n\nYou may not use another person\'s account without permission or impersonate another person or organization.'**
+  String get touS2Body;
+
+  /// No description provided for @touS3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Organizations and Service Providers'**
+  String get touS3Title;
+
+  /// No description provided for @touS3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Users who create or manage organization profiles are responsible for the accuracy of published information, including descriptions, schedules, prices, age restrictions, contact information, photographs, and other information.\n\nHobbyLab provides a technology platform and is not the organizer, instructor, or direct provider of classes or events published by users unless explicitly stated otherwise.'**
+  String get touS3Body;
+
+  /// No description provided for @touS4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'4. Classes and Events'**
+  String get touS4Title;
+
+  /// No description provided for @touS4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Information regarding classes, events, schedules, prices, availability, and other conditions may be provided by organizations or other platform users.\n\nWe aim to provide a useful and reliable service, but we cannot guarantee that information supplied by third parties is always complete, accurate, or current.\n\nBefore attending or paying for a service, users should verify important details directly with the relevant organization or service provider when appropriate.'**
+  String get touS4Body;
+
+  /// No description provided for @touS5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'5. User Content'**
+  String get touS5Title;
+
+  /// No description provided for @touS5Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Users may publish information, photographs, reviews, descriptions, and other content where such functionality is available in HobbyLab.\n\nBy publishing content, you confirm that you have the right to publish it and that it does not violate the rights of others or applicable law.\n\nYou retain ownership of your content but grant HobbyLab the right to display and technically process it as necessary to operate the service.'**
+  String get touS5Body;
+
+  /// No description provided for @touS6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'6. Prohibited Use'**
+  String get touS6Title;
+
+  /// No description provided for @touS6Body.
+  ///
+  /// In en, this message translates to:
+  /// **'You may not use HobbyLab for fraud, spam, unlawful, abusive, or harmful content, infringement of others\' rights, attempts to gain unauthorized access, or interference with the operation of the service.\n\nWe may remove content, restrict functionality, or suspend accounts when necessary to enforce these rules, comply with law, or protect users and the service.'**
+  String get touS6Body;
+
+  /// No description provided for @touS7Title.
+  ///
+  /// In en, this message translates to:
+  /// **'7. Reviews and User Interactions'**
+  String get touS7Title;
+
+  /// No description provided for @touS7Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews and other user-generated content reflect the opinions of their authors.\n\nUsers must submit reviews in good faith and may not use review features for threats, harassment, spam, or knowingly false information.'**
+  String get touS7Body;
+
+  /// No description provided for @touS8Title.
+  ///
+  /// In en, this message translates to:
+  /// **'8. Payments'**
+  String get touS8Title;
+
+  /// No description provided for @touS8Body.
+  ///
+  /// In en, this message translates to:
+  /// **'If HobbyLab introduces payments, booking functionality, or other paid services in the future, additional terms may apply and will be presented before use of the relevant functionality.\n\nWhere payment occurs directly between a user and an organization outside HobbyLab, payment, cancellation, and refund terms are determined between the user and the relevant organization.'**
+  String get touS8Body;
+
+  /// No description provided for @touS9Title.
+  ///
+  /// In en, this message translates to:
+  /// **'9. Service Availability'**
+  String get touS9Title;
+
+  /// No description provided for @touS9Body.
+  ///
+  /// In en, this message translates to:
+  /// **'We aim to keep HobbyLab available and functioning properly but do not guarantee uninterrupted or error-free operation.\n\nFeatures may be changed, added, or removed as the platform develops.'**
+  String get touS9Body;
+
+  /// No description provided for @touS10Title.
+  ///
+  /// In en, this message translates to:
+  /// **'10. Limitation of Liability'**
+  String get touS10Title;
+
+  /// No description provided for @touS10Body.
+  ///
+  /// In en, this message translates to:
+  /// **'To the extent permitted by applicable law, HobbyLab is not responsible for the acts of organizations, instructors, participants, or other third parties, or for the quality, safety, or outcome of services provided outside HobbyLab\'s direct control.\n\nNothing in these Terms limits rights that cannot legally be limited under applicable law.'**
+  String get touS10Body;
+
+  /// No description provided for @touS11Title.
+  ///
+  /// In en, this message translates to:
+  /// **'11. Ending Use and Account Deletion'**
+  String get touS11Title;
+
+  /// No description provided for @touS11Body.
+  ///
+  /// In en, this message translates to:
+  /// **'You may stop using HobbyLab at any time.\n\nWhere account deletion functionality is available in the application, you may use it to delete your account. Certain information may be retained where necessary to comply with law, maintain security, prevent fraud, or resolve disputes.'**
+  String get touS11Body;
+
+  /// No description provided for @touS12Title.
+  ///
+  /// In en, this message translates to:
+  /// **'12. Changes to These Terms'**
+  String get touS12Title;
+
+  /// No description provided for @touS12Body.
+  ///
+  /// In en, this message translates to:
+  /// **'We may update these Terms periodically to reflect changes to the service, law, or security requirements.\n\nThe current version will be available in HobbyLab and will display the date of the latest update.'**
+  String get touS12Body;
+
+  /// No description provided for @touS13Title.
+  ///
+  /// In en, this message translates to:
+  /// **'13. Governing Law'**
+  String get touS13Title;
+
+  /// No description provided for @touS13Body.
+  ///
+  /// In en, this message translates to:
+  /// **'These Terms are governed by the laws of the State of Israel, unless mandatory provisions of applicable law require otherwise.'**
+  String get touS13Body;
+
+  /// No description provided for @touS14Title.
+  ///
+  /// In en, this message translates to:
+  /// **'14. Contact Us'**
+  String get touS14Title;
+
+  /// No description provided for @touS14Body.
+  ///
+  /// In en, this message translates to:
+  /// **'If you have questions about these Terms or HobbyLab, use the \"Contact Support\" function in the application.'**
+  String get touS14Body;
+
+  /// No description provided for @ppTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get ppTitle;
+
+  /// No description provided for @ppLastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: August 2026'**
+  String get ppLastUpdated;
+
+  /// No description provided for @ppS1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'1. General'**
+  String get ppS1Title;
+
+  /// No description provided for @ppS1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'HobbyLab respects user privacy and aims to process personal data transparently and securely.\n\nThis Policy explains what data may be processed when you use HobbyLab, why it is used, with whom it may be shared, and the choices available to users regarding their data.'**
+  String get ppS1Body;
+
+  /// No description provided for @ppS2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Data We May Process'**
+  String get ppS2Title;
+
+  /// No description provided for @ppS2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Depending on the HobbyLab features you use, we may process:\n\n- name and email address;\n- user profile information;\n- registration and authentication information;\n- organization profile information;\n- information about classes, events, and other published activities;\n- photographs and other content uploaded by users;\n- reviews and other user-generated content;\n- messages and information related to communication features;\n- saved activities and preferences within the application;\n- city and location information if the user grants location permission;\n- support requests;\n- technical information necessary for operation, security, and diagnostics.'**
+  String get ppS2Body;
+
+  /// No description provided for @ppS3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Third-Party Sign-In'**
+  String get ppS3Title;
+
+  /// No description provided for @ppS3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'HobbyLab may allow users to sign in using third-party services such as Google or Apple.\n\nWhen you use such sign-in, we receive only the information the relevant provider makes available to HobbyLab in accordance with your settings and the provider\'s terms, such as an account identifier, name, or email address.\n\nYour Google or Apple password is not provided to HobbyLab.'**
+  String get ppS3Body;
+
+  /// No description provided for @ppS4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'4. How We Use Data'**
+  String get ppS4Title;
+
+  /// No description provided for @ppS4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'We may use data to:\n\n- create and manage accounts;\n- provide HobbyLab functionality;\n- display profiles, organizations, classes, and events;\n- personalize and improve the user experience;\n- find activities based on location;\n- maintain favorites and user preferences;\n- provide communication features;\n- process support requests;\n- maintain service security and prevent abuse;\n- diagnose technical problems;\n- comply with legal obligations.'**
+  String get ppS4Body;
+
+  /// No description provided for @ppS5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'5. Location'**
+  String get ppS5Title;
+
+  /// No description provided for @ppS5Body.
+  ///
+  /// In en, this message translates to:
+  /// **'If you grant location permission, HobbyLab may use location information to determine your city, display nearby classes, organizations or events, and provide other location-related functionality.\n\nLocation access is subject to your device permissions.\n\nIf you do not grant permission, functionality that does not require location should remain available where technically possible. You may be able to select your city or location manually where that functionality is provided.'**
+  String get ppS5Body;
+
+  /// No description provided for @ppS6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'6. Photos and Media'**
+  String get ppS6Title;
+
+  /// No description provided for @ppS6Body.
+  ///
+  /// In en, this message translates to:
+  /// **'If you select or upload photographs, HobbyLab processes those files to provide the feature you selected, such as displaying a user, organization, class, or event image.\n\nAccess to photos or the camera is requested only when necessary for a feature initiated by the user.'**
+  String get ppS6Body;
+
+  /// No description provided for @ppS7Title.
+  ///
+  /// In en, this message translates to:
+  /// **'7. Support'**
+  String get ppS7Title;
+
+  /// No description provided for @ppS7Body.
+  ///
+  /// In en, this message translates to:
+  /// **'When you submit a support request, we process your account information, the subject and content of the request, its date, and other information necessary to handle the request.\n\nTo allow the HobbyLab team to receive support requests promptly, the content of a request and related information may be transmitted through Telegram, which is used by the team as an internal support notification channel.\n\nDo not submit passwords, payment card details, or other information that is not necessary to resolve your request.'**
+  String get ppS7Body;
+
+  /// No description provided for @ppS8Title.
+  ///
+  /// In en, this message translates to:
+  /// **'8. Sharing with Third Parties'**
+  String get ppS8Title;
+
+  /// No description provided for @ppS8Body.
+  ///
+  /// In en, this message translates to:
+  /// **'HobbyLab may use third-party technology and infrastructure providers necessary to operate the service, such as hosting, data storage, authentication, notification delivery, and support services.\n\nSuch providers may process data only as necessary to provide the relevant services.\n\nWe do not sell users\' personal data.\n\nInformation may also be disclosed where required by law, pursuant to a lawful request by a competent authority, or where necessary to protect the rights or safety of users or the service.'**
+  String get ppS8Body;
+
+  /// No description provided for @ppS9Title.
+  ///
+  /// In en, this message translates to:
+  /// **'9. Public Information'**
+  String get ppS9Title;
+
+  /// No description provided for @ppS9Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Some information that a user or organization publishes in HobbyLab is intended to be visible to other users.\n\nThis may include organization names and descriptions, photographs, information about classes and events, schedules, contact information, and other content the user chooses to publish.\n\nDo not publish information that you do not want to make available to other users.'**
+  String get ppS9Body;
+
+  /// No description provided for @ppS10Title.
+  ///
+  /// In en, this message translates to:
+  /// **'10. Data Retention'**
+  String get ppS10Title;
+
+  /// No description provided for @ppS10Body.
+  ///
+  /// In en, this message translates to:
+  /// **'We retain personal data for as long as necessary to provide HobbyLab, fulfill the purposes described in this Policy, maintain security, and comply with legal obligations.\n\nFollowing account deletion, account-related data is deleted or anonymized except for information that must be retained for legitimate reasons, such as compliance with legal obligations, fraud prevention, security, or dispute resolution.'**
+  String get ppS10Body;
+
+  /// No description provided for @ppS11Title.
+  ///
+  /// In en, this message translates to:
+  /// **'11. Security'**
+  String get ppS11Title;
+
+  /// No description provided for @ppS11Body.
+  ///
+  /// In en, this message translates to:
+  /// **'We use reasonable technical and organizational measures designed to protect personal data against unauthorized access, alteration, disclosure, or destruction.\n\nHowever, no method of storage or transmission over the internet can guarantee absolute security.'**
+  String get ppS11Body;
+
+  /// No description provided for @ppS12Title.
+  ///
+  /// In en, this message translates to:
+  /// **'12. User Rights'**
+  String get ppS12Title;
+
+  /// No description provided for @ppS12Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Depending on applicable law, users may have rights to receive information about the processing of their personal data, access their data, and request correction or deletion where provided by law.\n\nUsers may also modify certain information directly through HobbyLab functionality.\n\nFor questions or requests concerning personal data, use the \"Contact Support\" function.'**
+  String get ppS12Body;
+
+  /// No description provided for @ppS13Title.
+  ///
+  /// In en, this message translates to:
+  /// **'13. Account Deletion'**
+  String get ppS13Title;
+
+  /// No description provided for @ppS13Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Users may request deletion of their account and associated personal data using the account deletion functionality provided in HobbyLab.\n\nCertain information may be retained after deletion only where necessary for legitimate reasons, including legal obligations, security, fraud prevention, or dispute resolution.'**
+  String get ppS13Body;
+
+  /// No description provided for @ppS14Title.
+  ///
+  /// In en, this message translates to:
+  /// **'14. Children\'s Data'**
+  String get ppS14Title;
+
+  /// No description provided for @ppS14Body.
+  ///
+  /// In en, this message translates to:
+  /// **'HobbyLab may contain information about activities and events intended for children, but the presence of children\'s activities does not by itself mean that the service is intended for independent use by young children.\n\nWhere a child\'s personal information is provided by a parent, guardian, organization, or other authorized person, that person must have authority to provide the information.\n\nWe recommend avoiding publication of unnecessary personal information about children.'**
+  String get ppS14Body;
+
+  /// No description provided for @ppS15Title.
+  ///
+  /// In en, this message translates to:
+  /// **'15. Changes to This Policy'**
+  String get ppS15Title;
+
+  /// No description provided for @ppS15Body.
+  ///
+  /// In en, this message translates to:
+  /// **'We may update this Policy as HobbyLab, our data practices, or legal requirements change.\n\nThe current version will be available in the application and will display the date of the latest update.'**
+  String get ppS15Body;
+
+  /// No description provided for @ppS16Title.
+  ///
+  /// In en, this message translates to:
+  /// **'16. Contact Us'**
+  String get ppS16Title;
+
+  /// No description provided for @ppS16Body.
+  ///
+  /// In en, this message translates to:
+  /// **'For privacy questions or requests relating to access, correction, or deletion of personal data, use the \"Contact Support\" function in HobbyLab.'**
+  String get ppS16Body;
+
   /// No description provided for @exitDashboard.
   ///
   /// In en, this message translates to:

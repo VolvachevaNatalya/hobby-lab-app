@@ -18,6 +18,7 @@ import 'org_invites_screen.dart';
 import 'org_members_screen.dart';
 import '../routing/transitions.dart';
 import '../utils/event_grouping.dart';
+import 'terms_privacy_screen.dart';
 
 bool _orgEventIsUpcoming(OrgEvent e) {
   final now = DateTime.now();
@@ -2284,7 +2285,9 @@ class _ProfileTabState extends State<_ProfileTab> {
                       _SettingItem(
                         Icons.policy_outlined,
                         l10n.termsPrivacy,
-                        onTap: () => _showComingSoon(l10n.termsPrivacy),
+                        onTap: () => Navigator.of(context).push(
+                          slideRoute(builder: (_) => const TermsPrivacyScreen()),
+                        ),
                       ),
                     ],
                   ),

@@ -6,6 +6,7 @@ import '../locale_provider.dart';
 import 'edit_profile_screen.dart';
 import 'language_selection_screen.dart';
 import 'support_request_screen.dart';
+import 'terms_privacy_screen.dart';
 import '../routing/transitions.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -106,6 +107,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ),
                         onTap: () => _push(context, const LanguageSelectionScreen()),
+                      ),
+                      _NavRow(
+                        icon: Icons.policy_outlined,
+                        iconColor: const Color(0xFFEC4899),
+                        label: l10n.termsPrivacy,
+                        onTap: () => _push(context, const TermsPrivacyScreen()),
                       ),
                     ]),
                     const SizedBox(height: 28),
