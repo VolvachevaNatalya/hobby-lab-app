@@ -553,10 +553,25 @@
   "dateTimeSection": "Дата и время",
   "selectDate": "Выберите дату",
   "selectTime": "Выберите время",
+  "endDateTimeSection": "Дата и время окончания",
+  "optionalLabel": "(необязательно)",
+  "endDateLabel": "Дата окончания",
+  "endTimeLabel": "Время окончания",
+  "endDateTimeValidation": "Дата окончания должна быть позже начала",
   "locationSection": "Местоположение",
   "addressHint": "Адрес / место проведения",
   "cityHint": "Город",
   "participantsSection": "Участники",
+  "ageAudienceLabel": "Возраст",
+  "ageGroupToddlers": "Малыши (2-5)",
+  "ageGroupKids": "Дети (6-11)",
+  "ageGroupTeens": "Подростки (12-17)",
+  "ageGroupAdults": "Взрослые (18+)",
+  "ageGroupFamily": "Для всей семьи (0+)",
+  "ageGroupCustom": "Другой возраст",
+  "ageCustomRangeError": "Минимальный возраст не может быть больше максимального",
+  "ageFromHint": "От",
+  "ageToHint": "До",
   "minAgeHint": "Мин. возраст",
   "maxAgeHint": "Макс. возраст",
   "maxCapacityHint": "Макс. вместимость",
@@ -783,6 +798,8 @@
   "noClassesAvailable": "Занятий пока нет",
   "upcomingEventsSection": "Предстоящие мероприятия",
   "noUpcomingEvents": "Предстоящих мероприятий нет",
+  "pastEventsSection": "Прошедшие мероприятия",
+  "eventPastBanner": "Это мероприятие уже прошло",
   "unnamedClass": "Без названия",
   "retryBtn": "Повторить",
   "pleaseWaitUpload": "Подождите, пока загрузится изображение",
@@ -800,5 +817,31 @@
   "accountSecuritySection": "БЕЗОПАСНОСТЬ АККАУНТА",
   "timeNow": "Сейчас",
   "changesSavedSuccess": "Изменения сохранены",
-  "failedToSaveChanges": "Не удалось сохранить изменения"
+  "failedToSaveChanges": "Не удалось сохранить изменения",
+
+  "notifEventUpdatedTitle": "Мероприятие обновлено",
+  "notifEventUpdatedBody": "Мероприятие {eventTitle} было обновлено",
+  "@notifEventUpdatedBody": {
+    "placeholders": {
+      "eventTitle": { "type": "String" }
+    }
+  },
+  "notifEventCancelledTitle": "Мероприятие отменено",
+  "notifEventCancelledBody": "Мероприятие {eventTitle} было отменено",
+  "@notifEventCancelledBody": {
+    "placeholders": {
+      "eventTitle": { "type": "String" }
+    }
+  },
+  "notifNewEventTitle": "Новое мероприятие",
+  "notifNewEventBody": "{organizationName} добавил новое мероприятие: {eventTitle}",
+  "@notifNewEventBody": {
+    "placeholders": {
+      "organizationName": { "type": "String" },
+      "eventTitle": { "type": "String" }
+    }
+  },
+  "notifEventNotAvailable": "Это мероприятие больше недоступно.",
+
+  "dateYesterday": "Вчера"
 }

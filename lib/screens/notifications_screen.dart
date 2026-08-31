@@ -6,9 +6,10 @@ import '../services/api_service.dart';
 import '../models/app_notification.dart' as model;
 import 'main_shell.dart';
 import 'notification_details_screen.dart';
-import 'notifications_settings_screen.dart';
+import 'event_details_screen.dart';
 import 'chat_screen.dart';
 import '../routing/transitions.dart';
+import '../unread_state.dart';
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -22,6 +23,7 @@ class _NotificationData {
   final String rawTime;
   final bool isRead;
   final String? conversationId;
+  final Map<String, dynamic> payload;
 
   const _NotificationData({
     this.id,
@@ -33,6 +35,7 @@ class _NotificationData {
     required this.rawTime,
     required this.isRead,
     this.conversationId,
+    this.payload = const {},
   });
 }
 
@@ -66,6 +69,26 @@ String _resolveNotifText(String raw, AppLocalizations l10n) {
   }
 }
 
+String _titleForItem(_NotificationData data, AppLocalizations l10n) {
+  switch (data.type) {
+    case 'event_updated': return l10n.notifEventUpdatedTitle;
+    case 'event_cancelled': return l10n.notifEventCancelledTitle;
+    case 'new_event': return l10n.notifNewEventTitle;
+    default: return _resolveNotifText(data.title, l10n);
+  }
+}
+
+String _bodyForItem(_NotificationData data, AppLocalizations l10n) {
+  final eventTitle = (data.payload['event_title'] as String?) ?? '';
+  final orgName = (data.payload['organization_name'] as String?) ?? '';
+  switch (data.type) {
+    case 'event_updated': return l10n.notifEventUpdatedBody(eventTitle);
+    case 'event_cancelled': return l10n.notifEventCancelledBody(eventTitle);
+    case 'new_event': return l10n.notifNewEventBody(orgName, eventTitle);
+    default: return _resolveNotifText(data.body, l10n);
+  }
+}
+
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
 class NotificationsScreen extends StatefulWidget {
@@ -82,22 +105,39 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   void initState() {
     super.initState();
+    MainShell.tabNotifier.addListener(_onTabChange);
     _loadNotifications();
   }
 
-  Future<void> _loadNotifications() async {
+  @override
+  void dispose() {
+    MainShell.tabNotifier.removeListener(_onTabChange);
+    super.dispose();
+  }
+
+  void _onTabChange() {
+    if (MainShell.tabNotifier.value == 3 && mounted) {
+      _loadNotifications(silent: true);
+      UnreadCounts.refresh();
+    }
+  }
+
+  Future<void> _loadNotifications({bool silent = false}) async {
+    if (!silent || _items.isEmpty) setState(() => _loading = true);
     try {
       final notifs = await ApiService.getNotifications();
       if (!mounted) return;
       setState(() {
         _items = notifs
             .where((n) =>
-                !n.isRead && n.type.toLowerCase() != 'new_organization')
+                !n.isRead &&
+                n.type.toLowerCase() != 'new_organization' &&
+                n.type.toLowerCase() != 'message')
             .map((n) => _toDisplay(n))
             .toList();
+        _loading = false;
       });
     } catch (_) {
-    } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
@@ -123,6 +163,18 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         icon = Icons.explore_rounded;
         color = const Color(0xFFEC4899);
         break;
+      case 'event_updated':
+        icon = Icons.edit_calendar_rounded;
+        color = const Color(0xFF0EA5E9);
+        break;
+      case 'event_cancelled':
+        icon = Icons.event_busy_rounded;
+        color = const Color(0xFFEF4444);
+        break;
+      case 'new_event':
+        icon = Icons.event_rounded;
+        color = const Color(0xFF10B981);
+        break;
       default:
         icon = Icons.notifications_rounded;
         color = const Color(0xFF0EA5E9);
@@ -137,6 +189,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       rawTime: n.rawTime,
       isRead: n.isRead,
       conversationId: n.conversationId,
+      payload: n.payload,
     );
   }
 
@@ -146,6 +199,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     setState(() => _items.removeAt(index));
     try {
       await ApiService.markNotificationRead(item.id!);
+      UnreadCounts.refresh();
     } catch (_) {}
   }
 
@@ -177,7 +231,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             final l10n = AppLocalizations.of(context)!;
                             return _NotificationTile(
                               data: item,
-                              onTap: () {
+                              onTap: () async {
                                 _markRead(i);
                                 if (item.type == 'message') {
                                   final convId = item.conversationId;
@@ -190,14 +244,46 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                       name: '',
                                       initials: '?',
                                       avatarColor: item.iconColor,
+                                      conversationUserId: '',
+                                      organizationId: '',
                                     )));
+                                  }
+                                } else if (item.type == 'event_updated' ||
+                                           item.type == 'event_cancelled' ||
+                                           item.type == 'new_event') {
+                                  final eventId = item.payload['event_id']?.toString() ?? '';
+                                  if (eventId.isEmpty) return;
+                                  final nav = Navigator.of(context);
+                                  final messenger = ScaffoldMessenger.of(context);
+                                  try {
+                                    await ApiService.getEvent(eventId);
+                                    if (!mounted) return;
+                                    nav.push(slideRoute(
+                                      builder: (_) => EventDetailsScreen(eventId: eventId),
+                                    ));
+                                  } catch (_) {
+                                    if (!mounted) return;
+                                    messenger.showSnackBar(SnackBar(
+                                      backgroundColor: const Color(0xFFEF4444),
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      content: Text(
+                                        l10n.notifEventNotAvailable,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 13,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ));
                                   }
                                 } else {
                                   Navigator.of(context).push(slideRoute(builder: (_) => NotificationDetailsScreen(
                                     icon: item.icon,
                                     iconColor: item.iconColor,
-                                    title: _resolveNotifText(item.title, l10n),
-                                    body: _resolveNotifText(item.body, l10n),
+                                    title: _titleForItem(item, l10n),
+                                    body: _bodyForItem(item, l10n),
                                     time: _fmtNotifTime(item.rawTime, l10n),
                                   )));
                                 }
@@ -287,26 +373,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               color: AppColors.textPrimary,
             ),
           ),
-          const Spacer(),
-          GestureDetector(
-            onTap: () => Navigator.of(context).push(
-              slideRoute(builder: (_) => const NotificationsSettingsScreen()),
-            ),
-            child: Container(
-              width: 42,
-              height: 42,
-              decoration: BoxDecoration(
-                color: AppColors.surfaceElevated,
-                borderRadius: BorderRadius.circular(13),
-                border: Border.all(color: AppColors.divider),
-              ),
-              child: const Icon(
-                Icons.settings_rounded,
-                color: AppColors.textPrimary,
-                size: 20,
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -353,7 +419,7 @@ class _NotificationTile extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          _resolveNotifText(data.title, l10n),
+                          _titleForItem(data, l10n),
                           style: GoogleFonts.poppins(
                             fontSize: 14,
                             fontWeight: data.isRead
@@ -374,7 +440,7 @@ class _NotificationTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    _resolveNotifText(data.body, l10n),
+                    _bodyForItem(data, l10n),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.poppins(

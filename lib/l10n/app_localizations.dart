@@ -2788,6 +2788,36 @@ abstract class AppLocalizations {
   /// **'Select time'**
   String get selectTime;
 
+  /// No description provided for @endDateTimeSection.
+  ///
+  /// In en, this message translates to:
+  /// **'End Date & Time'**
+  String get endDateTimeSection;
+
+  /// No description provided for @optionalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'(optional)'**
+  String get optionalLabel;
+
+  /// No description provided for @endDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'End date'**
+  String get endDateLabel;
+
+  /// No description provided for @endTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'End time'**
+  String get endTimeLabel;
+
+  /// No description provided for @endDateTimeValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'End must be after start'**
+  String get endDateTimeValidation;
+
   /// No description provided for @locationSection.
   ///
   /// In en, this message translates to:
@@ -2811,6 +2841,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Participants'**
   String get participantsSection;
+
+  /// No description provided for @ageAudienceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get ageAudienceLabel;
+
+  /// No description provided for @ageGroupToddlers.
+  ///
+  /// In en, this message translates to:
+  /// **'Toddlers (2-5)'**
+  String get ageGroupToddlers;
+
+  /// No description provided for @ageGroupKids.
+  ///
+  /// In en, this message translates to:
+  /// **'Kids (6-11)'**
+  String get ageGroupKids;
+
+  /// No description provided for @ageGroupTeens.
+  ///
+  /// In en, this message translates to:
+  /// **'Teens (12-17)'**
+  String get ageGroupTeens;
+
+  /// No description provided for @ageGroupAdults.
+  ///
+  /// In en, this message translates to:
+  /// **'Adults (18+)'**
+  String get ageGroupAdults;
+
+  /// No description provided for @ageGroupFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Whole Family (0+)'**
+  String get ageGroupFamily;
+
+  /// No description provided for @ageGroupCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom age'**
+  String get ageGroupCustom;
+
+  /// No description provided for @ageCustomRangeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Min age must not exceed max age'**
+  String get ageCustomRangeError;
+
+  /// No description provided for @ageFromHint.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get ageFromHint;
+
+  /// No description provided for @ageToHint.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get ageToHint;
 
   /// No description provided for @minAgeHint.
   ///
@@ -3664,6 +3754,18 @@ abstract class AppLocalizations {
   /// **'No upcoming events'**
   String get noUpcomingEvents;
 
+  /// No description provided for @pastEventsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Past Events'**
+  String get pastEventsSection;
+
+  /// No description provided for @eventPastBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'This event has already taken place'**
+  String get eventPastBanner;
+
   /// No description provided for @unnamedClass.
   ///
   /// In en, this message translates to:
@@ -3765,6 +3867,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to save changes'**
   String get failedToSaveChanges;
+
+  /// No description provided for @notifEventUpdatedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Event Updated'**
+  String get notifEventUpdatedTitle;
+
+  /// No description provided for @notifEventUpdatedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The event {eventTitle} has been updated'**
+  String notifEventUpdatedBody(String eventTitle);
+
+  /// No description provided for @notifEventCancelledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Event Cancelled'**
+  String get notifEventCancelledTitle;
+
+  /// No description provided for @notifEventCancelledBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The event {eventTitle} has been cancelled'**
+  String notifEventCancelledBody(String eventTitle);
+
+  /// No description provided for @notifNewEventTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Event'**
+  String get notifNewEventTitle;
+
+  /// No description provided for @notifNewEventBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{organizationName} posted a new event: {eventTitle}'**
+  String notifNewEventBody(String organizationName, String eventTitle);
+
+  /// No description provided for @notifEventNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This event is no longer available.'**
+  String get notifEventNotAvailable;
+
+  /// No description provided for @dateYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get dateYesterday;
 }
 
 class _AppLocalizationsDelegate

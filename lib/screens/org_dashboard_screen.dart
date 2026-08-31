@@ -17,14 +17,11 @@ import 'change_password_screen.dart';
 import 'org_invites_screen.dart';
 import 'org_members_screen.dart';
 import '../routing/transitions.dart';
+import '../utils/event_date_formatter.dart';
 import '../utils/event_grouping.dart';
 import 'terms_privacy_screen.dart';
 
-bool _orgEventIsUpcoming(OrgEvent e) {
-  final now = DateTime.now();
-  if (e.endDateTime != null) return !e.endDateTime!.isBefore(now);
-  return !e.date.isBefore(now);
-}
+bool _orgEventIsUpcoming(OrgEvent e) => !e.isPast;
 
 // ─── Main screen ──────────────────────────────────────────────────────────────
 
@@ -209,12 +206,14 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
           cityNameRu: json['city_name_ru']?.toString(),
           minAge: (json['min_age'] ?? 0) as int,
           maxAge: (json['max_age'] ?? 99) as int,
+          ageGroups: (json['age_groups'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
           capacity: (json['capacity'] ?? 0) as int,
           price: (json['price'] as num?)?.toDouble() ?? 0,
           priceComment: json['price_comment']?.toString(),
           isNationwide: json['is_nationwide'] as bool? ?? false,
           seriesId: json['series_id'] as int?,
           occurrenceIndex: json['occurrence_index'] as int?,
+          isPast: json['is_past'] as bool? ?? false,
           recurrence: json['recurrence'] != null
               ? EventRecurrence.fromJson(
                   json['recurrence'] as Map<String, dynamic>,
@@ -1176,6 +1175,12 @@ class _EventPreviewCard extends StatelessWidget {
             'ru' => event.cityNameRu,
             _ => event.cityNameEn,
           };
+    final months = [
+      '', l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+      l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+      l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+      l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
+    ];
     return GestureDetector(
       onTap: onManage,
       child: Container(
@@ -1219,11 +1224,13 @@ class _EventPreviewCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${fmtDate(event.date)} · ${fmtTime(event.time)} · ${event.price == 0 ? AppLocalizations.of(context)!.eventFree : '₪${event.price.toStringAsFixed(0)}'}',
+                    '${fmtOrgEventDateTime(event.date, event.time, event.endDateTime, months)} · ${event.price == 0 ? l10n.eventFree : '₪${event.price.toStringAsFixed(0)}'}',
                     style: GoogleFonts.poppins(
                       fontSize: 11,
                       color: AppColors.textMuted,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   if (cityLabel != null && cityLabel.isNotEmpty)
                     Row(
@@ -1836,7 +1843,11 @@ class _EventCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 _InfoRow(Icons.calendar_today_rounded, fmtDate(event.date)),
                 const SizedBox(height: 4),
-                _InfoRow(Icons.access_time_rounded, fmtTime(event.time)),
+                _InfoRow(Icons.access_time_rounded, fmtOrgEventTimeDisplay(event.time, event.endDateTime, event.date)),
+                if (event.endDateTime != null && event.endDateTime!.day != event.date.day) ...[
+                  const SizedBox(height: 4),
+                  _InfoRow(Icons.event_available_rounded, fmtDate(event.endDateTime!)),
+                ],
                 if (event.location.isNotEmpty) ...[
                   const SizedBox(height: 4),
                   _InfoRow(Icons.location_on_rounded, event.location),

@@ -73,12 +73,14 @@ class OrgEvent {
   int capacity;
   double price;
   String? priceComment;
+  List<String> ageGroups;
   bool isNationwide;
   DateTime? endDateTime;
   int? seriesId;
   int? occurrenceIndex;
   EventRecurrence? recurrence;
   String? imageUrl;
+  bool isPast;
 
   OrgEvent({
     required this.id,
@@ -97,6 +99,7 @@ class OrgEvent {
     this.cityNameRu,
     this.minAge = 0,
     this.maxAge = 99,
+    this.ageGroups = const [],
     this.capacity = 20,
     this.price = 0,
     this.priceComment,
@@ -105,6 +108,7 @@ class OrgEvent {
     this.occurrenceIndex,
     this.recurrence,
     this.imageUrl,
+    this.isPast = false,
   });
 }
 

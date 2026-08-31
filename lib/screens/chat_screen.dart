@@ -3,6 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../services/api_service.dart';
+import '../models/conversation.dart';
+import '../models/chat_message.dart';
+import '../unread_state.dart';
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -34,8 +37,6 @@ String _fmtChatTime(String raw, AppLocalizations l10n) {
   }
 }
 
-
-
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
 class ChatScreen extends StatefulWidget {
@@ -43,6 +44,9 @@ class ChatScreen extends StatefulWidget {
   final String name;
   final String initials;
   final Color avatarColor;
+  // Counterpart context — set by MessagesScreen; empty when opened from other screens
+  final String conversationUserId;
+  final String organizationId;
 
   const ChatScreen({
     super.key,
@@ -50,6 +54,8 @@ class ChatScreen extends StatefulWidget {
     required this.name,
     required this.initials,
     required this.avatarColor,
+    this.conversationUserId = '',
+    this.organizationId = '',
   });
 
   @override
@@ -61,17 +67,22 @@ class _ChatScreenState extends State<ChatScreen> {
   final _scrollController = ScrollController();
   List<_Msg> _messages = [];
   bool _loadingMessages = false;
-  late String _orgName;
-  late String _orgInitials;
+  late String _headerName;
+  late String _headerInitials;
+  // Resolved at load time; may start empty if caller didn't provide them
+  String _conversationUserId = '';
+  String _organizationId = '';
 
   @override
   void initState() {
     super.initState();
-    _orgName = widget.name;
-    _orgInitials = widget.initials;
+    _headerName = widget.name;
+    _headerInitials = widget.initials;
+    _conversationUserId = widget.conversationUserId;
+    _organizationId = widget.organizationId;
     if (widget.conversationId != null) {
-      _loadMessages();
-      _resolveOrgName();
+      _loadData();
+      _markConversationRead();
     }
   }
 
@@ -82,48 +93,77 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
-  Future<void> _loadMessages() async {
+  Future<void> _loadData() async {
     setState(() => _loadingMessages = true);
     try {
-      final results = await Future.wait([
+      // getCurrentUserId() is in-memory cached — no extra network call
+      final myId = await ApiService.getCurrentUserId();
+
+      // If caller didn't supply conversation context, fetch it now (parallel with messages)
+      final needsContext = _conversationUserId.isEmpty || _organizationId.isEmpty;
+      final List<dynamic> results = await Future.wait([
         ApiService.getMessages(widget.conversationId!),
-        ApiService.getCurrentUserId(),
+        if (needsContext) ApiService.getConversations(),
       ]);
+
       if (!mounted) return;
-      final msgs = results[0] as List<dynamic>;
-      final myId = results[1] as String;
-      debugPrint('[Chat] Current user_id: "$myId"');
+
+      final msgs = results[0] as List<ChatMessage>;
+
+      if (needsContext) {
+        final convos = results[1] as List<Conversation>;
+        try {
+          final convo = convos.firstWhere((c) => c.id == widget.conversationId);
+          _conversationUserId = convo.userId;
+          _organizationId = convo.organizationId;
+          // Update header when caller didn't pre-set the counterpart name
+          if (widget.name.isEmpty) {
+            final isUserSide = myId == convo.userId;
+            final name = isUserSide ? convo.organizationName : convo.userName;
+            if (name.isNotEmpty && mounted) {
+              setState(() {
+                _headerName = name;
+                _headerInitials = _computeInitials(name);
+              });
+            }
+          }
+        } catch (_) {}
+      }
+
+      // Determine which side the current user is on in this conversation
+      final isUserSide = _conversationUserId.isNotEmpty
+          ? myId == _conversationUserId
+          : true; // safe default when context is unavailable
+
       setState(() {
-        _messages = msgs.map((m) {
-          final msg = m as dynamic;
-          final senderId = (msg.senderId as String);
-          final isUser = senderId == myId;
-          debugPrint('[Chat] sender_id: "$senderId" → isUser: $isUser');
-          return _Msg(msg.content as String, isUser, msg.time as String);
+        _messages = msgs.map((msg) {
+          final bool isMine;
+          if (msg.senderType.isNotEmpty &&
+              _conversationUserId.isNotEmpty &&
+              _organizationId.isNotEmpty) {
+            // New backend format: use sender_type + sender_id together
+            isMine = isUserSide
+                ? (msg.senderType == 'user' && msg.senderId == _conversationUserId)
+                : (msg.senderType == 'organization' && msg.senderId == _organizationId);
+          } else {
+            // Legacy rows (no sender_type) or missing context: fall back to
+            // comparing sender_id against the current user's own ID
+            isMine = msg.senderId == myId;
+          }
+          return _Msg(msg.content, isMine, msg.time);
         }).toList();
       });
     } catch (e) {
-      debugPrint('[Chat] Error loading messages: $e');
+      debugPrint('[Chat] Error loading data: $e');
     } finally {
       if (mounted) setState(() => _loadingMessages = false);
     }
   }
 
-  Future<void> _resolveOrgName() async {
+  Future<void> _markConversationRead() async {
     try {
-      final convos = await ApiService.getConversations();
-      final convo = convos.firstWhere(
-        (c) => c.id == widget.conversationId,
-      );
-      if (convo.organizationId.isEmpty) return;
-      final org = await ApiService.getOrganization(convo.organizationId);
-      final name = (org['name'] ?? '').toString();
-      if (name.isNotEmpty && mounted) {
-        setState(() {
-          _orgName = name;
-          _orgInitials = _computeInitials(name);
-        });
-      }
+      await ApiService.markConversationRead(widget.conversationId!);
+      UnreadCounts.refresh();
     } catch (_) {}
   }
 
@@ -192,7 +232,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       itemBuilder: (_, i) => _ChatBubble(
                         msg: _messages[i],
                         avatarColor: widget.avatarColor,
-                        initial: widget.initials[0],
+                        initial: _headerInitials.isNotEmpty ? _headerInitials[0] : '?',
                       ),
                     ),
             ),
@@ -239,7 +279,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             child: Center(
               child: Text(
-                _orgInitials,
+                _headerInitials.isNotEmpty ? _headerInitials : '?',
                 style: GoogleFonts.poppins(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
@@ -251,7 +291,7 @@ class _ChatScreenState extends State<ChatScreen> {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              _orgName,
+              _headerName,
               overflow: TextOverflow.ellipsis,
               style: GoogleFonts.poppins(
                 fontSize: 15,

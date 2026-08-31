@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hobby_lab/l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
-import '../services/api_service.dart';
+import '../unread_state.dart';
 import 'home_screen.dart';
 import 'messages_screen.dart';
 import 'saved_screen.dart';
@@ -22,7 +22,6 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
-  int _unreadMessages = 0;
 
   static const _screens = <Widget>[
     HomeScreen(),
@@ -36,13 +35,21 @@ class _MainShellState extends State<MainShell> {
   void initState() {
     super.initState();
     MainShell.tabNotifier.addListener(_onTabChange);
-    _refreshUnread();
+    UnreadCounts.messageCount.addListener(_onCountChange);
+    UnreadCounts.alertCount.addListener(_onCountChange);
+    UnreadCounts.refresh();
   }
 
   @override
   void dispose() {
     MainShell.tabNotifier.removeListener(_onTabChange);
+    UnreadCounts.messageCount.removeListener(_onCountChange);
+    UnreadCounts.alertCount.removeListener(_onCountChange);
     super.dispose();
+  }
+
+  void _onCountChange() {
+    if (mounted) setState(() {});
   }
 
   void _onTabChange() {
@@ -50,16 +57,7 @@ class _MainShellState extends State<MainShell> {
     final newIndex = MainShell.tabNotifier.value;
     if (_currentIndex == newIndex) return;
     setState(() => _currentIndex = newIndex);
-    if (newIndex == 1) _refreshUnread();
-  }
-
-  Future<void> _refreshUnread() async {
-    try {
-      final convos = await ApiService.getConversations();
-      if (!mounted) return;
-      final total = convos.fold<int>(0, (sum, c) => sum + c.unreadCount);
-      setState(() => _unreadMessages = total);
-    } catch (_) {}
+    if (newIndex == 1 || newIndex == 3) UnreadCounts.refresh();
   }
 
   @override
@@ -89,11 +87,9 @@ class _MainShellState extends State<MainShell> {
     ];
 
     return PopScope(
-      // Allow the system back to exit only when already on Home (index 0).
       canPop: _currentIndex == 0,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) {
-          // Back pressed on a non-Home tab → go to Home instead of exiting.
           setState(() => _currentIndex = 0);
           MainShell.tabNotifier.value = 0;
         }
@@ -106,11 +102,11 @@ class _MainShellState extends State<MainShell> {
         bottomNavigationBar: _BottomNav(
           currentIndex: _currentIndex,
           items: navItems,
-          unreadMessages: _unreadMessages,
+          unreadMessages: UnreadCounts.messageCount.value,
+          unreadAlerts: UnreadCounts.alertCount.value,
           onTap: (i) {
             setState(() => _currentIndex = i);
             MainShell.tabNotifier.value = i;
-            if (i == 1) _refreshUnread();
           },
         ),
       ),
@@ -134,12 +130,14 @@ class _BottomNav extends StatelessWidget {
   final int currentIndex;
   final List<_NavItem> items;
   final int unreadMessages;
+  final int unreadAlerts;
   final ValueChanged<int> onTap;
 
   const _BottomNav({
     required this.currentIndex,
     required this.items,
     required this.unreadMessages,
+    required this.unreadAlerts,
     required this.onTap,
   });
 
@@ -167,7 +165,12 @@ class _BottomNav extends StatelessWidget {
             children: List.generate(items.length, (i) {
               final item = items[i];
               final isActive = currentIndex == i;
-              final showBadge = i == 1 && unreadMessages > 0;
+              final badgeCount = i == 1
+                  ? unreadMessages
+                  : i == 3
+                      ? unreadAlerts
+                      : 0;
+              final showBadge = badgeCount > 0;
               return Expanded(
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
@@ -200,9 +203,7 @@ class _BottomNav extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  unreadMessages > 99
-                                      ? '99+'
-                                      : '$unreadMessages',
+                                  badgeCount > 99 ? '99+' : '$badgeCount',
                                   style: GoogleFonts.poppins(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w700,

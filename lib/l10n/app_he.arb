@@ -553,10 +553,25 @@
   "dateTimeSection": "תאריך ושעה",
   "selectDate": "בחר תאריך",
   "selectTime": "בחר שעה",
+  "endDateTimeSection": "תאריך ושעת סיום",
+  "optionalLabel": "(אופציונלי)",
+  "endDateLabel": "תאריך סיום",
+  "endTimeLabel": "שעת סיום",
+  "endDateTimeValidation": "הסיום חייב להיות אחרי ההתחלה",
   "locationSection": "מיקום",
   "addressHint": "כתובת / שם המקום",
   "cityHint": "עיר",
   "participantsSection": "משתתפים",
+  "ageAudienceLabel": "גיל",
+  "ageGroupToddlers": "פעוטות (2-5)",
+  "ageGroupKids": "ילדים (6-11)",
+  "ageGroupTeens": "נוער (12-17)",
+  "ageGroupAdults": "מבוגרים (18+)",
+  "ageGroupFamily": "כל המשפחה (0+)",
+  "ageGroupCustom": "גיל מותאם",
+  "ageCustomRangeError": "הגיל המינימלי לא יכול לעלות על המקסימלי",
+  "ageFromHint": "מ-",
+  "ageToHint": "עד",
   "minAgeHint": "גיל מינימלי",
   "maxAgeHint": "גיל מקסימלי",
   "maxCapacityHint": "מקסימום משתתפים",
@@ -783,6 +798,8 @@
   "noClassesAvailable": "אין שיעורים עדיין",
   "upcomingEventsSection": "אירועים קרובים",
   "noUpcomingEvents": "אין אירועים קרובים",
+  "pastEventsSection": "אירועים שעברו",
+  "eventPastBanner": "אירוע זה כבר התקיים",
   "unnamedClass": "שיעור ללא שם",
   "retryBtn": "נסה שוב",
   "pleaseWaitUpload": "המתן לסיום העלאת התמונה",
@@ -800,5 +817,31 @@
   "accountSecuritySection": "אבטחת חשבון",
   "timeNow": "עכשיו",
   "changesSavedSuccess": "השינויים נשמרו בהצלחה",
-  "failedToSaveChanges": "שמירת השינויים נכשלה"
+  "failedToSaveChanges": "שמירת השינויים נכשלה",
+
+  "notifEventUpdatedTitle": "האירוע עודכן",
+  "notifEventUpdatedBody": "האירוע {eventTitle} עודכן",
+  "@notifEventUpdatedBody": {
+    "placeholders": {
+      "eventTitle": { "type": "String" }
+    }
+  },
+  "notifEventCancelledTitle": "האירוע בוטל",
+  "notifEventCancelledBody": "האירוע {eventTitle} בוטל",
+  "@notifEventCancelledBody": {
+    "placeholders": {
+      "eventTitle": { "type": "String" }
+    }
+  },
+  "notifNewEventTitle": "אירוע חדש",
+  "notifNewEventBody": "אירוע חדש מ{organizationName}: {eventTitle}",
+  "@notifNewEventBody": {
+    "placeholders": {
+      "organizationName": { "type": "String" },
+      "eventTitle": { "type": "String" }
+    }
+  },
+  "notifEventNotAvailable": "האירוע הזה כבר לא זמין.",
+
+  "dateYesterday": "אתמול"
 }

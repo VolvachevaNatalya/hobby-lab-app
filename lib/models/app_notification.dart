@@ -1,3 +1,13 @@
+import 'dart:convert';
+
+Map<String, dynamic> _parsePayload(dynamic raw) {
+  if (raw is Map<String, dynamic>) return raw;
+  if (raw is String && raw.isNotEmpty) {
+    try { return jsonDecode(raw) as Map<String, dynamic>; } catch (_) {}
+  }
+  return const {};
+}
+
 class AppNotification {
   final String id;
   final String title;
@@ -6,6 +16,7 @@ class AppNotification {
   final String rawTime;
   final String type;
   final String? conversationId;
+  final Map<String, dynamic> payload;
 
   const AppNotification({
     required this.id,
@@ -15,6 +26,7 @@ class AppNotification {
     required this.rawTime,
     required this.type,
     this.conversationId,
+    this.payload = const {},
   });
 
   factory AppNotification.fromJson(Map<String, dynamic> json) {
@@ -26,6 +38,7 @@ class AppNotification {
       rawTime: (json['created_at'] ?? json['time'] ?? '').toString(),
       type: (json['type'] ?? '').toString(),
       conversationId: json['conversation_id']?.toString(),
+      payload: _parsePayload(json['payload']),
     );
   }
 }

@@ -1450,6 +1450,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectTime => 'Select time';
 
   @override
+  String get endDateTimeSection => 'End Date & Time';
+
+  @override
+  String get optionalLabel => '(optional)';
+
+  @override
+  String get endDateLabel => 'End date';
+
+  @override
+  String get endTimeLabel => 'End time';
+
+  @override
+  String get endDateTimeValidation => 'End must be after start';
+
+  @override
   String get locationSection => 'Location';
 
   @override
@@ -1460,6 +1475,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get participantsSection => 'Participants';
+
+  @override
+  String get ageAudienceLabel => 'Age';
+
+  @override
+  String get ageGroupToddlers => 'Toddlers (2-5)';
+
+  @override
+  String get ageGroupKids => 'Kids (6-11)';
+
+  @override
+  String get ageGroupTeens => 'Teens (12-17)';
+
+  @override
+  String get ageGroupAdults => 'Adults (18+)';
+
+  @override
+  String get ageGroupFamily => 'Whole Family (0+)';
+
+  @override
+  String get ageGroupCustom => 'Custom age';
+
+  @override
+  String get ageCustomRangeError => 'Min age must not exceed max age';
+
+  @override
+  String get ageFromHint => 'From';
+
+  @override
+  String get ageToHint => 'To';
 
   @override
   String get minAgeHint => 'Min age';
@@ -1932,6 +1977,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noUpcomingEvents => 'No upcoming events';
 
   @override
+  String get pastEventsSection => 'Past Events';
+
+  @override
+  String get eventPastBanner => 'This event has already taken place';
+
+  @override
   String get unnamedClass => 'Unnamed Class';
 
   @override
@@ -1982,4 +2033,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get failedToSaveChanges => 'Failed to save changes';
+
+  @override
+  String get notifEventUpdatedTitle => 'Event Updated';
+
+  @override
+  String notifEventUpdatedBody(String eventTitle) {
+    return 'The event $eventTitle has been updated';
+  }
+
+  @override
+  String get notifEventCancelledTitle => 'Event Cancelled';
+
+  @override
+  String notifEventCancelledBody(String eventTitle) {
+    return 'The event $eventTitle has been cancelled';
+  }
+
+  @override
+  String get notifNewEventTitle => 'New Event';
+
+  @override
+  String notifNewEventBody(String organizationName, String eventTitle) {
+    return '$organizationName posted a new event: $eventTitle';
+  }
+
+  @override
+  String get notifEventNotAvailable => 'This event is no longer available.';
+
+  @override
+  String get dateYesterday => 'Yesterday';
 }

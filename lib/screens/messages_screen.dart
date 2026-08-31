@@ -6,6 +6,7 @@ import '../services/api_service.dart';
 import 'main_shell.dart';
 import 'chat_screen.dart';
 import '../routing/transitions.dart';
+import '../unread_state.dart';
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -17,6 +18,8 @@ class _Conversation {
   final String lastMessage;
   final String time;
   final int unread;
+  final String conversationUserId;
+  final String organizationId;
 
   const _Conversation({
     this.id = '',
@@ -26,6 +29,8 @@ class _Conversation {
     required this.lastMessage,
     required this.time,
     required this.unread,
+    this.conversationUserId = '',
+    this.organizationId = '',
   });
 }
 
@@ -33,6 +38,31 @@ String _initials(String name) {
   final words = name.trim().split(RegExp(r'\s+'));
   if (words.length >= 2) return '${words[0][0]}${words[1][0]}'.toUpperCase();
   return name.substring(0, name.length.clamp(0, 2)).toUpperCase();
+}
+
+String _fmtConvTime(String raw, AppLocalizations l10n) {
+  if (raw.isEmpty) return '';
+  try {
+    final dt = DateTime.parse(raw).toLocal();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final msgDay = DateTime(dt.year, dt.month, dt.day);
+    final diff = today.difference(msgDay).inDays;
+    if (diff == 0) {
+      return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+    }
+    if (diff == 1) return l10n.dateYesterday;
+    final months = [
+      l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+      l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+      l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+      l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
+    ];
+    if (dt.year == now.year) return '${dt.day} ${months[dt.month - 1]}';
+    return '${dt.day} ${months[dt.month - 1]} ${dt.year}';
+  } catch (_) {
+    return '';
+  }
 }
 
 const _avatarColors = [
@@ -80,28 +110,27 @@ class _MessagesScreenState extends State<MessagesScreen> {
   }
 
   Future<void> _loadConversations() async {
-    setState(() {
-      _allConvos = [];
-      _loading = true;
-    });
+    if (_allConvos.isEmpty) setState(() => _loading = true);
     try {
+      // getCurrentUserId() is cached in memory after first login — no extra network call
+      final myId = await ApiService.getCurrentUserId();
       final convos = await ApiService.getConversations();
       if (!mounted) return;
-      final orgNames = <String, String>{};
-      await Future.wait(convos.map((c) async {
-        if (c.organizationId.isNotEmpty) {
-          try {
-            final org = await ApiService.getOrganization(c.organizationId);
-            orgNames[c.organizationId] = (org['name'] ?? '').toString();
-          } catch (_) {}
+      convos.sort((a, b) {
+        try {
+          return DateTime.parse(b.time).compareTo(DateTime.parse(a.time));
+        } catch (_) {
+          return 0;
         }
-      }));
-      if (!mounted) return;
+      });
       setState(() {
         _allConvos = convos.asMap().entries.map((e) {
           final c = e.value;
-          final name = orgNames[c.organizationId] ??
-              (c.name.isNotEmpty ? c.name : 'Organization #${c.organizationId}');
+          // Counterpart rule: if I am the customer, show the org name; otherwise show the user name
+          final isUserSide = c.userId == myId;
+          final name = isUserSide
+              ? (c.organizationName.isNotEmpty ? c.organizationName : 'Organization #${c.organizationId}')
+              : (c.userName.isNotEmpty ? c.userName : 'User');
           return _Conversation(
             id: c.id,
             name: name,
@@ -110,11 +139,14 @@ class _MessagesScreenState extends State<MessagesScreen> {
             lastMessage: c.lastMessage,
             time: c.time,
             unread: c.unreadCount,
+            conversationUserId: c.userId,
+            organizationId: c.organizationId,
           );
         }).toList();
+        _loading = false;
       });
+      UnreadCounts.refresh();
     } catch (_) {
-    } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
@@ -152,32 +184,13 @@ class _MessagesScreenState extends State<MessagesScreen> {
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-      child: Row(
-        children: [
-          Text(
-            AppLocalizations.of(context)!.messages,
-            style: GoogleFonts.poppins(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const Spacer(),
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: AppColors.surfaceElevated,
-              borderRadius: BorderRadius.circular(13),
-              border: Border.all(color: AppColors.divider),
-            ),
-            child: const Icon(
-              Icons.notifications_rounded,
-              color: AppColors.textPrimary,
-              size: 22,
-            ),
-          ),
-        ],
+      child: Text(
+        AppLocalizations.of(context)!.messages,
+        style: GoogleFonts.poppins(
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimary,
+        ),
       ),
     );
   }
@@ -298,6 +311,8 @@ class _ConversationTile extends StatelessWidget {
           name: conversation.name,
           initials: conversation.initials,
           avatarColor: conversation.avatarColor,
+          conversationUserId: conversation.conversationUserId,
+          organizationId: conversation.organizationId,
         )),
       ),
       child: Padding(
@@ -365,8 +380,9 @@ class _ConversationTile extends StatelessWidget {
                           ),
                         ),
                       ),
+                      const SizedBox(width: 8),
                       Text(
-                        conversation.time,
+                        _fmtConvTime(conversation.time, AppLocalizations.of(context)!),
                         style: GoogleFonts.poppins(
                           fontSize: 11,
                           color: hasUnread

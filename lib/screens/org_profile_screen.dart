@@ -17,6 +17,7 @@ import 'event_details_screen.dart';
 import 'reviews_screen.dart';
 import 'write_review_screen.dart';
 import '../routing/transitions.dart';
+import '../utils/event_date_formatter.dart';
 import '../utils/event_grouping.dart';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -152,7 +153,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
       final futures = <Future>[
         ApiService.getOrganization(widget.orgId!),
         ApiService.getOrgClasses(widget.orgId!),
-        ApiService.getPublicOrgEvents(widget.orgId!),
+        ApiService.getPublicOrgEvents(widget.orgId!, includePast: true),
       ];
       final results = await Future.wait(
         futures.map((f) => f.catchError((_) => null)),
@@ -957,13 +958,18 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
   // ── Events ───────────────────────────────────────────────────────────────────
 
   Widget _buildEventsSection() {
-    final grouped = groupRawEventsBySeries(_events);
+    final l10n = AppLocalizations.of(context)!;
+    final currentRaw = _events.where((e) => !(e['is_past'] as bool? ?? false)).toList();
+    final pastRaw = _events.where((e) => e['is_past'] as bool? ?? false).toList();
+    final currentGrouped = groupRawEventsBySeries(currentRaw);
+    final pastGrouped = groupRawEventsBySeries(pastRaw);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _SectionHeader(title: AppLocalizations.of(context)!.upcomingEventsSection),
+        _SectionHeader(title: l10n.upcomingEventsSection),
         const SizedBox(height: 14),
-        if (grouped.isEmpty)
+        if (currentGrouped.isEmpty)
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(20),
@@ -973,37 +979,60 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
               border: Border.all(color: AppColors.divider),
             ),
             child: Text(
-              AppLocalizations.of(context)!.noUpcomingEvents,
+              l10n.noUpcomingEvents,
               textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
-                fontSize: 13,
-                color: AppColors.textMuted,
-              ),
+              style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textMuted),
             ),
           )
         else
-          ...List.generate(grouped.length, (i) {
-            final ev = grouped[i];
+          ...List.generate(currentGrouped.length, (i) {
+            final ev = currentGrouped[i];
             return Padding(
-              padding: EdgeInsets.only(bottom: i < grouped.length - 1 ? 10 : 0),
+              padding: EdgeInsets.only(bottom: i < currentGrouped.length - 1 ? 10 : 0),
               child: GestureDetector(
                 onTap: () {
                   final eventId = ev['id']?.toString();
                   if (eventId == null) return;
-                  Navigator.of(context).push(
-                    slideRoute(
-                      builder: (_) => EventDetailsScreen(
-                        eventId: eventId,
-                        colorStart: widget.colorStart,
-                        colorEnd: widget.colorEnd,
-                      ),
+                  Navigator.of(context).push(slideRoute(
+                    builder: (_) => EventDetailsScreen(
+                      eventId: eventId,
+                      colorStart: widget.colorStart,
+                      colorEnd: widget.colorEnd,
                     ),
-                  );
+                  ));
                 },
                 child: _EventTile(event: ev),
               ),
             );
           }),
+        if (pastGrouped.isNotEmpty) ...[
+          const SizedBox(height: 24),
+          _SectionHeader(title: l10n.pastEventsSection),
+          const SizedBox(height: 14),
+          ...List.generate(pastGrouped.length, (i) {
+            final ev = pastGrouped[i];
+            return Padding(
+              padding: EdgeInsets.only(bottom: i < pastGrouped.length - 1 ? 10 : 0),
+              child: Opacity(
+                opacity: 0.6,
+                child: GestureDetector(
+                  onTap: () {
+                    final eventId = ev['id']?.toString();
+                    if (eventId == null) return;
+                    Navigator.of(context).push(slideRoute(
+                      builder: (_) => EventDetailsScreen(
+                        eventId: eventId,
+                        colorStart: widget.colorStart,
+                        colorEnd: widget.colorEnd,
+                      ),
+                    ));
+                  },
+                  child: _EventTile(event: ev),
+                ),
+              ),
+            );
+          }),
+        ],
       ],
     );
   }
@@ -1546,25 +1575,18 @@ class _EventTile extends StatelessWidget {
     final name = (event['title'] ?? event['name'] ?? l10n.unnamedEvent)
         .toString();
     final description = (event['description'] ?? '').toString();
-    final startDt = event['start_datetime'];
-    String? dateStr;
-    if (startDt != null) {
-      try {
-        final dt = DateTime.parse(startDt.toString());
-        final timeStr =
-            '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
-        final months = [
-          '',
-          l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
-          l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
-          l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
-          l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
-        ];
-        dateStr = '${dt.day} ${months[dt.month]} ${dt.year} · $timeStr';
-      } catch (_) {
-        dateStr = startDt.toString();
-      }
-    }
+    final months = [
+      '',
+      l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+      l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+      l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+      l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
+    ];
+    final dateStr = fmtEventDateTime(
+      event['start_datetime']?.toString(),
+      event['end_datetime']?.toString(),
+      months,
+    );
     final locale = Localizations.localeOf(context).languageCode;
     final String cityLabel;
     if (event['is_nationwide'] == true) {

@@ -1437,6 +1437,21 @@ class AppLocalizationsHe extends AppLocalizations {
   String get selectTime => 'בחר שעה';
 
   @override
+  String get endDateTimeSection => 'תאריך ושעת סיום';
+
+  @override
+  String get optionalLabel => '(אופציונלי)';
+
+  @override
+  String get endDateLabel => 'תאריך סיום';
+
+  @override
+  String get endTimeLabel => 'שעת סיום';
+
+  @override
+  String get endDateTimeValidation => 'הסיום חייב להיות אחרי ההתחלה';
+
+  @override
   String get locationSection => 'מיקום';
 
   @override
@@ -1447,6 +1462,36 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get participantsSection => 'משתתפים';
+
+  @override
+  String get ageAudienceLabel => 'גיל';
+
+  @override
+  String get ageGroupToddlers => 'פעוטות (2-5)';
+
+  @override
+  String get ageGroupKids => 'ילדים (6-11)';
+
+  @override
+  String get ageGroupTeens => 'נוער (12-17)';
+
+  @override
+  String get ageGroupAdults => 'מבוגרים (18+)';
+
+  @override
+  String get ageGroupFamily => 'כל המשפחה (0+)';
+
+  @override
+  String get ageGroupCustom => 'גיל מותאם';
+
+  @override
+  String get ageCustomRangeError => 'הגיל המינימלי לא יכול לעלות על המקסימלי';
+
+  @override
+  String get ageFromHint => 'מ-';
+
+  @override
+  String get ageToHint => 'עד';
 
   @override
   String get minAgeHint => 'גיל מינימלי';
@@ -1920,6 +1965,12 @@ class AppLocalizationsHe extends AppLocalizations {
   String get noUpcomingEvents => 'אין אירועים קרובים';
 
   @override
+  String get pastEventsSection => 'אירועים שעברו';
+
+  @override
+  String get eventPastBanner => 'אירוע זה כבר התקיים';
+
+  @override
   String get unnamedClass => 'שיעור ללא שם';
 
   @override
@@ -1970,4 +2021,34 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get failedToSaveChanges => 'שמירת השינויים נכשלה';
+
+  @override
+  String get notifEventUpdatedTitle => 'האירוע עודכן';
+
+  @override
+  String notifEventUpdatedBody(String eventTitle) {
+    return 'האירוע $eventTitle עודכן';
+  }
+
+  @override
+  String get notifEventCancelledTitle => 'האירוע בוטל';
+
+  @override
+  String notifEventCancelledBody(String eventTitle) {
+    return 'האירוע $eventTitle בוטל';
+  }
+
+  @override
+  String get notifNewEventTitle => 'אירוע חדש';
+
+  @override
+  String notifNewEventBody(String organizationName, String eventTitle) {
+    return 'אירוע חדש מ$organizationName: $eventTitle';
+  }
+
+  @override
+  String get notifEventNotAvailable => 'האירוע הזה כבר לא זמין.';
+
+  @override
+  String get dateYesterday => 'אתמול';
 }

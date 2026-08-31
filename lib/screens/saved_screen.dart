@@ -10,6 +10,7 @@ import 'activity_details_screen.dart';
 import 'org_profile_screen.dart';
 import 'event_details_screen.dart';
 import '../routing/transitions.dart';
+import '../utils/event_date_formatter.dart';
 
 class SavedScreen extends StatefulWidget {
   const SavedScreen({super.key});
@@ -95,8 +96,10 @@ class _SavedScreenState extends State<SavedScreen> {
               ApiService.getEvent(f.entityId).catchError((_) => null as dynamic)),
         );
         if (!mounted) return;
-        savedEventsList.value =
-            eventResults.whereType<AppEvent>().toList();
+        savedEventsList.value = eventResults
+            .whereType<AppEvent>()
+            .where((e) => !e.isPast)
+            .toList();
       } else {
         savedEventsList.value = [];
       }
@@ -794,13 +797,7 @@ class _SavedEventCard extends StatelessWidget {
       l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
       l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
     ];
-    String? dateStr;
-    if (event.startDatetime != null) {
-      final dt = DateTime.tryParse(event.startDatetime!);
-      if (dt != null) {
-        dateStr = '${dt.day} ${months[dt.month]} ${dt.year}';
-      }
-    }
+    final dateStr = fmtEventDateTime(event.startDatetime, event.endDatetime, months);
 
     return GestureDetector(
       onTap: onTap,

@@ -19,6 +19,7 @@ class AppEvent {
   final int? organizationId;
   final int? minAge;
   final int? maxAge;
+  final List<String> ageGroups;
   final int? capacity;
   final double? distanceKm;
   final bool isNationwide;
@@ -30,6 +31,7 @@ class AppEvent {
   final EventRecurrence? recurrence;
   final String? imageUrl;
   final List<AppCategory> categories;
+  final bool isPast;
 
   const AppEvent({
     required this.id,
@@ -49,6 +51,7 @@ class AppEvent {
     this.organizationId,
     this.minAge,
     this.maxAge,
+    this.ageGroups = const [],
     this.capacity,
     this.distanceKm,
     this.isNationwide = false,
@@ -60,6 +63,7 @@ class AppEvent {
     this.recurrence,
     this.imageUrl,
     this.categories = const [],
+    this.isPast = false,
   });
 
   factory AppEvent.fromJson(Map<String, dynamic> json) => AppEvent(
@@ -82,6 +86,7 @@ class AppEvent {
     organizationId: json['organization_id'] as int?,
     minAge: json['min_age'] as int?,
     maxAge: json['max_age'] as int?,
+    ageGroups: (json['age_groups'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? const [],
     capacity: json['capacity'] as int?,
     distanceKm: (json['distance_km'] as num?)?.toDouble(),
     isNationwide: json['is_nationwide'] as bool? ?? false,
@@ -95,6 +100,7 @@ class AppEvent {
         : null,
     imageUrl: json['image_url']?.toString(),
     categories: _parseCategories(json),
+    isPast: json['is_past'] as bool? ?? false,
   );
 }
 

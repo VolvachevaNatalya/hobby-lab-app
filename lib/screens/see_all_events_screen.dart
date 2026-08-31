@@ -4,6 +4,7 @@ import '../l10n/app_localizations.dart';
 import '../models/app_event.dart';
 import '../services/api_service.dart';
 import '../theme/app_theme.dart';
+import '../utils/event_date_formatter.dart';
 import '../utils/event_grouping.dart';
 import 'event_details_screen.dart';
 import '../routing/transitions.dart';
@@ -66,13 +67,6 @@ class _SeeAllEventsScreenState extends State<SeeAllEventsScreen> {
     l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
     l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
   ];
-
-  String _fmtEventDate(String? iso, List<String> months) {
-    if (iso == null || iso.isEmpty) return '';
-    final dt = DateTime.tryParse(iso);
-    if (dt == null) return '';
-    return '${dt.day} ${months[dt.month]} ${dt.year}';
-  }
 
   String _fmtEventMeta(AppEvent event, String locale) {
     final cats = event.categories;
@@ -226,7 +220,7 @@ class _SeeAllEventsScreenState extends State<SeeAllEventsScreen> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Text(_fmtEventDate(event.startDatetime, months),
+                                          Text(fmtEventDateTime(event.startDatetime, event.endDatetime, months) ?? '',
                                               style: GoogleFonts.poppins(fontSize: 9, fontWeight: FontWeight.w700, color: Colors.white.withValues(alpha: 0.8), letterSpacing: 1)),
                                           const SizedBox(height: 3),
                                           Text(event.title, maxLines: 1, overflow: TextOverflow.ellipsis,

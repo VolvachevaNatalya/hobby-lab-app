@@ -14,6 +14,7 @@ import 'org_profile_screen.dart';
 import 'org_event_form_screen.dart';
 import 'event_schedule_screen.dart';
 import '../routing/transitions.dart';
+import '../utils/event_date_formatter.dart';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -93,7 +94,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       final orgId = event.organizationId;
       if (orgId != null) {
         final orgFuture = ApiService.getOrganization(orgId.toString());
-        final eventsFuture = ApiService.getOrgEvents(orgId.toString());
+        // Use public (no include_past) endpoint so only current events appear in "Other Events"
+        final eventsFuture = ApiService.getPublicOrgEvents(orgId.toString());
         final results = await Future.wait([orgFuture, eventsFuture]);
         if (!mounted) return;
         final org = results[0] as Map<String, dynamic>;
@@ -102,7 +104,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           _orgData = org;
           _orgName = (org['name'] as String?) ?? '';
           _otherEvents = allEvents
-              .where((e) => e['id'].toString() != widget.eventId)
+              .where((e) =>
+                  e['id'].toString() != widget.eventId &&
+                  !(e['is_past'] as bool? ?? false))
               .take(3)
               .toList();
         });
@@ -191,6 +195,35 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // ── Past event banner ──
+                    if (event.isPast) ...[
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF6B7280).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFF6B7280).withValues(alpha: 0.3)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.history_rounded, size: 16, color: Color(0xFF6B7280)),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                AppLocalizations.of(context)!.eventPastBanner,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 13,
+                                  color: const Color(0xFF6B7280),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                    ],
                     // ── Category + badge row ──
                     _buildBadgeRow(event),
                     const SizedBox(height: 14),
@@ -220,7 +253,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     _divider(),
                     const SizedBox(height: 24),
                     // ── Details chips ──
-                    if (event.minAge != null ||
+                    if (event.ageGroups.isNotEmpty ||
+                        event.minAge != null ||
                         event.maxAge != null ||
                         event.capacity != null) ...[
                       _buildDetailsSection(event),
@@ -511,24 +545,54 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     final items = <_InfoItem>[];
 
     if (event.startDatetime != null) {
-      final dt = DateTime.tryParse(event.startDatetime!);
-      if (dt != null) {
-        items.add(
-          _InfoItem(
-            icon: Icons.calendar_today_rounded,
-            label: l10n.dateLabel,
-            value: _fmtDate(dt, l10n),
-            color: const Color(0xFF0EA5E9),
-          ),
-        );
-        items.add(
-          _InfoItem(
-            icon: Icons.access_time_rounded,
-            label: l10n.timeLabel,
-            value: _fmtTime(dt),
-            color: AppColors.purple,
-          ),
-        );
+      final startDt = DateTime.tryParse(event.startDatetime!);
+      if (startDt != null) {
+        final endDt = event.endDatetime != null
+            ? DateTime.tryParse(event.endDatetime!)
+            : null;
+        final isSameDay = endDt != null &&
+            startDt.year == endDt.year &&
+            startDt.month == endDt.month &&
+            startDt.day == endDt.day;
+        final isMultiDay = endDt != null && !isSameDay;
+
+        if (isMultiDay) {
+          // Single combined row for multi-day events
+          final months = [
+            '', l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+            l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+            l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+            l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
+          ];
+          items.add(
+            _InfoItem(
+              icon: Icons.calendar_today_rounded,
+              label: l10n.dateLabel,
+              value: fmtEventDateTime(event.startDatetime, event.endDatetime, months)!,
+              color: const Color(0xFF0EA5E9),
+            ),
+          );
+        } else {
+          items.add(
+            _InfoItem(
+              icon: Icons.calendar_today_rounded,
+              label: l10n.dateLabel,
+              value: _fmtDate(startDt, l10n),
+              color: const Color(0xFF0EA5E9),
+            ),
+          );
+          final timeValue = isSameDay
+              ? '${_fmtTime(startDt)}-${_fmtTime(endDt)}'
+              : _fmtTime(startDt);
+          items.add(
+            _InfoItem(
+              icon: Icons.access_time_rounded,
+              label: l10n.timeLabel,
+              value: timeValue,
+              color: AppColors.purple,
+            ),
+          );
+        }
       }
     }
 
@@ -770,7 +834,23 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           spacing: 8,
           runSpacing: 8,
           children: [
-            if (event.minAge != null && event.maxAge != null)
+            if (event.ageGroups.isNotEmpty) ...[
+              ...event.ageGroups
+                  .where((g) => g != 'custom')
+                  .map((g) => _chip(
+                        _ageGroupLabel(g, l10n),
+                        AppColors.purple.withValues(alpha: 0.12),
+                        AppColors.purpleLight,
+                      )),
+              if (event.ageGroups.contains('custom') &&
+                  event.minAge != null &&
+                  event.maxAge != null)
+                _chip(
+                  l10n.eventAgesFormat(event.minAge!, event.maxAge!),
+                  AppColors.purple.withValues(alpha: 0.12),
+                  AppColors.purpleLight,
+                ),
+            ] else if (event.minAge != null && event.maxAge != null)
               _chip(
                 l10n.eventAgesFormat(event.minAge!, event.maxAge!),
                 AppColors.purple.withValues(alpha: 0.12),
@@ -983,6 +1063,16 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
   Widget _divider() => Container(height: 1, color: AppColors.divider);
 
+  String _ageGroupLabel(String key, AppLocalizations l10n) => switch (key) {
+    'toddlers' => l10n.ageGroupToddlers,
+    'kids' => l10n.ageGroupKids,
+    'teens' => l10n.ageGroupTeens,
+    'adults' => l10n.ageGroupAdults,
+    'family' => l10n.ageGroupFamily,
+    'custom' => l10n.ageGroupCustom,
+    _ => key,
+  };
+
   Widget _sectionTitle(String text) => Text(
     text,
     style: GoogleFonts.poppins(
@@ -1130,14 +1220,20 @@ class _OtherEventCard extends StatelessWidget {
     required this.colorEnd,
   });
 
-  String _fmtDate(String? iso, List<String> months) {
-    if (iso == null) return '';
-    try {
-      final dt = DateTime.parse(iso);
-      return '${dt.day} ${months[dt.month]}';
-    } catch (_) {
-      return '';
+  // Short date for compact other-event cards: "29 Aug · 10:00" or "29 Aug · 10:00-18:00"
+  String _fmtOtherEventDate(String? startIso, String? endIso, List<String> months) {
+    if (startIso == null) return '';
+    final start = DateTime.tryParse(startIso);
+    if (start == null) return '';
+    final startStr = '${start.day} ${months[start.month]} · ${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}';
+    if (endIso == null) return startStr;
+    final end = DateTime.tryParse(endIso);
+    if (end == null) return startStr;
+    final endTime = '${end.hour.toString().padLeft(2, '0')}:${end.minute.toString().padLeft(2, '0')}';
+    if (start.year == end.year && start.month == end.month && start.day == end.day) {
+      return '${start.day} ${months[start.month]} · ${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}-$endTime';
     }
+    return '${start.day} ${months[start.month]} - ${end.day} ${months[end.month]}';
   }
 
   @override
@@ -1151,7 +1247,9 @@ class _OtherEventCard extends StatelessWidget {
       l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
     ];
     final title = (event['title'] ?? event['name'] ?? '').toString();
-    final dateStr = _fmtDate(event['start_datetime']?.toString(), months);
+    final startIso = event['start_datetime']?.toString();
+    final endIso = event['end_datetime']?.toString();
+    final dateStr = _fmtOtherEventDate(startIso, endIso, months);
     final city = (event['city'] ?? '').toString();
     final badge = (event['badge'] ?? event['status'] ?? '')
         .toString()

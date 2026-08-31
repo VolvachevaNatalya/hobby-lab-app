@@ -553,10 +553,25 @@
   "dateTimeSection": "Date & Time",
   "selectDate": "Select date",
   "selectTime": "Select time",
+  "endDateTimeSection": "End Date & Time",
+  "optionalLabel": "(optional)",
+  "endDateLabel": "End date",
+  "endTimeLabel": "End time",
+  "endDateTimeValidation": "End must be after start",
   "locationSection": "Location",
   "addressHint": "Address / venue name",
   "cityHint": "City",
   "participantsSection": "Participants",
+  "ageAudienceLabel": "Age",
+  "ageGroupToddlers": "Toddlers (2-5)",
+  "ageGroupKids": "Kids (6-11)",
+  "ageGroupTeens": "Teens (12-17)",
+  "ageGroupAdults": "Adults (18+)",
+  "ageGroupFamily": "Whole Family (0+)",
+  "ageGroupCustom": "Custom age",
+  "ageCustomRangeError": "Min age must not exceed max age",
+  "ageFromHint": "From",
+  "ageToHint": "To",
   "minAgeHint": "Min age",
   "maxAgeHint": "Max age",
   "maxCapacityHint": "Max capacity",
@@ -783,6 +798,8 @@
   "noClassesAvailable": "No classes available yet",
   "upcomingEventsSection": "Upcoming Events",
   "noUpcomingEvents": "No upcoming events",
+  "pastEventsSection": "Past Events",
+  "eventPastBanner": "This event has already taken place",
   "unnamedClass": "Unnamed Class",
   "retryBtn": "Retry",
   "pleaseWaitUpload": "Please wait for image upload to finish",
@@ -800,5 +817,31 @@
   "accountSecuritySection": "ACCOUNT SECURITY",
   "timeNow": "Now",
   "changesSavedSuccess": "Changes saved successfully",
-  "failedToSaveChanges": "Failed to save changes"
+  "failedToSaveChanges": "Failed to save changes",
+
+  "notifEventUpdatedTitle": "Event Updated",
+  "notifEventUpdatedBody": "The event {eventTitle} has been updated",
+  "@notifEventUpdatedBody": {
+    "placeholders": {
+      "eventTitle": { "type": "String" }
+    }
+  },
+  "notifEventCancelledTitle": "Event Cancelled",
+  "notifEventCancelledBody": "The event {eventTitle} has been cancelled",
+  "@notifEventCancelledBody": {
+    "placeholders": {
+      "eventTitle": { "type": "String" }
+    }
+  },
+  "notifNewEventTitle": "New Event",
+  "notifNewEventBody": "{organizationName} posted a new event: {eventTitle}",
+  "@notifNewEventBody": {
+    "placeholders": {
+      "organizationName": { "type": "String" },
+      "eventTitle": { "type": "String" }
+    }
+  },
+  "notifEventNotAvailable": "This event is no longer available.",
+
+  "dateYesterday": "Yesterday"
 }

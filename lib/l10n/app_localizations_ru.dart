@@ -1460,6 +1460,21 @@ class AppLocalizationsRu extends AppLocalizations {
   String get selectTime => 'Выберите время';
 
   @override
+  String get endDateTimeSection => 'Дата и время окончания';
+
+  @override
+  String get optionalLabel => '(необязательно)';
+
+  @override
+  String get endDateLabel => 'Дата окончания';
+
+  @override
+  String get endTimeLabel => 'Время окончания';
+
+  @override
+  String get endDateTimeValidation => 'Дата окончания должна быть позже начала';
+
+  @override
   String get locationSection => 'Местоположение';
 
   @override
@@ -1470,6 +1485,37 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get participantsSection => 'Участники';
+
+  @override
+  String get ageAudienceLabel => 'Возраст';
+
+  @override
+  String get ageGroupToddlers => 'Малыши (2-5)';
+
+  @override
+  String get ageGroupKids => 'Дети (6-11)';
+
+  @override
+  String get ageGroupTeens => 'Подростки (12-17)';
+
+  @override
+  String get ageGroupAdults => 'Взрослые (18+)';
+
+  @override
+  String get ageGroupFamily => 'Для всей семьи (0+)';
+
+  @override
+  String get ageGroupCustom => 'Другой возраст';
+
+  @override
+  String get ageCustomRangeError =>
+      'Минимальный возраст не может быть больше максимального';
+
+  @override
+  String get ageFromHint => 'От';
+
+  @override
+  String get ageToHint => 'До';
 
   @override
   String get minAgeHint => 'Мин. возраст';
@@ -1959,6 +2005,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get noUpcomingEvents => 'Предстоящих мероприятий нет';
 
   @override
+  String get pastEventsSection => 'Прошедшие мероприятия';
+
+  @override
+  String get eventPastBanner => 'Это мероприятие уже прошло';
+
+  @override
   String get unnamedClass => 'Без названия';
 
   @override
@@ -2010,4 +2062,34 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get failedToSaveChanges => 'Не удалось сохранить изменения';
+
+  @override
+  String get notifEventUpdatedTitle => 'Мероприятие обновлено';
+
+  @override
+  String notifEventUpdatedBody(String eventTitle) {
+    return 'Мероприятие $eventTitle было обновлено';
+  }
+
+  @override
+  String get notifEventCancelledTitle => 'Мероприятие отменено';
+
+  @override
+  String notifEventCancelledBody(String eventTitle) {
+    return 'Мероприятие $eventTitle было отменено';
+  }
+
+  @override
+  String get notifNewEventTitle => 'Новое мероприятие';
+
+  @override
+  String notifNewEventBody(String organizationName, String eventTitle) {
+    return '$organizationName добавил новое мероприятие: $eventTitle';
+  }
+
+  @override
+  String get notifEventNotAvailable => 'Это мероприятие больше недоступно.';
+
+  @override
+  String get dateYesterday => 'Вчера';
 }

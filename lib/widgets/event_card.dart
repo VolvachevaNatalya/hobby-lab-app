@@ -5,6 +5,7 @@ import '../models/app_event.dart';
 import '../services/api_service.dart';
 import '../services/saved_activities.dart';
 import '../theme/app_theme.dart';
+import '../utils/event_date_formatter.dart';
 
 // Deterministic colour pair keyed by event id hash.
 const _palette = [
@@ -99,7 +100,7 @@ class _EventCardState extends State<EventCard> {
       l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
       l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
     ];
-    final dateStr = _fmtDate(event.startDatetime, months);
+    final dateStr = fmtEventDateTime(event.startDatetime, event.endDatetime, months);
     const String? categoryLabel = null;
 
     return GestureDetector(
@@ -205,12 +206,6 @@ class _EventCardState extends State<EventCard> {
     );
   }
 
-  static String? _fmtDate(String? iso, List<String> months) {
-    if (iso == null) return null;
-    final dt = DateTime.tryParse(iso);
-    if (dt == null) return null;
-    return '${dt.day} ${months[dt.month]} ${dt.year}';
-  }
 }
 
 // ─── Image / placeholder ──────────────────────────────────────────────────────

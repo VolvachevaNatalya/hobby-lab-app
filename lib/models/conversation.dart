@@ -1,7 +1,9 @@
 class Conversation {
   final String id;
   final String organizationId;
-  final String name;
+  final String organizationName;
+  final String userId;
+  final String userName;
   final String lastMessage;
   final String time;
   final int unreadCount;
@@ -9,7 +11,9 @@ class Conversation {
   const Conversation({
     required this.id,
     required this.organizationId,
-    this.name = '',
+    this.organizationName = '',
+    this.userId = '',
+    this.userName = '',
     this.lastMessage = '',
     this.time = '',
     this.unreadCount = 0,
@@ -19,7 +23,9 @@ class Conversation {
     return Conversation(
       id: (json['id'] ?? '').toString(),
       organizationId: (json['organization_id'] ?? '').toString(),
-      name: (json['organization_name'] ?? json['name'] ?? '').toString(),
+      organizationName: (json['organization_name'] ?? '').toString(),
+      userId: (json['user_id'] ?? '').toString(),
+      userName: (json['user_name'] ?? '').toString(),
       lastMessage: (json['last_message'] ?? '').toString(),
       time: (json['last_message_at'] ?? json['created_at'] ?? '').toString(),
       unreadCount: (json['unread_count'] as int?) ?? 0,

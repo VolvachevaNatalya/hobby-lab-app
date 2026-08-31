@@ -7,7 +7,6 @@ import '../theme/app_theme.dart';
 import '../models/app_class.dart';
 import '../models/app_event.dart';
 import '../models/app_category.dart';
-import '../models/app_notification.dart';
 import '../models/organization.dart';
 import '../models/app_city.dart';
 import '../services/api_service.dart';
@@ -26,6 +25,7 @@ import 'event_details_screen.dart';
 import '../l10n/app_localizations.dart';
 import '../routing/transitions.dart';
 import '../utils/event_grouping.dart';
+import '../unread_state.dart';
 
 String _resolveEventBadge(String badge, AppLocalizations l10n) {
   switch (badge.toLowerCase()) {
@@ -103,7 +103,6 @@ class _HomeScreenState extends State<HomeScreen> {
   List<AppCategory> _apiCategories = [];
   List<Organization> _apiOrganizations = [];
   bool _loadingClasses = true;
-  int _unreadCount = 0;
   AppCity? _selectedCity;
   double? _fetchedLat;
   double? _fetchedLng;
@@ -175,13 +174,12 @@ class _HomeScreenState extends State<HomeScreen> {
         ApiService.getClasses(cityId: cityId, userLat: userLat, userLng: userLng,),
         ApiService.getEvents(cityId: cityId, userLat: userLat, userLng: userLng),
         ApiService.getCategories(),
-        ApiService.getNotifications(),
         ApiService.getFavorites(),
         ApiService.getOrganizations(cityId: cityId, userLat: userLat, userLng: userLng),
       ]);
       if (mounted && version == _fetchVersion) {
         final classes = results[0] as List<AppClass>;
-        final favs = results[4] as List;
+        final favs = results[3] as List;
         // Populate favorites cache (separate by entity_type)
         favoriteIds.clear();
         orgFavoriteIds.clear();
@@ -229,9 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _apiClasses = classes;
           _apiEvents = results[1] as List<AppEvent>;
           _apiCategories = results[2] as List<AppCategory>;
-          final notifs = results[3] as List<AppNotification>;
-          _unreadCount = notifs.where((n) => !n.isRead).length;
-          _apiOrganizations = results[5] as List<Organization>;
+          _apiOrganizations = results[4] as List<Organization>;
         });
       }
     } catch (_) {
@@ -239,16 +235,6 @@ class _HomeScreenState extends State<HomeScreen> {
       if (mounted && version == _fetchVersion) setState(() => _loadingClasses = false);
     }
   }
-
-  Future<void> _refreshUnreadCount() async {
-    try {
-      final notifs = await ApiService.getNotifications();
-      if (mounted) setState(() => _unreadCount = notifs.where((n) => !n.isRead).length);
-    } catch (_) {}
-  }
-
-  // GPS init is now done once in _initLoad().
-  // This method is kept only for the "re-detect location" button if added later.
 
   Future<void> _openCityPicker() async {
     final city = await Navigator.of(context).push<AppCity>(
@@ -393,10 +379,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _Header(
-                      unreadCount: _unreadCount,
                       locationCity: _selectedCity?.displayName(locale),
                       onTapLocation: _openCityPicker,
-                      onNotificationsOpened: _refreshUnreadCount,
                     ),
                     const SizedBox(height: 20),
                     const _SearchBar(),
@@ -471,15 +455,12 @@ class _HomeScreenState extends State<HomeScreen> {
 // ─── Header ───────────────────────────────────────────────────────────────────
 
 class _Header extends StatelessWidget {
-  final int unreadCount;
   final String? locationCity;
   final VoidCallback onTapLocation;
-  final VoidCallback onNotificationsOpened;
+
   const _Header({
-    required this.unreadCount,
     required this.locationCity,
     required this.onTapLocation,
-    required this.onNotificationsOpened,
   });
 
   @override
@@ -522,46 +503,51 @@ class _Header extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () => Navigator.of(context).push(
-            slideRoute(builder: (_) => const NotificationsScreen()),
-          ).then((_) => onNotificationsOpened()),
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceElevated,
-                  borderRadius: BorderRadius.circular(13),
-                  border: Border.all(color: AppColors.divider, width: 1),
-                ),
-                child: const Icon(Icons.notifications_rounded, color: AppColors.textPrimary, size: 22),
-              ),
-              if (unreadCount > 0)
-                Positioned(
-                  top: -2,
-                  right: -2,
-                  child: Container(
-                    width: 18,
-                    height: 18,
+        ValueListenableBuilder<int>(
+          valueListenable: UnreadCounts.alertCount,
+          builder: (context, count, _) {
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => Navigator.of(context).push(
+                slideRoute(builder: (_) => const NotificationsScreen()),
+              ).then((_) => UnreadCounts.refresh()),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    width: 42,
+                    height: 42,
                     decoration: BoxDecoration(
-                      gradient: AppColors.brandGradient,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.background, width: 2),
+                      color: AppColors.surfaceElevated,
+                      borderRadius: BorderRadius.circular(13),
+                      border: Border.all(color: AppColors.divider, width: 1),
                     ),
-                    child: Center(
-                      child: Text(
-                        unreadCount > 9 ? '9+' : '$unreadCount',
-                        style: GoogleFonts.poppins(fontSize: 9, fontWeight: FontWeight.w700, color: Colors.white),
+                    child: const Icon(Icons.notifications_rounded, color: AppColors.textPrimary, size: 22),
+                  ),
+                  if (count > 0)
+                    Positioned(
+                      top: -2,
+                      right: -2,
+                      child: Container(
+                        width: 18,
+                        height: 18,
+                        decoration: BoxDecoration(
+                          gradient: AppColors.brandGradient,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppColors.background, width: 2),
+                        ),
+                        child: Center(
+                          child: Text(
+                            count > 9 ? '9+' : '$count',
+                            style: GoogleFonts.poppins(fontSize: 9, fontWeight: FontWeight.w700, color: Colors.white),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-            ],
-          ),
+                ],
+              ),
+            );
+          },
         ),
       ],
     );

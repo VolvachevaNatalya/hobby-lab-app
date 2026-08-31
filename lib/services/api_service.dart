@@ -574,6 +574,16 @@ class ApiService {
     throw Exception('Failed to load conversations');
   }
 
+  static Future<void> markConversationRead(String conversationId) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/conversations/$conversationId/read'),
+      headers: await _authHeaders(),
+    );
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw Exception('Failed to mark conversation as read');
+    }
+  }
+
   // ── Messages ───────────────────────────────────────────────────────────────
 
   static Future<List<ChatMessage>> getMessages(String conversationId) async {
@@ -616,6 +626,22 @@ class ApiService {
   }
 
   // ── Notifications ──────────────────────────────────────────────────────────
+
+  /// Returns {"message_count": N, "alert_count": M}.
+  static Future<Map<String, int>> getUnreadCounts() async {
+    final response = await http.get(
+      Uri.parse('$_baseUrl/notifications/unread-count'),
+      headers: await _authHeaders(),
+    );
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      return {
+        'message_count': (data['message_count'] as int?) ?? 0,
+        'alert_count': (data['alert_count'] as int?) ?? 0,
+      };
+    }
+    return {'message_count': 0, 'alert_count': 0};
+  }
 
   static Future<List<AppNotification>> getNotifications() async {
     final response = await http.get(
@@ -839,10 +865,13 @@ class ApiService {
     throw Exception('Failed to load org events');
   }
 
-  static Future<List<Map<String, dynamic>>> getPublicOrgEvents(String orgId) async {
-    final uri = Uri.parse(
-      '$_baseUrl/events/',
-    ).replace(queryParameters: {'organization_id': orgId});
+  static Future<List<Map<String, dynamic>>> getPublicOrgEvents(
+    String orgId, {
+    bool includePast = false,
+  }) async {
+    final params = <String, String>{'organization_id': orgId};
+    if (includePast) params['include_past'] = 'true';
+    final uri = Uri.parse('$_baseUrl/events/').replace(queryParameters: params);
     final response = await http.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List<dynamic>)
@@ -1082,6 +1111,7 @@ class ApiService {
     String? title,
     String? description,
     String? startDatetime,
+    String? endDatetime,
     int? categoryId,
     List<int>? categoryIds,
     int? minAge,
@@ -1096,12 +1126,16 @@ class ApiService {
     String? scope,
     RecurrenceInput? recurrence,
     bool removeRecurrence = false,
+    bool sendEndDatetime = false,
+    List<String>? ageGroups,
+    bool sendAgeGroups = false,
   }) async {
     final headers = await _authHeaders();
     final body = <String, dynamic>{};
     if (title != null) body['title'] = title;
     if (description != null) body['description'] = description;
     if (startDatetime != null) body['start_datetime'] = startDatetime;
+    if (sendEndDatetime) body['end_datetime'] = endDatetime;
     if (categoryIds != null && categoryIds.isNotEmpty) {
       body['category_ids'] = categoryIds;
     } else if (categoryId != null) {
@@ -1109,6 +1143,7 @@ class ApiService {
     }
     if (minAge != null) body['min_age'] = minAge;
     if (maxAge != null) body['max_age'] = maxAge;
+    if (sendAgeGroups) body['age_groups'] = ageGroups ?? [];
     if (capacity != null) body['capacity'] = capacity;
     if (address != null) body['address'] = address;
     if (cityId != null) body['city_id'] = cityId;
@@ -1469,6 +1504,7 @@ class ApiService {
     required int organizationId,
     required String title,
     required String startDatetime,
+    String? endDatetime,
     int? categoryId,
     List<int>? categoryIds,
     String? description,
@@ -1482,6 +1518,7 @@ class ApiService {
     String? priceComment,
     String? imageUrl,
     RecurrenceInput? recurrence,
+    List<String>? ageGroups,
   }) async {
     final headers = await _authHeaders();
     final body = <String, dynamic>{
@@ -1499,6 +1536,7 @@ class ApiService {
       body['description'] = description;
     if (minAge != null && minAge > 0) body['min_age'] = minAge;
     if (maxAge != null && maxAge < 99) body['max_age'] = maxAge;
+    if (ageGroups != null && ageGroups.isNotEmpty) body['age_groups'] = ageGroups;
     if (capacity != null) body['capacity'] = capacity;
     if (address != null && address.isNotEmpty) body['address'] = address;
     if (cityId != null) body['city_id'] = cityId;
@@ -1506,6 +1544,7 @@ class ApiService {
     if (priceComment != null && priceComment.isNotEmpty)
       body['price_comment'] = priceComment;
     if (imageUrl != null && imageUrl.isNotEmpty) body['image_url'] = imageUrl;
+    if (endDatetime != null) body['end_datetime'] = endDatetime;
     if (recurrence != null) body['recurrence'] = recurrence.toJson();
     final response = await http.post(
       Uri.parse('$_baseUrl/events/'),
