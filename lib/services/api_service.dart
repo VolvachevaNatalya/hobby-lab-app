@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
@@ -23,21 +24,54 @@ import '../models/event_recurrence.dart';
 
 const _baseUrl = 'https://hobbylab-api-production-84bd.up.railway.app';
 const _tokenKey = 'auth_token';
+const _refreshTokenKey = 'refresh_token';
 const _userIdKey = 'current_user_id';
 
 class ApiService {
   static String? _sessionToken;
   static String? _cachedUserId;
   static bool _handlingUnauthorized = false;
+  static Completer<bool>? _refreshCompleter;
+  static bool sessionExpiredOnce = false;
 
   static final authNotifier = ValueNotifier<bool>(true);
+
+  // Authenticated client — used by all API endpoints (intercepts 401 for refresh).
+  static http.Client _client = _AuthenticatedClient(http.Client());
+
+  // Raw client — used by auth-flow endpoints (login, register, refresh) that
+  // must never go through the refresh interceptor.
+  static http.Client _rawClient = http.Client();
+
+  @visibleForTesting
+  static void setInnerClientForTesting(http.Client innerClient) {
+    _client = _AuthenticatedClient(innerClient);
+  }
+
+  @visibleForTesting
+  static void setRawClientForTesting(http.Client rawClient) {
+    _rawClient = rawClient;
+  }
+
+  @visibleForTesting
+  static void resetForTesting() {
+    _sessionToken = null;
+    _cachedUserId = null;
+    _handlingUnauthorized = false;
+    _refreshCompleter = null;
+    sessionExpiredOnce = false;
+    authNotifier.value = true;
+    _client = _AuthenticatedClient(http.Client());
+    _rawClient = http.Client();
+  }
 
   // ── Token ──────────────────────────────────────────────────────────────────
 
   static Future<String?> getSavedToken() async {
     if (_sessionToken != null) return _sessionToken;
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_tokenKey);
+    _sessionToken = prefs.getString(_tokenKey);
+    return _sessionToken;
   }
 
   static Future<Map<String, String>> _authHeaders() async {
@@ -55,7 +89,7 @@ class ApiService {
     String password, {
     bool rememberMe = true,
   }) async {
-    final response = await http.post(
+    final response = await _rawClient.post(
       Uri.parse('$_baseUrl/auth/login'),
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
       body: {'username': email, 'password': password},
@@ -65,8 +99,11 @@ class ApiService {
       final token = data['access_token'] as String;
       _sessionToken = token;
       _handlingUnauthorized = false;
+      sessionExpiredOnce = false;
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_tokenKey, token);
+      final refreshToken = data['refresh_token'] as String?;
+      if (refreshToken != null) await prefs.setString(_refreshTokenKey, refreshToken);
       // Eagerly cache user ID so chat doesn't need an extra /me call
       try {
         final profile = await getMe();
@@ -93,7 +130,7 @@ class ApiService {
     final idToken = auth.idToken;
     if (idToken == null) throw Exception('Failed to get Google ID token');
 
-    final response = await http.post(
+    final response = await _rawClient.post(
       Uri.parse('$_baseUrl/auth/google-login'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'id_token': idToken}),
@@ -104,13 +141,12 @@ class ApiService {
       final token = data['access_token'] as String;
       _sessionToken = token;
       _handlingUnauthorized = false;
+      sessionExpiredOnce = false;
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_tokenKey, token);
+      final refreshToken = data['refresh_token'] as String?;
+      if (refreshToken != null) await prefs.setString(_refreshTokenKey, refreshToken);
       // User ID is fetched lazily on first demand via getCurrentUserId().
-      // We intentionally skip the eager getMe() call here: if getMe() were to
-      // return 401 (e.g. transient backend issue for a newly created Google
-      // user), _handleError would fire _onUnauthorized() which calls logout()
-      // and wipes the just-saved token — breaking session persistence.
       return;
     }
     final detail = _extractDetail(response.body);
@@ -136,7 +172,7 @@ class ApiService {
 
     final fbToken = result.accessToken!.tokenString;
 
-    final response = await http.post(
+    final response = await _rawClient.post(
       Uri.parse('$_baseUrl/auth/facebook-login'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'access_token': fbToken}),
@@ -147,9 +183,11 @@ class ApiService {
       final token = data['access_token'] as String;
       _sessionToken = token;
       _handlingUnauthorized = false;
+      sessionExpiredOnce = false;
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_tokenKey, token);
-      // Skipping eager getMe() — same reasoning as loginWithGoogle().
+      final refreshToken = data['refresh_token'] as String?;
+      if (refreshToken != null) await prefs.setString(_refreshTokenKey, refreshToken);
       return;
     }
     final detail = _extractDetail(response.body);
@@ -182,7 +220,7 @@ class ApiService {
     if (identityToken == null)
       throw Exception('Failed to get Apple identity token');
 
-    final response = await http.post(
+    final response = await _rawClient.post(
       Uri.parse('$_baseUrl/auth/apple-login'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'id_token': identityToken}),
@@ -193,9 +231,11 @@ class ApiService {
       final token = data['access_token'] as String;
       _sessionToken = token;
       _handlingUnauthorized = false;
+      sessionExpiredOnce = false;
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_tokenKey, token);
-      // Skipping eager getMe() — same reasoning as loginWithGoogle().
+      final refreshToken = data['refresh_token'] as String?;
+      if (refreshToken != null) await prefs.setString(_refreshTokenKey, refreshToken);
       return;
     }
     final detail = _extractDetail(response.body);
@@ -209,6 +249,7 @@ class ApiService {
     _cachedUserId = null;
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_tokenKey);
+    await prefs.remove(_refreshTokenKey);
     await prefs.remove(_userIdKey);
   }
 
@@ -223,18 +264,62 @@ class ApiService {
     if (response.statusCode == 401) _onUnauthorized();
   }
 
+  // Serializes concurrent refresh attempts: only one real HTTP call at a time.
+  static Future<bool> _tryRefresh() async {
+    if (_refreshCompleter != null) return _refreshCompleter!.future;
+    final completer = Completer<bool>();
+    _refreshCompleter = completer;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final refreshToken = prefs.getString(_refreshTokenKey);
+      if (refreshToken == null || refreshToken.isEmpty) {
+        completer.complete(false);
+        return false;
+      }
+      final response = await _rawClient.post(
+        Uri.parse('$_baseUrl/auth/refresh'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'refresh_token': refreshToken}),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        final newAccess = data['access_token'] as String?;
+        final newRefresh = data['refresh_token'] as String?;
+        if (newAccess == null || newAccess.isEmpty) {
+          completer.complete(false);
+          return false;
+        }
+        _sessionToken = newAccess;
+        await prefs.setString(_tokenKey, newAccess);
+        if (newRefresh != null && newRefresh.isNotEmpty) {
+          await prefs.setString(_refreshTokenKey, newRefresh);
+        }
+        debugPrint('[Auth] Token refreshed successfully');
+        completer.complete(true);
+        return true;
+      }
+      debugPrint('[Auth] Refresh failed: ${response.statusCode}');
+      completer.complete(false);
+      return false;
+    } catch (e) {
+      debugPrint('[Auth] Refresh error: $e');
+      if (!completer.isCompleted) completer.complete(false);
+      return false;
+    } finally {
+      _refreshCompleter = null;
+    }
+  }
+
   // ── Upload ─────────────────────────────────────────────────────────────────
 
   static Future<String> uploadFile(String filePath) async {
     debugPrint('[Upload] uploading file: $filePath');
-    final token = await getSavedToken();
     final request = http.MultipartRequest(
       'POST',
       Uri.parse('$_baseUrl/upload'),
     );
-    if (token != null) request.headers['Authorization'] = 'Bearer $token';
     request.files.add(await http.MultipartFile.fromPath('file', filePath));
-    final streamed = await request.send();
+    final streamed = await _client.send(request);
     final response = await http.Response.fromStream(streamed);
     debugPrint(
       '[Upload] status: ${response.statusCode}  body: ${response.body}',
@@ -248,7 +333,6 @@ class ApiService {
       debugPrint('[Upload] success → $url');
       return url;
     }
-    if (response.statusCode == 401) _onUnauthorized();
     final detail = _extractDetail(response.body);
     throw Exception(
       'Upload failed (${response.statusCode})${detail != null ? ": $detail" : ""}',
@@ -292,7 +376,7 @@ class ApiService {
     final uri = Uri.parse(
       '$_baseUrl/cities/',
     ).replace(queryParameters: params.isEmpty ? null : params);
-    final response = await http.get(uri, headers: await _authHeaders());
+    final response = await _client.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List<dynamic>)
           .map((e) => AppCity.fromJson(e as Map<String, dynamic>))
@@ -318,7 +402,7 @@ class ApiService {
     final uri = Uri.parse(
       '$_baseUrl/classes/',
     ).replace(queryParameters: params.isEmpty ? null : params);
-    final response = await http.get(uri, headers: await _authHeaders());
+    final response = await _client.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List<dynamic>)
           .map((e) => AppClass.fromJson(e as Map<String, dynamic>))
@@ -338,7 +422,7 @@ class ApiService {
     final uri = Uri.parse(
       '$_baseUrl/classes/search',
     ).replace(queryParameters: params);
-    final response = await http.get(uri, headers: await _authHeaders());
+    final response = await _client.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
       final List<dynamic> items;
@@ -365,7 +449,7 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> getClassDetails(String id) async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/classes/$id/details'),
       headers: await _authHeaders(),
     );
@@ -378,7 +462,7 @@ class ApiService {
   // ── Categories ─────────────────────────────────────────────────────────────
 
   static Future<List<AppCategory>> getCategories() async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/categories/'),
       headers: await _authHeaders(),
     );
@@ -409,7 +493,7 @@ class ApiService {
     final uri = Uri.parse(
       '$_baseUrl/events/',
     ).replace(queryParameters: params.isEmpty ? null : params);
-    final response = await http.get(uri, headers: await _authHeaders());
+    final response = await _client.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List<dynamic>)
           .map((e) => AppEvent.fromJson(e as Map<String, dynamic>))
@@ -435,7 +519,7 @@ class ApiService {
     final uri = Uri.parse(
       '$_baseUrl/organizations/',
     ).replace(queryParameters: params.isEmpty ? null : params);
-    final response = await http.get(uri, headers: await _authHeaders());
+    final response = await _client.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       final orgs = (jsonDecode(response.body) as List<dynamic>)
           .map((e) => Organization.fromJson(e as Map<String, dynamic>))
@@ -461,7 +545,7 @@ class ApiService {
   // ── Favorites ──────────────────────────────────────────────────────────────
 
   static Future<List<Favorite>> getFavorites() async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/favorites/'),
       headers: await _authHeaders(),
     );
@@ -475,7 +559,7 @@ class ApiService {
 
   static Future<Favorite> addFavorite(String classId) async {
     final headers = await _authHeaders();
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/favorites/'),
       headers: headers,
       body: jsonEncode({
@@ -493,7 +577,7 @@ class ApiService {
 
   static Future<Favorite> addOrgFavorite(String orgId) async {
     final headers = await _authHeaders();
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/favorites/'),
       headers: headers,
       body: jsonEncode({
@@ -511,7 +595,7 @@ class ApiService {
 
   static Future<Favorite> addEventFavorite(String eventId) async {
     final headers = await _authHeaders();
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/favorites/'),
       headers: headers,
       body: jsonEncode({
@@ -528,7 +612,7 @@ class ApiService {
   }
 
   static Future<void> removeFavorite(String favoriteId) async {
-    final response = await http.delete(
+    final response = await _client.delete(
       Uri.parse('$_baseUrl/favorites/$favoriteId'),
       headers: await _authHeaders(),
     );
@@ -546,7 +630,7 @@ class ApiService {
     print(
       '[API] createConversation → POST /conversations/ body: {organization_id: $organizationId}',
     );
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/conversations/'),
       headers: headers,
       body: jsonEncode({'organization_id': organizationId}),
@@ -561,7 +645,7 @@ class ApiService {
   }
 
   static Future<List<Conversation>> getConversations() async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/conversations/'),
       headers: await _authHeaders(),
     );
@@ -575,7 +659,7 @@ class ApiService {
   }
 
   static Future<void> markConversationRead(String conversationId) async {
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/conversations/$conversationId/read'),
       headers: await _authHeaders(),
     );
@@ -587,7 +671,7 @@ class ApiService {
   // ── Messages ───────────────────────────────────────────────────────────────
 
   static Future<List<ChatMessage>> getMessages(String conversationId) async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/messages/conversation/$conversationId'),
       headers: await _authHeaders(),
     );
@@ -609,7 +693,7 @@ class ApiService {
       'message_text': content,
     };
     print('[API] sendMessage → POST /messages/ body: $payload');
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/messages/'),
       headers: headers,
       body: jsonEncode(payload),
@@ -629,7 +713,7 @@ class ApiService {
 
   /// Returns {"message_count": N, "alert_count": M}.
   static Future<Map<String, int>> getUnreadCounts() async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/notifications/unread-count'),
       headers: await _authHeaders(),
     );
@@ -644,7 +728,7 @@ class ApiService {
   }
 
   static Future<List<AppNotification>> getNotifications() async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/notifications/'),
       headers: await _authHeaders(),
     );
@@ -658,7 +742,7 @@ class ApiService {
   }
 
   static Future<void> markNotificationRead(String id) async {
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/notifications/$id/read'),
       headers: await _authHeaders(),
     );
@@ -668,7 +752,7 @@ class ApiService {
   }
 
   static Future<void> markAllNotificationsRead() async {
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/notifications/read-all'),
       headers: await _authHeaders(),
     );
@@ -683,7 +767,7 @@ class ApiService {
     required String subject,
     required String message,
   }) async {
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/support/'),
       headers: await _authHeaders(),
       body: jsonEncode({'subject': subject, 'message': message}),
@@ -696,7 +780,7 @@ class ApiService {
   // ── User ───────────────────────────────────────────────────────────────────
 
   static Future<UserProfile> getMe() async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/me'),
       headers: await _authHeaders(),
     );
@@ -719,7 +803,7 @@ class ApiService {
     if (name != null) body['name'] = name;
     if (phone != null) body['phone'] = phone;
     if (avatarUrl != null) body['avatar_url'] = avatarUrl;
-    final response = await http.patch(
+    final response = await _client.patch(
       Uri.parse('$_baseUrl/me'),
       headers: headers,
       body: jsonEncode(body),
@@ -737,7 +821,7 @@ class ApiService {
     required String name,
     required String password,
   }) async {
-    final response = await http.post(
+    final response = await _rawClient.post(
       Uri.parse('$_baseUrl/auth/register'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
@@ -756,7 +840,7 @@ class ApiService {
   // ── Organizations ──────────────────────────────────────────────────────────
 
   static Future<Map<String, dynamic>> getOrganization(String id) async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/organizations/$id'),
       headers: await _authHeaders(),
     );
@@ -767,7 +851,7 @@ class ApiService {
   }
 
   static Future<List<Map<String, dynamic>>> getMyOrganizations() async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/organizations/my'),
       headers: await _authHeaders(),
     );
@@ -783,7 +867,7 @@ class ApiService {
   /// Returns true (owner/admin), false (member), or null (network/auth error).
   static Future<bool?> checkIsAdminOrOwner(String orgId) async {
     try {
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse('$_baseUrl/organizations/$orgId/invite-codes'),
         headers: await _authHeaders(),
       );
@@ -799,7 +883,7 @@ class ApiService {
   // ── Organization members ──────────────────────────────────────────────────────
 
   static Future<List<OrgMember>> getOrgMembers(String orgId) async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/organizations/$orgId/members'),
       headers: await _authHeaders(),
     );
@@ -817,7 +901,7 @@ class ApiService {
     int userId,
     String role,
   ) async {
-    final response = await http.patch(
+    final response = await _client.patch(
       Uri.parse('$_baseUrl/organizations/$orgId/members/$userId/role'),
       headers: await _authHeaders(),
       body: jsonEncode({'role': role}),
@@ -829,7 +913,7 @@ class ApiService {
   }
 
   static Future<void> removeMember(String orgId, int userId) async {
-    final response = await http.delete(
+    final response = await _client.delete(
       Uri.parse('$_baseUrl/organizations/$orgId/members/$userId'),
       headers: await _authHeaders(),
     );
@@ -843,7 +927,7 @@ class ApiService {
     final uri = Uri.parse(
       '$_baseUrl/classes/',
     ).replace(queryParameters: {'organization_id': orgId});
-    final response = await http.get(uri, headers: await _authHeaders());
+    final response = await _client.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List<dynamic>)
           .map((e) => e as Map<String, dynamic>)
@@ -856,7 +940,7 @@ class ApiService {
     final uri = Uri.parse(
       '$_baseUrl/events/',
     ).replace(queryParameters: {'organization_id': orgId, 'include_past': 'true'});
-    final response = await http.get(uri, headers: await _authHeaders());
+    final response = await _client.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List<dynamic>)
           .map((e) => e as Map<String, dynamic>)
@@ -872,7 +956,7 @@ class ApiService {
     final params = <String, String>{'organization_id': orgId};
     if (includePast) params['include_past'] = 'true';
     final uri = Uri.parse('$_baseUrl/events/').replace(queryParameters: params);
-    final response = await http.get(uri, headers: await _authHeaders());
+    final response = await _client.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List<dynamic>)
           .map((e) => e as Map<String, dynamic>)
@@ -890,7 +974,7 @@ class ApiService {
     if (organizationId != null) params['organization_id'] = organizationId.toString();
     if (includePast) params['include_past'] = 'true';
     final uri = Uri.parse('$_baseUrl/events/').replace(queryParameters: params);
-    final response = await http.get(uri, headers: await _authHeaders());
+    final response = await _client.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List<dynamic>)
           .map((e) => e as Map<String, dynamic>)
@@ -900,7 +984,7 @@ class ApiService {
   }
 
   static Future<List<Map<String, dynamic>>> getAllGroups() async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/groups/'),
       headers: await _authHeaders(),
     );
@@ -915,7 +999,7 @@ class ApiService {
   static Future<List<Map<String, dynamic>>> getGroupsByClass(
     String classId,
   ) async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/groups/class/$classId'),
       headers: await _authHeaders(),
     );
@@ -930,7 +1014,7 @@ class ApiService {
   static Future<List<Map<String, dynamic>>> getGroupSchedules(
     String groupId,
   ) async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/group-schedules/group/$groupId'),
       headers: await _authHeaders(),
     );
@@ -963,7 +1047,7 @@ class ApiService {
       body['description'] = description;
     }
     if (imageUrl != null && imageUrl.isNotEmpty) body['image_url'] = imageUrl;
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/classes/'),
       headers: headers,
       body: jsonEncode(body),
@@ -986,7 +1070,7 @@ class ApiService {
     if (ageFrom != null) body['age_from'] = ageFrom;
     if (ageTo != null) body['age_to'] = ageTo;
     if (capacity != null) body['capacity'] = capacity;
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/groups/'),
       headers: headers,
       body: jsonEncode(body),
@@ -1010,7 +1094,7 @@ class ApiService {
       'start_time': startTime,
       'end_time': endTime,
     };
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/group-schedules/'),
       headers: headers,
       body: jsonEncode(body),
@@ -1059,7 +1143,7 @@ class ApiService {
       body['tiktok_url'] = tiktokUrl;
     if (whatsappUrl != null && whatsappUrl.isNotEmpty)
       body['whatsapp_url'] = whatsappUrl;
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/organizations/'),
       headers: headers,
       body: jsonEncode(body),
@@ -1085,7 +1169,7 @@ class ApiService {
       body['category_ids'] = categoryIds;
     }
     if (imageUrl != null && imageUrl.isNotEmpty) body['image_url'] = imageUrl;
-    final response = await http.put(
+    final response = await _client.put(
       Uri.parse('$_baseUrl/classes/$classId'),
       headers: headers,
       body: jsonEncode(body),
@@ -1097,7 +1181,7 @@ class ApiService {
   }
 
   static Future<void> deleteClass(int classId) async {
-    final response = await http.delete(
+    final response = await _client.delete(
       Uri.parse('$_baseUrl/classes/$classId'),
       headers: await _authHeaders(),
     );
@@ -1159,7 +1243,7 @@ class ApiService {
     final uri = Uri.parse(
       '$_baseUrl/events/$eventId',
     ).replace(queryParameters: scope != null ? {'scope': scope} : null);
-    final response = await http.put(
+    final response = await _client.put(
       uri,
       headers: headers,
       body: jsonEncode(body),
@@ -1174,7 +1258,7 @@ class ApiService {
     final uri = Uri.parse(
       '$_baseUrl/events/$eventId',
     ).replace(queryParameters: scope != null ? {'scope': scope} : null);
-    final response = await http.delete(uri, headers: await _authHeaders());
+    final response = await _client.delete(uri, headers: await _authHeaders());
     if (response.statusCode != 200 && response.statusCode != 204) {
       throw Exception('Failed to delete event');
     }
@@ -1194,7 +1278,7 @@ class ApiService {
     if (comment != null && comment.isNotEmpty) body['comment'] = comment;
     if (photoUrls != null && photoUrls.isNotEmpty)
       body['photo_urls'] = photoUrls;
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/reviews/'),
       headers: headers,
       body: jsonEncode(body),
@@ -1209,7 +1293,7 @@ class ApiService {
   }
 
   static Future<AppEvent> getEvent(String id) async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/events/$id'),
       headers: await _authHeaders(),
     );
@@ -1224,7 +1308,7 @@ class ApiService {
   static Future<List<Map<String, dynamic>>> getReviews(
     int organizationId,
   ) async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/reviews/organization/$organizationId'),
       headers: await _authHeaders(),
     );
@@ -1282,7 +1366,7 @@ class ApiService {
     if (trialLessonPrice != null) body['trial_lesson_price'] = trialLessonPrice;
     if (trialLessonComment != null)
       body['trial_lesson_comment'] = trialLessonComment;
-    final response = await http.put(
+    final response = await _client.put(
       Uri.parse('$_baseUrl/organizations/$id'),
       headers: headers,
       body: jsonEncode(body),
@@ -1298,7 +1382,7 @@ class ApiService {
     required String newPassword,
   }) async {
     final headers = await _authHeaders();
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/auth/change-password'),
       headers: headers,
       body: jsonEncode({
@@ -1319,7 +1403,7 @@ class ApiService {
   // ── Organization photos ────────────────────────────────────────────────────
 
   static Future<List<OrgPhoto>> getOrgPhotos(String orgId) async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/organizations/$orgId/photos'),
       headers: await _authHeaders(),
     );
@@ -1333,7 +1417,7 @@ class ApiService {
 
   static Future<OrgPhoto> addOrgPhoto(String orgId, String photoUrl) async {
     final headers = await _authHeaders();
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/organizations/$orgId/photos'),
       headers: headers,
       body: jsonEncode({'photo_url': photoUrl}),
@@ -1347,7 +1431,7 @@ class ApiService {
   }
 
   static Future<void> deleteOrgPhoto(String orgId, String photoId) async {
-    final response = await http.delete(
+    final response = await _client.delete(
       Uri.parse('$_baseUrl/organizations/$orgId/photos/$photoId'),
       headers: await _authHeaders(),
     );
@@ -1357,7 +1441,7 @@ class ApiService {
   }
 
   static Future<void> deleteOrganization(String orgId) async {
-    final response = await http.delete(
+    final response = await _client.delete(
       Uri.parse('$_baseUrl/organizations/$orgId'),
       headers: await _authHeaders(),
     );
@@ -1372,7 +1456,7 @@ class ApiService {
     final uri = Uri.parse(
       '$_baseUrl/invite-codes/resolve',
     ).replace(queryParameters: {'code': code});
-    final response = await http.get(uri, headers: await _authHeaders());
+    final response = await _client.get(uri, headers: await _authHeaders());
     if (response.statusCode == 200) {
       return InviteCodeResolveResult.fromJson(
         jsonDecode(response.body) as Map<String, dynamic>,
@@ -1384,7 +1468,7 @@ class ApiService {
   }
 
   static Future<List<OrgInviteCode>> getInviteCodes(String orgId) async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/organizations/$orgId/invite-codes'),
       headers: await _authHeaders(),
     );
@@ -1410,7 +1494,7 @@ class ApiService {
     };
     if (expiresAt != null)
       body['expires_at'] = expiresAt.toUtc().toIso8601String();
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/organizations/$orgId/invite-codes'),
       headers: headers,
       body: jsonEncode(body),
@@ -1428,7 +1512,7 @@ class ApiService {
     String orgId,
     int codeId,
   ) async {
-    final response = await http.patch(
+    final response = await _client.patch(
       Uri.parse(
         '$_baseUrl/organizations/$orgId/invite-codes/$codeId/deactivate',
       ),
@@ -1445,7 +1529,7 @@ class ApiService {
 
   static Future<JoinResult> submitJoinRequest(String orgId, String code) async {
     final headers = await _authHeaders();
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/organizations/$orgId/join-requests'),
       headers: headers,
       body: jsonEncode({'code': code}),
@@ -1461,7 +1545,7 @@ class ApiService {
   }
 
   static Future<List<OrgJoinRequest>> getJoinRequests(String orgId) async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/organizations/$orgId/join-requests'),
       headers: await _authHeaders(),
     );
@@ -1475,7 +1559,7 @@ class ApiService {
   }
 
   static Future<void> approveJoinRequest(String orgId, int requestId) async {
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse(
         '$_baseUrl/organizations/$orgId/join-requests/$requestId/approve',
       ),
@@ -1488,7 +1572,7 @@ class ApiService {
   }
 
   static Future<void> rejectJoinRequest(String orgId, int requestId) async {
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse(
         '$_baseUrl/organizations/$orgId/join-requests/$requestId/reject',
       ),
@@ -1546,7 +1630,7 @@ class ApiService {
     if (imageUrl != null && imageUrl.isNotEmpty) body['image_url'] = imageUrl;
     if (endDatetime != null) body['end_datetime'] = endDatetime;
     if (recurrence != null) body['recurrence'] = recurrence.toJson();
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/events/'),
       headers: headers,
       body: jsonEncode(body),
@@ -1556,4 +1640,55 @@ class ApiService {
     }
     throw Exception('Failed to create event');
   }
+}
+
+class _AuthenticatedClient extends http.BaseClient {
+  final http.Client _inner;
+
+  _AuthenticatedClient(this._inner);
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) async {
+    // Inject the latest access token into the request.
+    final token = await ApiService.getSavedToken();
+    if (token != null) {
+      request.headers['Authorization'] = 'Bearer $token';
+    }
+
+    final streamed = await _inner.send(request);
+    final response = await http.Response.fromStream(streamed);
+
+    if (response.statusCode != 401) return _toStreamed(response);
+
+    // Attempt a silent token refresh (concurrent callers share one refresh).
+    final refreshed = await ApiService._tryRefresh();
+    if (!refreshed) {
+      ApiService.sessionExpiredOnce = true;
+      await ApiService._onUnauthorized();
+      return _toStreamed(response);
+    }
+
+    // Retry the original request once with the new token.
+    if (request is http.Request) {
+      final retry = http.Request(request.method, request.url);
+      retry.headers.addAll(request.headers);
+      if (ApiService._sessionToken != null) {
+        retry.headers['Authorization'] = 'Bearer ${ApiService._sessionToken}';
+      }
+      retry.bodyBytes = request.bodyBytes;
+      return _inner.send(retry);
+    }
+
+    // Non-retryable request type (e.g. MultipartRequest): return the 401.
+    return _toStreamed(response);
+  }
+
+  static http.StreamedResponse _toStreamed(http.Response r) =>
+      http.StreamedResponse(
+        Stream.value(r.bodyBytes),
+        r.statusCode,
+        headers: r.headers,
+        contentLength: r.contentLength,
+        reasonPhrase: r.reasonPhrase,
+      );
 }

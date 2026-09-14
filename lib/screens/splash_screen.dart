@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
+import '../services/api_service.dart';
 import '../theme/app_theme.dart';
 import 'onboarding_screen.dart';
 
@@ -27,6 +28,21 @@ class _SplashScreenState extends State<SplashScreen>
     _fadeIn = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
 
     _controller.forward();
+
+    if (ApiService.sessionExpiredOnce) {
+      ApiService.sessionExpiredOnce = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.sessionExpiredMessage),
+            backgroundColor: AppColors.purple,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      });
+    }
   }
 
   @override

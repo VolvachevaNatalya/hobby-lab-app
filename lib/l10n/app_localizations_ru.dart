@@ -2092,4 +2092,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get dateYesterday => 'Вчера';
+
+  @override
+  String get sessionExpiredMessage => 'Сессия истекла. Войдите снова.';
 }

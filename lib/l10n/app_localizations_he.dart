@@ -2051,4 +2051,7 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get dateYesterday => 'אתמול';
+
+  @override
+  String get sessionExpiredMessage => 'פג תוקף ההתחברות. אנא היכנס שוב.';
 }

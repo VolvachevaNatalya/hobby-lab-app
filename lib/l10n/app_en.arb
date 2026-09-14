@@ -843,5 +843,7 @@
   },
   "notifEventNotAvailable": "This event is no longer available.",
 
-  "dateYesterday": "Yesterday"
+  "dateYesterday": "Yesterday",
+
+  "sessionExpiredMessage": "Your session has expired. Please sign in again."
 }

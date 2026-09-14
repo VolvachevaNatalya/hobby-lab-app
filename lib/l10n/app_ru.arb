@@ -843,5 +843,7 @@
   },
   "notifEventNotAvailable": "Это мероприятие больше недоступно.",
 
-  "dateYesterday": "Вчера"
+  "dateYesterday": "Вчера",
+
+  "sessionExpiredMessage": "Сессия истекла. Войдите снова."
 }

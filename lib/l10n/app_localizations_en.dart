@@ -2063,4 +2063,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dateYesterday => 'Yesterday';
+
+  @override
+  String get sessionExpiredMessage => 'Your session has expired. Please sign in again.';
 }

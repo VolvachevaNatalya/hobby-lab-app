@@ -843,5 +843,7 @@
   },
   "notifEventNotAvailable": "האירוע הזה כבר לא זמין.",
 
-  "dateYesterday": "אתמול"
+  "dateYesterday": "אתמול",
+
+  "sessionExpiredMessage": "פג תוקף ההתחברות. אנא היכנס שוב."
 }
