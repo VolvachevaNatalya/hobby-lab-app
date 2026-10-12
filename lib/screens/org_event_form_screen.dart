@@ -62,7 +62,6 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
   TimeOfDay? _endTime;
   bool _endDateTimeError = false;
   List<String> _selectedAgeGroups = [];
-  bool _ageRangeError = false;
   List<AppCategory> _categories = [];
   bool _loadingCategories = true;
   bool _saving = false;
@@ -70,9 +69,12 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
   bool _submitted = false;
   AppCity? _selectedCity;
   RecurrenceInput? _recurrence;
+  RecurrenceInput? _originalRecurrence;
 
   bool get _isEdit => widget.event != null && !widget.isDuplicate;
   bool get _hasCustomAge => _selectedAgeGroups.contains('custom');
+  bool get _recurrenceChanged =>
+      recurrenceInputChanged(_originalRecurrence, _recurrence);
 
   @override
   void initState() {
@@ -131,6 +133,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
           endDate: r.endDate,
         );
       }
+      _originalRecurrence = _recurrence;
       if (widget.isDuplicate) {
         _date = null;
         _time = null;
@@ -574,10 +577,15 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
 
       String? scope;
       if (widget.event!.seriesId != null && !removeRecurrence) {
-        final title = AppLocalizations.of(context)!.editEventScopeTitle;
-        scope = await showEventScopeDialog(context, title: title);
-        if (mounted) FocusManager.instance.primaryFocus?.unfocus();
-        if (scope == null || !mounted) return;
+        if (_recurrenceChanged) {
+          // Recurrence itself changed — backend always rebuilds the full series;
+          // scope selection is meaningless and would confuse the user.
+        } else {
+          final title = AppLocalizations.of(context)!.editEventScopeTitle;
+          scope = await showEventScopeDialog(context, title: title);
+          if (mounted) FocusManager.instance.primaryFocus?.unfocus();
+          if (scope == null || !mounted) return;
+        }
       }
 
       setState(() => _saving = true);
@@ -629,10 +637,17 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
             priceComment: commentText.isNotEmpty ? commentText : null,
             imageUrl: _imageUrl,
             scope: scope,
-            recurrence: scope != 'single' ? _recurrence : null,
+            recurrence: _recurrenceChanged ? _recurrence : null,
             removeRecurrence: removeRecurrence,
           );
-        } catch (_) {}
+        } catch (_) {
+          if (mounted) {
+            setState(() => _saving = false);
+            _showSnack(AppLocalizations.of(context)!.failedToSaveChanges,
+                const Color(0xFFEF4444));
+          }
+          return;
+        }
       }
       if (!mounted) return;
       setState(() => _saving = false);
@@ -640,9 +655,11 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
       // Force parent reload when the event list structure changes:
       // - removing recurrence deletes siblings
       // - adding recurrence to a standalone event generates new occurrence rows
+      // - recurrence settings changed: backend rebuilt the series
       // - future/series scope edits may affect multiple events
       final convertingToSeries = widget.event!.seriesId == null && _recurrence != null;
-      if (convertingToSeries || removeRecurrence || (scope != null && scope != 'single')) {
+      if (convertingToSeries || removeRecurrence || _recurrenceChanged ||
+          (scope != null && scope != 'single')) {
         widget.onSaved?.call();
         Navigator.of(context).pop(null);
         return;
@@ -1367,75 +1384,8 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
       onClear: _selectedAgeGroups.isNotEmpty
           ? () => setState(() {
                 _selectedAgeGroups = [];
-                _ageRangeError = false;
               })
           : null,
-    );
-  }
-
-  Widget _ageRangeRow() {
-    final l10n = AppLocalizations.of(context)!;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Row(
-        children: [
-          Icon(Icons.straighten_rounded, size: 20, color: AppColors.textMuted),
-          const SizedBox(width: 14),
-          Expanded(
-            child: TextField(
-              controller: _minAgeCtrl,
-              keyboardType: TextInputType.number,
-              textInputAction: TextInputAction.next,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              style: GoogleFonts.poppins(
-                color: _ageRangeError ? const Color(0xFFEF4444) : AppColors.textPrimary,
-                fontSize: 14,
-              ),
-              cursorColor: AppColors.purple,
-              onChanged: (_) => setState(() => _ageRangeError = false),
-              decoration: InputDecoration(
-                hintText: l10n.minAgeHint,
-                hintStyle: GoogleFonts.poppins(
-                  color: AppColors.textMuted,
-                  fontSize: 14,
-                ),
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-            ),
-          ),
-          Text(
-            ' - ',
-            style: GoogleFonts.poppins(
-              color: AppColors.textMuted,
-              fontSize: 14,
-            ),
-          ),
-          Expanded(
-            child: TextField(
-              controller: _maxAgeCtrl,
-              keyboardType: TextInputType.number,
-              textInputAction: TextInputAction.next,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              style: GoogleFonts.poppins(
-                color: _ageRangeError ? const Color(0xFFEF4444) : AppColors.textPrimary,
-                fontSize: 14,
-              ),
-              cursorColor: AppColors.purple,
-              onChanged: (_) => setState(() => _ageRangeError = false),
-              decoration: InputDecoration(
-                hintText: l10n.maxAgeHint,
-                hintStyle: GoogleFonts.poppins(
-                  color: AppColors.textMuted,
-                  fontSize: 14,
-                ),
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -1670,7 +1620,6 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                             _maxAgeCtrl.text = tempMaxCtrl.text;
                             setState(() {
                               _selectedAgeGroups = tempSelected;
-                              _ageRangeError = false;
                             });
                             Navigator.of(ctx).pop();
                           },

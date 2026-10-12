@@ -209,6 +209,10 @@ class _EventScheduleScreenState extends State<EventScheduleScreen> {
       cityNameHe: json['city_name_he']?.toString(),
       cityNameEn: json['city_name_en']?.toString(),
       cityNameRu: json['city_name_ru']?.toString(),
+      ageGroups: (json['age_groups'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList() ??
+          [],
       minAge: (json['min_age'] ?? 0) as int,
       maxAge: (json['max_age'] ?? 99) as int,
       capacity: (json['capacity'] ?? 0) as int,

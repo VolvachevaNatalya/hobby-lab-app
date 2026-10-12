@@ -112,6 +112,16 @@ String recurrenceEndText(EventRecurrence r, AppLocalizations l10n) {
   return l10n.repeatNoEndDate;
 }
 
+bool recurrenceInputChanged(RecurrenceInput? original, RecurrenceInput? current) {
+  if (original == null && current == null) return false;
+  if (original == null || current == null) return true;
+  return original.frequency != current.frequency ||
+      original.interval != current.interval ||
+      original.endType != current.endType ||
+      original.totalCount != current.totalCount ||
+      original.endDate != current.endDate;
+}
+
 String recurrenceInputSummary(RecurrenceInput r, AppLocalizations l10n) {
   if (r.interval == 1) {
     return switch (r.frequency) {
