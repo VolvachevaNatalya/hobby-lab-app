@@ -923,6 +923,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get repeatUnitYear => 'год';
 
   @override
+  String get repeatUnitDays => 'дней';
+
+  @override
+  String get repeatUnitWeeks => 'недель';
+
+  @override
+  String get repeatUnitMonths => 'месяцев';
+
+  @override
+  String get repeatUnitYears => 'лет';
+
+  @override
   String get repeatEndsLabel => 'Завершение';
 
   @override
@@ -939,6 +951,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get firstEventIncludedNote => 'Первое событие включено в счёт';
+
+  @override
+  String get countIncludesPastNote =>
+      'Общее количество включает уже прошедшие события';
 
   @override
   String get repeatMinCountError => 'Минимум 2 события';

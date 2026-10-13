@@ -920,6 +920,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get repeatUnitYear => 'year';
 
   @override
+  String get repeatUnitDays => 'days';
+
+  @override
+  String get repeatUnitWeeks => 'weeks';
+
+  @override
+  String get repeatUnitMonths => 'months';
+
+  @override
+  String get repeatUnitYears => 'years';
+
+  @override
   String get repeatEndsLabel => 'Ends';
 
   @override
@@ -937,6 +949,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get firstEventIncludedNote =>
       'The first event is included in the count';
+
+  @override
+  String get countIncludesPastNote => 'Total includes past occurrences';
 
   @override
   String get repeatMinCountError => 'Minimum 2 events';

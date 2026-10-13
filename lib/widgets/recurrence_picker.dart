@@ -12,6 +12,7 @@ Future<void> showRecurrencePicker(
   BuildContext context, {
   RecurrenceInput? current,
   DateTime? eventDate,
+  bool isEditingExistingSeries = false,
   required void Function() onClear,
   required void Function(RecurrenceInput) onSelect,
 }) {
@@ -22,6 +23,7 @@ Future<void> showRecurrencePicker(
     builder: (_) => _RecurrencePicker(
       current: current,
       eventDate: eventDate,
+      isEditingExistingSeries: isEditingExistingSeries,
       onClear: onClear,
       onSelect: onSelect,
     ),
@@ -31,12 +33,14 @@ Future<void> showRecurrencePicker(
 class _RecurrencePicker extends StatelessWidget {
   final RecurrenceInput? current;
   final DateTime? eventDate;
+  final bool isEditingExistingSeries;
   final void Function() onClear;
   final void Function(RecurrenceInput) onSelect;
 
   const _RecurrencePicker({
     required this.current,
     required this.eventDate,
+    required this.isEditingExistingSeries,
     required this.onClear,
     required this.onSelect,
   });
@@ -111,6 +115,7 @@ class _RecurrencePicker extends StatelessWidget {
                   context,
                   current: seed,
                   eventDate: eventDate,
+                  isEditingExistingSeries: isEditingExistingSeries,
                 );
                 if (result != null && context.mounted) {
                   Navigator.of(context).pop();
@@ -140,6 +145,7 @@ class _RecurrencePicker extends StatelessWidget {
                   context,
                   current: seed,
                   eventDate: eventDate,
+                  isEditingExistingSeries: isEditingExistingSeries,
                 );
                 if (result != null && context.mounted) {
                   Navigator.of(context).pop();
@@ -169,6 +175,7 @@ class _RecurrencePicker extends StatelessWidget {
                   context,
                   current: seed,
                   eventDate: eventDate,
+                  isEditingExistingSeries: isEditingExistingSeries,
                 );
                 if (result != null && context.mounted) {
                   Navigator.of(context).pop();
@@ -198,6 +205,7 @@ class _RecurrencePicker extends StatelessWidget {
                   context,
                   current: seed,
                   eventDate: eventDate,
+                  isEditingExistingSeries: isEditingExistingSeries,
                 );
                 if (result != null && context.mounted) {
                   Navigator.of(context).pop();
@@ -218,6 +226,7 @@ class _RecurrencePicker extends StatelessWidget {
                   context,
                   current: current,
                   eventDate: eventDate,
+                  isEditingExistingSeries: isEditingExistingSeries,
                 );
                 if (result != null && context.mounted) {
                   Navigator.of(context).pop();

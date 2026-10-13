@@ -1727,6 +1727,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
       context,
       current: _recurrence,
       eventDate: _date,
+      isEditingExistingSeries: widget.event?.seriesId != null,
       onClear: () {
         if (mounted) setState(() => _recurrence = null);
       },

@@ -10,21 +10,30 @@ Future<RecurrenceInput?> showRecurrenceConfigSheet(
   BuildContext context, {
   RecurrenceInput? current,
   DateTime? eventDate,
+  bool isEditingExistingSeries = false,
 }) {
   return showModalBottomSheet<RecurrenceInput>(
     context: context,
     backgroundColor: Colors.transparent,
     isScrollControlled: true,
-    builder: (_) =>
-        _RecurrenceConfigSheet(current: current, eventDate: eventDate),
+    builder: (_) => _RecurrenceConfigSheet(
+      current: current,
+      eventDate: eventDate,
+      isEditingExistingSeries: isEditingExistingSeries,
+    ),
   );
 }
 
 class _RecurrenceConfigSheet extends StatefulWidget {
   final RecurrenceInput? current;
   final DateTime? eventDate;
+  final bool isEditingExistingSeries;
 
-  const _RecurrenceConfigSheet({this.current, this.eventDate});
+  const _RecurrenceConfigSheet({
+    this.current,
+    this.eventDate,
+    this.isEditingExistingSeries = false,
+  });
 
   @override
   State<_RecurrenceConfigSheet> createState() => _RecurrenceConfigSheetState();
@@ -125,10 +134,10 @@ class _RecurrenceConfigSheetState extends State<_RecurrenceConfigSheet> {
   }
 
   String _unitLabelPlural(String freq, AppLocalizations l10n) => switch (freq) {
-    'daily' => '${l10n.repeatUnitDay}s',
-    'weekly' => '${l10n.repeatUnitWeek}s',
-    'monthly' => '${l10n.repeatUnitMonth}s',
-    'yearly' => '${l10n.repeatUnitYear}s',
+    'daily' => l10n.repeatUnitDays,
+    'weekly' => l10n.repeatUnitWeeks,
+    'monthly' => l10n.repeatUnitMonths,
+    'yearly' => l10n.repeatUnitYears,
     _ => freq,
   };
 
@@ -235,7 +244,9 @@ class _RecurrenceConfigSheetState extends State<_RecurrenceConfigSheet> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 4),
                                 child: Text(
-                                  l10n.firstEventIncludedNote,
+                                  widget.isEditingExistingSeries
+                                      ? l10n.countIncludesPastNote
+                                      : l10n.firstEventIncludedNote,
                                   style: GoogleFonts.poppins(
                                     fontSize: 11,
                                     color: AppColors.textMuted,

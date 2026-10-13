@@ -1692,7 +1692,7 @@ class _EventTile extends StatelessWidget {
                     ],
                   ),
                 ],
-                if (event['series_id'] != null) ...[
+                if (event['series_id'] != null && event['recurrence'] != null) ...[
                   const SizedBox(height: 4),
                   Row(
                     children: [
@@ -1703,14 +1703,12 @@ class _EventTile extends StatelessWidget {
                       ),
                       const SizedBox(width: 3),
                       Text(
-                        event['recurrence'] != null
-                            ? recurrenceFrequencyText(
-                                EventRecurrence.fromJson(
-                                  event['recurrence'] as Map<String, dynamic>,
-                                ),
-                                l10n,
-                              )
-                            : l10n.repeatsWeekly,
+                        recurrenceFrequencyText(
+                          EventRecurrence.fromJson(
+                            event['recurrence'] as Map<String, dynamic>,
+                          ),
+                          l10n,
+                        ),
                         style: GoogleFonts.poppins(
                           fontSize: 11,
                           color: AppColors.textMuted,

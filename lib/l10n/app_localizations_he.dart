@@ -907,6 +907,18 @@ class AppLocalizationsHe extends AppLocalizations {
   String get repeatUnitYear => 'שנה';
 
   @override
+  String get repeatUnitDays => 'ימים';
+
+  @override
+  String get repeatUnitWeeks => 'שבועות';
+
+  @override
+  String get repeatUnitMonths => 'חודשים';
+
+  @override
+  String get repeatUnitYears => 'שנים';
+
+  @override
   String get repeatEndsLabel => 'מסתיים';
 
   @override
@@ -923,6 +935,10 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get firstEventIncludedNote => 'האירוע הראשון נכלל בספירה';
+
+  @override
+  String get countIncludesPastNote =>
+      'המספר הכולל כולל גם אירועים שכבר התקיימו';
 
   @override
   String get repeatMinCountError => 'מינימום 2 אירועים';

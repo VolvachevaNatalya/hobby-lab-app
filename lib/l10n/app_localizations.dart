@@ -1846,6 +1846,30 @@ abstract class AppLocalizations {
   /// **'year'**
   String get repeatUnitYear;
 
+  /// No description provided for @repeatUnitDays.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get repeatUnitDays;
+
+  /// No description provided for @repeatUnitWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'weeks'**
+  String get repeatUnitWeeks;
+
+  /// No description provided for @repeatUnitMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'months'**
+  String get repeatUnitMonths;
+
+  /// No description provided for @repeatUnitYears.
+  ///
+  /// In en, this message translates to:
+  /// **'years'**
+  String get repeatUnitYears;
+
   /// No description provided for @repeatEndsLabel.
   ///
   /// In en, this message translates to:
@@ -1881,6 +1905,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The first event is included in the count'**
   String get firstEventIncludedNote;
+
+  /// No description provided for @countIncludesPastNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Total includes past occurrences'**
+  String get countIncludesPastNote;
 
   /// No description provided for @repeatMinCountError.
   ///

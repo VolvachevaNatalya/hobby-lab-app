@@ -89,20 +89,12 @@ String recurrenceEndText(EventRecurrence r, AppLocalizations l10n) {
   if (r.endType == 'date' && r.endDate != null) {
     try {
       final dt = DateTime.parse(r.endDate!);
-      const months = [
+      final months = [
         '',
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
+        l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+        l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+        l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+        l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
       ];
       return l10n.repeatUntilDate('${dt.day} ${months[dt.month]} ${dt.year}');
     } catch (_) {
