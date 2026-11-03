@@ -1320,6 +1320,19 @@ class ApiService {
     throw Exception('Failed to load reviews');
   }
 
+  static Future<Map<String, dynamic>> getReviewStats(
+    int organizationId,
+  ) async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/reviews/organization/$organizationId/stats'),
+      headers: await _authHeaders(),
+    );
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    }
+    throw Exception('Failed to load review stats');
+  }
+
   static Future<Map<String, dynamic>> updateOrganization(
     int id, {
     String? name,

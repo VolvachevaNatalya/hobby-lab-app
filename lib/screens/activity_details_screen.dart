@@ -110,6 +110,10 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
       final reviewsFuture = orgId != null
           ? ApiService.getReviews(orgId)
           : Future.value(<Map<String, dynamic>>[]);
+      final statsFuture = orgId != null
+          ? ApiService.getReviewStats(orgId).catchError(
+              (_) => <String, dynamic>{'total': null, 'average_rating': null})
+          : Future.value(<String, dynamic>{'total': null, 'average_rating': null});
 
       final groups = await groupsFuture;
 
@@ -129,20 +133,17 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
       }
 
       List<Map<String, dynamic>> reviews = [];
+      Map<String, dynamic> stats = {'total': null, 'average_rating': null};
       try {
         reviews = await reviewsFuture;
       } catch (_) {}
+      try {
+        stats = await statsFuture;
+      } catch (_) {}
 
-      double loadedRating = widget.rating;
-      int loadedCount = widget.reviewCount;
-      if (reviews.isNotEmpty) {
-        loadedCount = reviews.length;
-        final sum = reviews.fold<double>(
-          0,
-          (s, r) => s + ((r['rating'] ?? 0) as num).toDouble(),
-        );
-        loadedRating = sum / reviews.length;
-      }
+      final loadedCount = (stats['total'] as num?)?.toInt() ?? reviews.length;
+      final avgRaw = stats['average_rating'];
+      final loadedRating = avgRaw != null ? (avgRaw as num).toDouble() : widget.rating;
 
       if (!mounted) return;
       setState(() {

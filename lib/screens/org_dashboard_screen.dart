@@ -110,31 +110,35 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
         ApiService.getOrgClasses(_orgId),
         ApiService.getOrgEvents(_orgId),
         ApiService.getCategories(),
-        ApiService.getAllGroups(),
       ]);
 
       final rawClasses = results[0] as List<Map<String, dynamic>>;
       final rawEvents = results[1] as List<Map<String, dynamic>>;
       final cats = results[2] as List<AppCategory>;
-      final rawGroups = results[3] as List<Map<String, dynamic>>;
 
       final catMap = {for (final c in cats) c.id: c.name};
 
+      // Fetch groups per class so pagination never truncates results
       final groupsMap = <String, List<OrgGroup>>{};
-      for (final g in rawGroups) {
-        final classId = (g['class_id'] ?? '').toString();
-        groupsMap
-            .putIfAbsent(classId, () => [])
-            .add(
-              OrgGroup(
-                name: (g['name'] ?? '').toString(),
-                minAge: (g['age_from'] ?? 0) as int,
-                maxAge: (g['age_to'] ?? 99) as int,
-                capacity: (g['capacity'] ?? 0) as int,
-                price: 0,
-              ),
-            );
-      }
+      await Future.wait(
+        rawClasses.map((cls) async {
+          final classId = (cls['id'] ?? '').toString();
+          try {
+            final groups = await ApiService.getGroupsByClass(classId);
+            groupsMap[classId] = groups
+                .map((g) => OrgGroup(
+                      name: (g['name'] ?? '').toString(),
+                      minAge: (g['age_from'] ?? 0) as int,
+                      maxAge: (g['age_to'] ?? 99) as int,
+                      capacity: (g['capacity'] ?? 0) as int,
+                      price: 0,
+                    ))
+                .toList();
+          } catch (_) {
+            groupsMap.putIfAbsent(classId, () => []);
+          }
+        }),
+      );
 
       final classes = rawClasses.map((json) {
         final classId = (json['id'] ?? '').toString();

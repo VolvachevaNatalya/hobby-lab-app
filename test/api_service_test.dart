@@ -192,4 +192,90 @@ void main() {
       expect(ApiService.sessionExpiredOnce, isTrue);
     });
   });
+
+  // ── getReviews ─────────────────────────────────────────────────────────────
+  // Contract: returns a flat List<Map> — original format, backward-compatible
+  // with all previously released Flutter app versions.
+
+  group('getReviews', () {
+    test('parses flat JSON array and returns list', () async {
+      ApiService.setInnerClientForTesting(
+        MockClient((_) async => http.Response(
+              '[{"id":1,"rating":5,"comment":"Great!"},{"id":2,"rating":4,"comment":"Good"}]',
+              200,
+              headers: {'content-type': 'application/json'},
+            )),
+      );
+
+      final result = await ApiService.getReviews(42);
+
+      expect(result, isA<List<Map<String, dynamic>>>());
+      expect(result.length, 2);
+      expect(result[0]['rating'], 5);
+    });
+
+    test('returns empty list for org with no reviews', () async {
+      ApiService.setInnerClientForTesting(
+        MockClient((_) async => http.Response(
+              '[]',
+              200,
+              headers: {'content-type': 'application/json'},
+            )),
+      );
+
+      final result = await ApiService.getReviews(99);
+
+      expect(result, isEmpty);
+    });
+
+    test('throws on non-200 response', () async {
+      ApiService.setInnerClientForTesting(
+        MockClient((_) async => http.Response('Not Found', 404)),
+      );
+
+      expect(ApiService.getReviews(1), throwsException);
+    });
+  });
+
+  // ── getReviewStats ─────────────────────────────────────────────────────────
+  // Contract: returns {"total": int, "average_rating": double|null}
+  // Aggregates ALL active reviews — not bounded by any pagination limit.
+
+  group('getReviewStats', () {
+    test('parses stats envelope with total and average_rating', () async {
+      ApiService.setInnerClientForTesting(
+        MockClient((_) async => _json(200, {
+              'total': 47,
+              'average_rating': 4.32,
+            })),
+      );
+
+      final result = await ApiService.getReviewStats(42);
+
+      expect(result['total'], 47);
+      expect(result['average_rating'], 4.32);
+    });
+
+    test('handles null average_rating for org with no reviews', () async {
+      ApiService.setInnerClientForTesting(
+        MockClient((_) async => _json(200, {
+              'total': 0,
+              'average_rating': null,
+            })),
+      );
+
+      final result = await ApiService.getReviewStats(99);
+
+      expect(result['total'], 0);
+      expect(result['average_rating'], isNull);
+    });
+
+    test('throws on non-200 response', () async {
+      ApiService.setInnerClientForTesting(
+        MockClient((_) async => http.Response('Server Error', 500)),
+      );
+
+      expect(ApiService.getReviewStats(1), throwsException);
+    });
+  });
 }

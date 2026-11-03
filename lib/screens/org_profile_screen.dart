@@ -181,22 +181,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
     // Load reviews separately so a failure here never hides the org data
     if (orgIdInt != null) {
       try {
-        final reviews = await ApiService.getReviews(orgIdInt);
-        if (!mounted) return;
-        double avgRating = _avgRating;
-        if (reviews.isNotEmpty) {
-          avgRating =
-              reviews.fold<double>(
-                0,
-                (s, r) => s + ((r['rating'] ?? 0) as num).toDouble(),
-              ) /
-              reviews.length;
-        }
-        setState(() {
-          _reviews = reviews;
-          _reviewCount = reviews.length;
-          _avgRating = avgRating;
-        });
+        await _fetchAndApplyReviews(orgIdInt);
       } catch (_) {}
     }
   }
@@ -205,23 +190,27 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
     final orgIdInt = int.tryParse(widget.orgId!);
     if (orgIdInt == null) return;
     try {
-      final reviews = await ApiService.getReviews(orgIdInt);
-      if (!mounted) return;
-      double avgRating = _avgRating;
-      if (reviews.isNotEmpty) {
-        avgRating =
-            reviews.fold<double>(
-              0,
-              (s, r) => s + ((r['rating'] ?? 0) as num).toDouble(),
-            ) /
-            reviews.length;
-      }
-      setState(() {
-        _reviews = reviews;
-        _reviewCount = reviews.length;
-        _avgRating = avgRating;
-      });
+      await _fetchAndApplyReviews(orgIdInt);
     } catch (_) {}
+  }
+
+  Future<void> _fetchAndApplyReviews(int orgIdInt) async {
+    final results = await Future.wait([
+      ApiService.getReviews(orgIdInt),
+      ApiService.getReviewStats(orgIdInt).catchError(
+          (_) => <String, dynamic>{'total': null, 'average_rating': null}),
+    ]);
+    if (!mounted) return;
+    final reviews = results[0] as List<Map<String, dynamic>>;
+    final stats = results[1] as Map<String, dynamic>;
+    final total = (stats['total'] as num?)?.toInt() ?? reviews.length;
+    final avgRaw = stats['average_rating'];
+    final avgRating = avgRaw != null ? (avgRaw as num).toDouble() : _avgRating;
+    setState(() {
+      _reviews = reviews;
+      _reviewCount = total;
+      _avgRating = avgRating;
+    });
   }
 
   String get _displayName => (_orgData?['name'] as String?) ?? widget.name;

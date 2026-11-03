@@ -47,18 +47,19 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
   Future<void> _loadReviews() async {
     setState(() => _loading = true);
     try {
-      final reviews = await ApiService.getReviews(widget.organizationId!);
+      final results = await Future.wait([
+        ApiService.getReviews(widget.organizationId!),
+        ApiService.getReviewStats(widget.organizationId!).catchError((_) =>
+            <String, dynamic>{'total': null, 'average_rating': null}),
+      ]);
       if (!mounted) return;
+      final reviews = results[0] as List<Map<String, dynamic>>;
+      final stats = results[1] as Map<String, dynamic>;
       setState(() {
         _reviews = reviews;
-        if (reviews.isNotEmpty) {
-          _currentCount = reviews.length;
-          final sum = reviews.fold<double>(
-            0,
-            (s, r) => s + ((r['rating'] ?? 0) as num).toDouble(),
-          );
-          _currentRating = sum / reviews.length;
-        }
+        _currentCount = (stats['total'] as num?)?.toInt() ?? reviews.length;
+        final avg = stats['average_rating'];
+        if (avg != null) _currentRating = (avg as num).toDouble();
       });
     } catch (_) {
     } finally {
