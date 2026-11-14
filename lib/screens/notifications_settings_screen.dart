@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../l10n/app_localizations.dart';
+import '../services/api_service.dart';
 import '../theme/app_theme.dart';
 
 class _ToggleData {
@@ -18,6 +19,16 @@ class _ToggleData {
   });
 }
 
+// Mapping between toggle index and SharedPreferences / API keys.
+const _prefKeys = [
+  'notif_appointments',
+  'notif_chat',
+  'notif_activity',
+  'notif_offers',
+];
+
+const _defaultValues = [true, true, false, true];
+
 class NotificationsSettingsScreen extends StatefulWidget {
   const NotificationsSettingsScreen({super.key});
 
@@ -28,13 +39,9 @@ class NotificationsSettingsScreen extends StatefulWidget {
 
 class _NotificationsSettingsScreenState
     extends State<NotificationsSettingsScreen> {
-  final _keys = [
-    'notif_appointments',
-    'notif_chat',
-    'notif_activity',
-    'notif_offers',
-  ];
-  var _values = [true, true, false, true];
+  var _values = List<bool>.from(_defaultValues);
+  bool _loadingInitial = true;
+  String? _saveError;
 
   @override
   void initState() {
@@ -42,21 +49,67 @@ class _NotificationsSettingsScreenState
     _loadPrefs();
   }
 
+  /// Load order: API → SharedPreferences fallback.
+  /// SharedPreferences is used as an offline cache: always written on
+  /// successful API load / save.
   Future<void> _loadPrefs() async {
+    final cached = await _loadFromSharedPrefs();
+    if (mounted) setState(() { _values = cached; _loadingInitial = false; });
+
+    try {
+      final apiPrefs = await ApiService.getNotificationPreferences();
+      if (!mounted) return;
+      final apiValues = [
+        apiPrefs['notif_appointments'] ?? true,
+        apiPrefs['notif_chat'] ?? true,
+        apiPrefs['notif_activity'] ?? false,
+        apiPrefs['notif_offers'] ?? true,
+      ];
+      setState(() => _values = apiValues);
+      await _saveToSharedPrefs(apiValues);
+    } catch (_) {
+      // Network failure: keep the cached values already shown.
+    }
+  }
+
+  Future<List<bool>> _loadFromSharedPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    if (!mounted) return;
-    setState(() {
-      _values = List.generate(
-        _keys.length,
-        (i) => prefs.getBool(_keys[i]) ?? _values[i],
-      );
-    });
+    return List.generate(
+      _prefKeys.length,
+      (i) => prefs.getBool(_prefKeys[i]) ?? _defaultValues[i],
+    );
+  }
+
+  Future<void> _saveToSharedPrefs(List<bool> values) async {
+    final prefs = await SharedPreferences.getInstance();
+    for (var i = 0; i < _prefKeys.length; i++) {
+      await prefs.setBool(_prefKeys[i], values[i]);
+    }
   }
 
   Future<void> _toggle(int i, bool v) async {
-    setState(() => _values[i] = v);
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_keys[i], v);
+    final previous = List<bool>.from(_values);
+    setState(() { _values[i] = v; _saveError = null; });
+
+    // Optimistic: update local cache immediately.
+    final updated = List<bool>.from(_values);
+    await _saveToSharedPrefs(updated);
+
+    try {
+      await ApiService.updateNotificationPreferences({
+        for (var j = 0; j < _prefKeys.length; j++) _prefKeys[j]: updated[j],
+      });
+    } catch (_) {
+      // Roll back optimistic update on failure.
+      if (mounted) {
+        setState(() {
+          _values = previous;
+          final l10n = AppLocalizations.of(context);
+          _saveError = l10n?.notifPrefSaveFailed;
+        });
+        await _saveToSharedPrefs(previous);
+      }
+    }
   }
 
   List<_ToggleData> _buildItems(AppLocalizations l10n) => [
@@ -99,51 +152,63 @@ class _NotificationsSettingsScreenState
             _buildHeader(context, l10n),
             const Divider(height: 1, color: AppColors.divider),
             Expanded(
-              child: SingleChildScrollView(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.notifChooseDesc,
-                      style: GoogleFonts.poppins(
-                        fontSize: 13,
-                        color: AppColors.textMuted,
-                        height: 1.5,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColors.divider),
-                      ),
+              child: _loadingInitial
+                  ? const Center(child: CircularProgressIndicator())
+                  : SingleChildScrollView(
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
                       child: Column(
-                        children: List.generate(toggleItems.length, (i) {
-                          return Column(
-                            children: [
-                              _ToggleRow(
-                                data: toggleItems[i],
-                                value: _values[i],
-                                onChanged: (v) => _toggle(i, v),
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.notifChooseDesc,
+                            style: GoogleFonts.poppins(
+                              fontSize: 13,
+                              color: AppColors.textMuted,
+                              height: 1.5,
+                            ),
+                          ),
+                          if (_saveError != null) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              _saveError!,
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: Colors.redAccent,
                               ),
-                              if (i < toggleItems.length - 1)
-                                const Divider(
-                                  height: 1,
-                                  color: AppColors.divider,
-                                  indent: 64,
-                                  endIndent: 16,
-                                ),
-                            ],
-                          );
-                        }),
+                            ),
+                          ],
+                          const SizedBox(height: 20),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.surface,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: AppColors.divider),
+                            ),
+                            child: Column(
+                              children: List.generate(toggleItems.length, (i) {
+                                return Column(
+                                  children: [
+                                    _ToggleRow(
+                                      data: toggleItems[i],
+                                      value: _values[i],
+                                      onChanged: (v) => _toggle(i, v),
+                                    ),
+                                    if (i < toggleItems.length - 1)
+                                      const Divider(
+                                        height: 1,
+                                        color: AppColors.divider,
+                                        indent: 64,
+                                        endIndent: 16,
+                                      ),
+                                  ],
+                                );
+                              }),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
             ),
           ],
         ),

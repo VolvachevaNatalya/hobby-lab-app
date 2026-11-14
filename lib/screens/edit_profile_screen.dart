@@ -157,6 +157,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       hint: l10n.emailHint,
                       prefixIcon: Icons.email_outlined,
                       keyboardType: TextInputType.emailAddress,
+                      readOnly: true,
                     ),
                     const SizedBox(height: 14),
                     AppTextField(

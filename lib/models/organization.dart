@@ -18,6 +18,15 @@ class Organization {
   final int reviewCount;
   final String? promotionType;
   final double? distanceKm;
+  final String? phone;
+  final String? website;
+  final String? bannerUrl;
+  final String? instagramUrl;
+  final String? facebookUrl;
+  final bool isVerified;
+  final bool trialLessonAvailable;
+  final double? trialLessonPrice;
+  final String? trialLessonComment;
 
   const Organization({
     required this.id,
@@ -37,6 +46,15 @@ class Organization {
     required this.reviewCount,
     this.promotionType,
     this.distanceKm,
+    this.phone,
+    this.website,
+    this.bannerUrl,
+    this.instagramUrl,
+    this.facebookUrl,
+    this.isVerified = false,
+    this.trialLessonAvailable = false,
+    this.trialLessonPrice,
+    this.trialLessonComment,
   });
 
   String? localizedCity(String locale) {
@@ -77,6 +95,15 @@ class Organization {
       reviewCount: (json['review_count'] ?? 0) as int,
       promotionType: promoType,
       distanceKm: (json['distance_km'] as num?)?.toDouble(),
+      phone: json['phone']?.toString(),
+      website: json['website']?.toString(),
+      bannerUrl: json['banner_url']?.toString(),
+      instagramUrl: json['instagram_url']?.toString(),
+      facebookUrl: json['facebook_url']?.toString(),
+      isVerified: json['is_verified'] as bool? ?? false,
+      trialLessonAvailable: json['trial_lesson_available'] as bool? ?? false,
+      trialLessonPrice: (json['trial_lesson_price'] as num?)?.toDouble(),
+      trialLessonComment: json['trial_lesson_comment']?.toString(),
     );
   }
 }

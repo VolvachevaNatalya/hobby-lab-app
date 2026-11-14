@@ -11,6 +11,7 @@ class AppTextField extends StatefulWidget {
   final TextInputAction textInputAction;
   final String? errorText;
   final bool isRequired;
+  final bool readOnly;
 
   const AppTextField({
     super.key,
@@ -22,6 +23,7 @@ class AppTextField extends StatefulWidget {
     this.textInputAction = TextInputAction.next,
     this.errorText,
     this.isRequired = false,
+    this.readOnly = false,
   });
 
   @override
@@ -64,8 +66,10 @@ class _AppTextFieldState extends State<AppTextField> {
 
     final borderColor = hasError
         ? const Color(0xFFEF4444)
-        : (_focused ? AppColors.purple : AppColors.divider);
-    final borderWidth = hasError ? 1.5 : (_focused ? 1.5 : 1.0);
+        : widget.readOnly
+            ? AppColors.divider
+            : (_focused ? AppColors.purple : AppColors.divider);
+    final borderWidth = hasError ? 1.5 : (_focused && !widget.readOnly ? 1.5 : 1.0);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,11 +92,13 @@ class _AppTextFieldState extends State<AppTextField> {
           child: TextField(
             focusNode: _focus,
             controller: widget.controller,
+            readOnly: widget.readOnly,
             obscureText: widget.isPassword && _obscure,
             keyboardType: widget.keyboardType,
             textInputAction: widget.textInputAction,
             style: GoogleFonts.poppins(
-                color: AppColors.textPrimary, fontSize: 15),
+                color: widget.readOnly ? AppColors.textMuted : AppColors.textPrimary,
+                fontSize: 15),
             cursorColor: AppColors.purple,
             decoration: InputDecoration(
               hintText: widget.hint,

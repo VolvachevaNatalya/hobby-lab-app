@@ -165,6 +165,7 @@ class _OrgDashboardState extends State<OrgDashboardScreen> {
           categoryList: classCatList,
           description: (json['description'] ?? '').toString(),
           groups: groupsMap[classId] ?? [],
+          imageUrl: json['image_url']?.toString(),
         );
       }).toList();
 
@@ -1180,7 +1181,7 @@ class _EventPreviewCard extends StatelessWidget {
             _ => event.cityNameEn,
           };
     final months = [
-      '', l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+      l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
       l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
       l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
       l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
@@ -1792,6 +1793,12 @@ class _EventCard extends StatelessWidget {
     final cs = catColorStart(event.category);
     final ce = catColorEnd(event.category);
     final l10n = AppLocalizations.of(context)!;
+    final months = [
+      l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+      l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+      l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+      l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
+    ];
     final locale = Localizations.localeOf(context).languageCode;
     final String? cityLabel = event.isNationwide
         ? l10n.nationwideLabel
@@ -1845,12 +1852,12 @@ class _EventCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                _InfoRow(Icons.calendar_today_rounded, fmtDate(event.date)),
+                _InfoRow(Icons.calendar_today_rounded, fmtOrgDate(event.date, months)),
                 const SizedBox(height: 4),
                 _InfoRow(Icons.access_time_rounded, fmtOrgEventTimeDisplay(event.time, event.endDateTime, event.date)),
                 if (event.endDateTime != null && event.endDateTime!.day != event.date.day) ...[
                   const SizedBox(height: 4),
-                  _InfoRow(Icons.event_available_rounded, fmtDate(event.endDateTime!)),
+                  _InfoRow(Icons.event_available_rounded, fmtOrgDate(event.endDateTime!, months)),
                 ],
                 if (event.location.isNotEmpty) ...[
                   const SizedBox(height: 4),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../services/api_service.dart';
+import '../services/saved_activities.dart';
 import '../models/app_category.dart';
 import '../l10n/app_localizations.dart';
 import 'activity_details_screen.dart';
@@ -20,6 +21,7 @@ class _Activity {
   final Color colorStart;
   final Color colorEnd;
   final IconData icon;
+  final String? imageUrl;
 
   const _Activity({
     this.id = '',
@@ -32,6 +34,7 @@ class _Activity {
     required this.colorStart,
     required this.colorEnd,
     required this.icon,
+    this.imageUrl,
   });
 
   bool matches(String q) {
@@ -165,6 +168,7 @@ class _SearchScreenState extends State<SearchScreen> {
             colorStart: c.$1,
             colorEnd: c.$2,
             icon: _icons[i % _icons.length],
+            imageUrl: e.value.imageUrl,
           );
         }).toList();
       });
@@ -653,14 +657,64 @@ class _ResultsList extends StatelessWidget {
 
 // ─── Result card ──────────────────────────────────────────────────────────────
 
-class _ResultCard extends StatelessWidget {
+class _ResultCard extends StatefulWidget {
   final _Activity activity;
   const _ResultCard({required this.activity});
 
   @override
+  State<_ResultCard> createState() => _ResultCardState();
+}
+
+class _ResultCardState extends State<_ResultCard> {
+  bool _bookmarking = false;
+
+  bool get _isSaved => isSavedById(widget.activity.id);
+
+  Future<void> _toggleBookmark() async {
+    if (_bookmarking || widget.activity.id.isEmpty) return;
+    setState(() => _bookmarking = true);
+    SavedActivity act() => SavedActivity(
+          classId: widget.activity.id,
+          name: widget.activity.name,
+          studio: widget.activity.studio,
+          category: widget.activity.category,
+          primaryCategory: widget.activity.primaryCategory,
+          rating: widget.activity.rating,
+          reviewCount: widget.activity.reviewCount,
+          colorStart: widget.activity.colorStart,
+          colorEnd: widget.activity.colorEnd,
+          icon: widget.activity.icon,
+          imageUrl: widget.activity.imageUrl,
+        );
+    try {
+      if (_isSaved) {
+        final favId = favoriteIds[widget.activity.id];
+        toggleSaved(act());
+        if (favId != null) {
+          await ApiService.removeFavorite(favId);
+          favoriteIds.remove(widget.activity.id);
+        }
+      } else {
+        toggleSaved(act());
+        final fav = await ApiService.addFavorite(widget.activity.id);
+        favoriteIds[widget.activity.id] = fav.id;
+      }
+    } catch (_) {
+      toggleSaved(act()); // revert optimistic update
+    } finally {
+      if (mounted) setState(() => _bookmarking = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context).languageCode;
-    return GestureDetector(
+    final activity = widget.activity;
+    return ValueListenableBuilder<List<SavedActivity>>(
+      valueListenable: savedActivities,
+      builder: (context, savedList, _) {
+        final saved = _isSaved;
+        return GestureDetector(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
         builder: (_) => ActivityDetailsScreen(
           classId: activity.id.isNotEmpty ? activity.id : null,
@@ -672,6 +726,7 @@ class _ResultCard extends StatelessWidget {
           colorStart: activity.colorStart,
           colorEnd: activity.colorEnd,
           heroIcon: activity.icon,
+          imageUrl: activity.imageUrl,
         ),
       )),
       child: Container(
@@ -684,28 +739,52 @@ class _ResultCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Gradient image
+            // Thumbnail — network image with gradient fallback
             ClipRRect(
               borderRadius:
                   const BorderRadius.horizontal(left: Radius.circular(17)),
-              child: Container(
+              child: SizedBox(
                 width: 112,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [activity.colorStart, activity.colorEnd],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
                 child: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    Center(
-                      child: Icon(
-                        activity.icon,
-                        size: 44,
-                        color: Colors.white.withValues(alpha: 0.28),
-                      ),
-                    ),
+                    activity.imageUrl?.isNotEmpty == true
+                        ? Image.network(
+                            activity.imageUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, e, st) => Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [activity.colorStart, activity.colorEnd],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  activity.icon,
+                                  size: 44,
+                                  color: Colors.white.withValues(alpha: 0.28),
+                                ),
+                              ),
+                            ),
+                          )
+                        : Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [activity.colorStart, activity.colorEnd],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                            ),
+                            child: Center(
+                              child: Icon(
+                                activity.icon,
+                                size: 44,
+                                color: Colors.white.withValues(alpha: 0.28),
+                              ),
+                            ),
+                          ),
                     Positioned(
                       top: 8,
                       left: 8,
@@ -802,23 +881,41 @@ class _ResultCard extends StatelessWidget {
             // Bookmark
             Padding(
               padding: const EdgeInsets.only(right: 14),
-              child: Container(
-                width: 32,
-                height: 32,
-                decoration: const BoxDecoration(
-                  color: AppColors.surface,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.bookmark_outline_rounded,
-                  color: AppColors.textMuted,
-                  size: 16,
+              child: GestureDetector(
+                onTap: _toggleBookmark,
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: saved
+                        ? AppColors.purple.withValues(alpha: 0.15)
+                        : AppColors.surface,
+                    shape: BoxShape.circle,
+                  ),
+                  child: _bookmarking
+                      ? const SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: Padding(
+                            padding: EdgeInsets.all(8),
+                            child: CircularProgressIndicator(strokeWidth: 1.5),
+                          ),
+                        )
+                      : Icon(
+                          saved
+                              ? Icons.bookmark_rounded
+                              : Icons.bookmark_outline_rounded,
+                          color: saved ? AppColors.purple : AppColors.textMuted,
+                          size: 16,
+                        ),
                 ),
               ),
             ),
           ],
         ),
       ),
+    );
+      },
     );
   }
 }

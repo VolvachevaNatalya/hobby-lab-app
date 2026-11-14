@@ -407,7 +407,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
             child: Image.network(
               url,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
+              errorBuilder: (_, e, st) => Container(
                 color: AppColors.surfaceElevated,
                 child: const Icon(Icons.image_outlined,
                     color: AppColors.textMuted, size: 28),

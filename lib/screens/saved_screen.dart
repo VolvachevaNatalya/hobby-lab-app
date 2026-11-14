@@ -62,6 +62,7 @@ class _SavedScreenState extends State<SavedScreen> {
           colorStart: _colorForIndex(e.key),
           colorEnd: _colorEndForIndex(e.key),
           icon: _iconForCategory(e.value.category),
+          imageUrl: e.value.imageUrl,
         );
       }).toList();
 
@@ -98,7 +99,6 @@ class _SavedScreenState extends State<SavedScreen> {
         if (!mounted) return;
         savedEventsList.value = eventResults
             .whereType<AppEvent>()
-            .where((e) => !e.isPast)
             .toList();
       } else {
         savedEventsList.value = [];
@@ -463,7 +463,7 @@ class _SavedOrgCard extends StatelessWidget {
                       child: Image.network(
                         org.logoUrl!,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Center(
+                        errorBuilder: (_, e, st) => Center(
                           child: Text(
                             initial,
                             style: GoogleFonts.poppins(
@@ -595,6 +595,7 @@ class _SavedClassCard extends StatelessWidget {
           colorStart: activity.colorStart,
           colorEnd: activity.colorEnd,
           heroIcon: activity.icon,
+          imageUrl: activity.imageUrl,
         ),
       )),
       child: Container(
@@ -617,79 +618,108 @@ class _SavedClassCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(20)),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [activity.colorStart, activity.colorEnd],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Positioned(
-                        right: -16,
-                        bottom: -16,
-                        child: Container(
-                          width: 72,
-                          height: 72,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withValues(alpha: 0.1),
-                          ),
-                        ),
-                      ),
-                      Center(
-                        child: Icon(
-                          activity.icon,
-                          size: 44,
-                          color: Colors.white.withValues(alpha: 0.35),
-                        ),
-                      ),
-                      Positioned(
-                        top: 8,
-                        left: 8,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.35),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            activity.primaryCategory?.localizedName(locale) ?? activity.category,
-                            style: GoogleFonts.poppins(
-                              fontSize: 9,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                              letterSpacing: 0.3,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    // Background: network image or gradient
+                    activity.imageUrl?.isNotEmpty == true
+                        ? Image.network(
+                            activity.imageUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, e, st) => Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [activity.colorStart, activity.colorEnd],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  activity.icon,
+                                  size: 44,
+                                  color: Colors.white.withValues(alpha: 0.35),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 6,
-                        right: 6,
-                        child: GestureDetector(
-                          onTap: onUnsave,
-                          child: Container(
-                            width: 30,
-                            height: 30,
+                          )
+                        : Container(
                             decoration: BoxDecoration(
-                              color: const Color(0xFFEC4899).withValues(alpha: 0.85),
-                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                colors: [activity.colorStart, activity.colorEnd],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
                             ),
-                            child: const Icon(
-                              Icons.favorite_rounded,
-                              color: Colors.white,
-                              size: 15,
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                Positioned(
+                                  right: -16,
+                                  bottom: -16,
+                                  child: Container(
+                                    width: 72,
+                                    height: 72,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.white.withValues(alpha: 0.1),
+                                    ),
+                                  ),
+                                ),
+                                Center(
+                                  child: Icon(
+                                    activity.icon,
+                                    size: 44,
+                                    color: Colors.white.withValues(alpha: 0.35),
+                                  ),
+                                ),
+                              ],
                             ),
+                          ),
+                    // Category label overlay
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.35),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          activity.primaryCategory?.localizedName(locale) ?? activity.category,
+                          style: GoogleFonts.poppins(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            letterSpacing: 0.3,
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    // Unsave button overlay
+                    Positioned(
+                      top: 6,
+                      right: 6,
+                      child: GestureDetector(
+                        onTap: onUnsave,
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFEC4899).withValues(alpha: 0.85),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.favorite_rounded,
+                            color: Colors.white,
+                            size: 15,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -791,7 +821,6 @@ class _SavedEventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final months = [
-      '',
       l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
       l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
       l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,

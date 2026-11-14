@@ -319,7 +319,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   // ── Hero ─────────────────────────────────────────────────────────────────────
 
   Widget _buildHero(AppEvent event) {
-    final imageUrl = event.imageUrl;
+    final imageUrl = event.bannerUrl ?? event.imageUrl;
     if (imageUrl != null && imageUrl.isNotEmpty) {
       return SizedBox(
         height: 250,
@@ -559,7 +559,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         if (isMultiDay) {
           // Single combined row for multi-day events
           final months = [
-            '', l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+            l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
             l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
             l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
             l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
@@ -1102,13 +1102,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
   String _fmtDate(DateTime dt, AppLocalizations l10n) {
     final months = [
-      '',
       l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
       l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
       l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
       l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
     ];
-    return '${dt.day} ${months[dt.month]} ${dt.year}';
+    return '${dt.day} ${months[dt.month - 1]} ${dt.year}';
   }
 
   String _fmtTime(DateTime dt) {
@@ -1225,22 +1224,21 @@ class _OtherEventCard extends StatelessWidget {
     if (startIso == null) return '';
     final start = DateTime.tryParse(startIso);
     if (start == null) return '';
-    final startStr = '${start.day} ${months[start.month]} · ${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}';
+    final startStr = '${start.day} ${months[start.month - 1]} · ${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}';
     if (endIso == null) return startStr;
     final end = DateTime.tryParse(endIso);
     if (end == null) return startStr;
     final endTime = '${end.hour.toString().padLeft(2, '0')}:${end.minute.toString().padLeft(2, '0')}';
     if (start.year == end.year && start.month == end.month && start.day == end.day) {
-      return '${start.day} ${months[start.month]} · ${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}-$endTime';
+      return '${start.day} ${months[start.month - 1]} · ${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}-$endTime';
     }
-    return '${start.day} ${months[start.month]} - ${end.day} ${months[end.month]}';
+    return '${start.day} ${months[start.month - 1]} - ${end.day} ${months[end.month - 1]}';
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final months = [
-      '',
       l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
       l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
       l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
@@ -67,6 +68,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final _scrollController = ScrollController();
   List<_Msg> _messages = [];
   bool _loadingMessages = false;
+  Timer? _pollTimer;
   late String _headerName;
   late String _headerInitials;
   // Resolved at load time; may start empty if caller didn't provide them
@@ -83,18 +85,22 @@ class _ChatScreenState extends State<ChatScreen> {
     if (widget.conversationId != null) {
       _loadData();
       _markConversationRead();
+      _pollTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+        if (!_loadingMessages && mounted) _loadData(silent: true);
+      });
     }
   }
 
   @override
   void dispose() {
+    _pollTimer?.cancel();
     _textController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
 
-  Future<void> _loadData() async {
-    setState(() => _loadingMessages = true);
+  Future<void> _loadData({bool silent = false}) async {
+    if (!silent) setState(() => _loadingMessages = true);
     try {
       // getCurrentUserId() is in-memory cached — no extra network call
       final myId = await ApiService.getCurrentUserId();

@@ -9,6 +9,7 @@ import '../models/org_models.dart';
 import '../models/app_category.dart';
 import '../models/event_recurrence.dart';
 import '../routing/transitions.dart';
+import '../utils/event_date_formatter.dart';
 import '../services/api_service.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/recurrence_picker.dart';
@@ -765,6 +766,12 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final months = [
+      l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+      l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+      l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+      l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
+    ];
     return Scaffold(
       backgroundColor: AppColors.background,
       body: GestureDetector(
@@ -822,7 +829,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
                           _tapField(
                             icon: Icons.calendar_today_rounded,
                             label: _date != null
-                                ? fmtDate(_date!)
+                                ? fmtOrgDate(_date!, months)
                                 : l10n.selectDate,
                             isEmpty: _date == null,
                             onTap: _pickDate,
@@ -1656,6 +1663,12 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
 
   Widget _buildEndDateTimeSection() {
     final l10n = AppLocalizations.of(context)!;
+    final months = [
+      l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+      l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+      l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+      l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1677,7 +1690,7 @@ class _OrgEventFormScreenState extends State<OrgEventFormScreen> {
           children: [
             _tapField(
               icon: Icons.event_available_rounded,
-              label: _endDate != null ? fmtDate(_endDate!) : l10n.endDateLabel,
+              label: _endDate != null ? fmtOrgDate(_endDate!, months) : l10n.endDateLabel,
               isEmpty: _endDate == null,
               onTap: _pickEndDate,
               onClear: _endDate != null

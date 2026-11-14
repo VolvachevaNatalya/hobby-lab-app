@@ -1036,6 +1036,12 @@ abstract class AppLocalizations {
   /// **'Failed to save. Please try again.'**
   String get profileSaveFailed;
 
+  /// No description provided for @deleteAccountFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete account. Please try again.'**
+  String get deleteAccountFailed;
+
   /// No description provided for @noNotifications.
   ///
   /// In en, this message translates to:
@@ -1275,6 +1281,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Required'**
   String get fieldRequired;
+
+  /// No description provided for @invalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address'**
+  String get invalidEmail;
+
+  /// No description provided for @passwordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get passwordTooShort;
 
   /// No description provided for @errorFillRequired.
   ///
@@ -3951,6 +3969,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your session has expired. Please sign in again.'**
   String get sessionExpiredMessage;
+
+  /// No description provided for @errorNetworkTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection timed out. Please try again.'**
+  String get errorNetworkTimeout;
+
+  /// No description provided for @forgotPasswordEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email and we\'ll send you a 6-digit reset code'**
+  String get forgotPasswordEmailLabel;
+
+  /// No description provided for @forgotPasswordSendBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Reset Code'**
+  String get forgotPasswordSendBtn;
+
+  /// No description provided for @forgotPasswordSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Your Email'**
+  String get forgotPasswordSuccessTitle;
+
+  /// No description provided for @forgotPasswordSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'If that email is registered, a 6-digit reset code has been sent to it. It expires in 15 minutes.'**
+  String get forgotPasswordSuccessMessage;
+
+  /// No description provided for @resetPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get resetPasswordTitle;
+
+  /// No description provided for @resetPasswordOtpHint.
+  ///
+  /// In en, this message translates to:
+  /// **'6-digit code'**
+  String get resetPasswordOtpHint;
+
+  /// No description provided for @resetPasswordOtpLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the code from your email'**
+  String get resetPasswordOtpLabel;
+
+  /// No description provided for @resetPasswordSubmitBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Set New Password'**
+  String get resetPasswordSubmitBtn;
+
+  /// No description provided for @resetPasswordSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset successfully. Please sign in.'**
+  String get resetPasswordSuccessMessage;
+
+  /// No description provided for @errorInvalidResetCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid or expired code. Please try again.'**
+  String get errorInvalidResetCode;
+
+  /// No description provided for @errorCodeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Code is required'**
+  String get errorCodeRequired;
+
+  /// No description provided for @notifPrefLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load notification preferences'**
+  String get notifPrefLoadFailed;
+
+  /// No description provided for @notifPrefSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save notification preferences'**
+  String get notifPrefSaveFailed;
 }
 
 class _AppLocalizationsDelegate

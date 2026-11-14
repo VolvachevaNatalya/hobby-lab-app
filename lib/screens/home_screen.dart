@@ -17,7 +17,9 @@ import 'notifications_screen.dart';
 import 'see_all_screen.dart';
 import 'see_all_events_screen.dart';
 import 'see_all_orgs_screen.dart';
-import 'filters_screen.dart';
+import 'filters_screen.dart' show FiltersScreen, FilterResult;
+import '../models/org_models.dart' show dayToInt;
+import '../utils/class_filter.dart';
 import 'org_profile_screen.dart';
 import 'city_picker_screen.dart';
 import 'category_screen.dart';
@@ -49,6 +51,7 @@ class _Activity {
   final Color colorStart;
   final Color colorEnd;
   final IconData icon;
+  final String? imageUrl;
   const _Activity({
     this.id = '',
     required this.name,
@@ -61,6 +64,7 @@ class _Activity {
     required this.colorStart,
     required this.colorEnd,
     required this.icon,
+    this.imageUrl,
   });
 }
 
@@ -104,6 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Organization> _apiOrganizations = [];
   bool _loadingClasses = true;
   AppCity? _selectedCity;
+  FilterResult? _activeFilters;
   double? _fetchedLat;
   double? _fetchedLng;
   int _fetchVersion = 0; // incremented each time _fetchData starts; stale results are dropped
@@ -171,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final cityId = _selectedCity?.id;
     try {
       final results = await Future.wait([
-        ApiService.getClasses(cityId: cityId, userLat: userLat, userLng: userLng,),
+        _buildClassesFuture(filters: _activeFilters, cityId: cityId, lat: userLat, lng: userLng),
         ApiService.getEvents(cityId: cityId, userLat: userLat, userLng: userLng),
         ApiService.getCategories(),
         ApiService.getFavorites(),
@@ -219,6 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 colorStart: g.$1,
                 colorEnd: g.$2,
                 icon: _icons[e.key % _icons.length],
+                imageUrl: e.value.imageUrl,
               );
             })
             .toList();
@@ -246,6 +252,108 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  // Returns the right classes future based on active filters.
+  // Routes to /classes/search when server-side joins are needed:
+  //   • days  → GroupSchedule table (day_of_week)
+  //   • age   → Group table (min_age / max_age range overlap)
+  // Price, category, and distance are applied client-side after the fetch.
+  Future<List<AppClass>> _buildClassesFuture({
+    FilterResult? filters,
+    int? cityId,
+    double? lat,
+    double? lng,
+  }) {
+    final f = filters;
+    if (f == null || f.isDefault) {
+      return ApiService.getClasses(cityId: cityId, userLat: lat, userLng: lng);
+    }
+
+    // Day filter always goes through searchClasses (age params flow through too).
+    if (f.days.isNotEmpty) {
+      return _fetchClassesByDays(f, cityId: cityId, lat: lat, lng: lng);
+    }
+
+    // Age filter with no day filter — single searchClasses call.
+    if (f.ageRange != const RangeValues(3, 120)) {
+      return ApiService.searchClasses(
+        '',
+        cityId: cityId,
+        lat: lat,
+        lng: lng,
+        distanceKm: f.maxDistanceKm != 10 ? f.maxDistanceKm.round() : null,
+        minAge: f.ageRange.start.round(),
+        maxAge: f.ageRange.end.round(),
+      );
+    }
+
+    // Price / category / distance only — handled client-side after getClasses.
+    return ApiService.getClasses(cityId: cityId, userLat: lat, userLng: lng);
+  }
+
+  // Runs one /classes/search request per selected day, then unions results
+  // by ID.  Single-day selection is a straight pass-through.
+  // Multiple-day union is needed because the backend accepts only one
+  // day_of_week value per request.  Age params flow through to every request.
+  Future<List<AppClass>> _fetchClassesByDays(
+    FilterResult f, {
+    int? cityId,
+    double? lat,
+    double? lng,
+  }) async {
+    final dayInts = f.days.map(dayToInt).toSet().toList();
+    final distKm = f.maxDistanceKm != 10 ? f.maxDistanceKm.round() : null;
+    final ageActive = f.ageRange != const RangeValues(3, 120);
+    final minAge = ageActive ? f.ageRange.start.round() : null;
+    final maxAge = ageActive ? f.ageRange.end.round() : null;
+
+    Future<List<AppClass>> queryDay(int dow) => ApiService.searchClasses(
+          '',
+          dayOfWeek: dow,
+          cityId: cityId,
+          lat: lat,
+          lng: lng,
+          distanceKm: distKm,
+          minAge: minAge,
+          maxAge: maxAge,
+        );
+
+    if (dayInts.length == 1) return queryDay(dayInts.first);
+
+    // Multiple days: parallel fetch + dedup by class id.
+    final batches = await Future.wait(dayInts.map(queryDay));
+    final seen = <String>{};
+    return [
+      for (final batch in batches)
+        for (final c in batch)
+          if (seen.add(c.id)) c,
+    ];
+  }
+
+  // Called when the user confirms a new filter selection.
+  // Re-fetches only the class list; events/categories/orgs are unaffected.
+  Future<void> _applyFilters(FilterResult filters) async {
+    if (!mounted) return;
+    setState(() {
+      _activeFilters = filters;
+      _loadingClasses = true;
+    });
+    final version = ++_fetchVersion;
+    try {
+      final classes = await _buildClassesFuture(
+        filters: filters,
+        cityId: _selectedCity?.id,
+        lat: _fetchedLat,
+        lng: _fetchedLng,
+      );
+      if (mounted && version == _fetchVersion) {
+        setState(() => _apiClasses = classes);
+      }
+    } catch (_) {
+    } finally {
+      if (mounted && version == _fetchVersion) setState(() => _loadingClasses = false);
+    }
+  }
+
   List<_Activity> _toDisplay(List<AppClass> src) {
     return src.asMap().entries.map((e) {
       final i = e.key;
@@ -267,9 +375,13 @@ class _HomeScreenState extends State<HomeScreen> {
         colorStart: c.$1,
         colorEnd: c.$2,
         icon: _icons[i % _icons.length],
+        imageUrl: e.value.imageUrl,
       );
     }).toList();
   }
+
+  List<AppClass> get _filteredApiClasses =>
+      applyClientFilters(_apiClasses, _activeFilters ?? const FilterResult());
 
   void _onCategoryTap(String name, String id) {
     final cat = _apiCategories.firstWhere(
@@ -361,7 +473,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final popular = _toDisplay(_apiClasses.take(10).toList());
+    final popular = _toDisplay(_filteredApiClasses.take(10).toList());
     final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context).languageCode;;
 
@@ -383,7 +495,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTapLocation: _openCityPicker,
                     ),
                     const SizedBox(height: 20),
-                    const _SearchBar(),
+                    _SearchBar(
+                      activeFilterCount: _activeFilters?.activeCount ?? 0,
+                      onFilterTap: () async {
+                        final result = await Navigator.of(context).push<FilterResult>(
+                          modalRoute(builder: (_) => const FiltersScreen()),
+                        );
+                        if (result != null && mounted) _applyFilters(result);
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -557,7 +677,10 @@ class _Header extends StatelessWidget {
 // ─── Search bar ───────────────────────────────────────────────────────────────
 
 class _SearchBar extends StatelessWidget {
-  const _SearchBar();
+  final VoidCallback onFilterTap;
+  final int activeFilterCount;
+
+  const _SearchBar({required this.onFilterTap, this.activeFilterCount = 0});
 
   @override
   Widget build(BuildContext context) {
@@ -600,20 +723,47 @@ class _SearchBar extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         GestureDetector(
-          onTap: () => Navigator.of(context).push(
-            modalRoute(builder: (_) => const FiltersScreen()),
-          ),
-          child: Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              gradient: AppColors.brandGradient,
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: [
-                BoxShadow(color: AppColors.purple.withValues(alpha: 0.35), blurRadius: 12, offset: const Offset(0, 4)),
-              ],
-            ),
-            child: const Icon(Icons.tune_rounded, color: Colors.white, size: 22),
+          onTap: onFilterTap,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  gradient: AppColors.brandGradient,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(color: AppColors.purple.withValues(alpha: 0.35), blurRadius: 12, offset: const Offset(0, 4)),
+                  ],
+                ),
+                child: const Icon(Icons.tune_rounded, color: Colors.white, size: 22),
+              ),
+              if (activeFilterCount > 0)
+                Positioned(
+                  top: -4,
+                  right: -4,
+                  child: Container(
+                    width: 18,
+                    height: 18,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEC4899),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.background, width: 2),
+                    ),
+                    child: Center(
+                      child: Text(
+                        activeFilterCount > 9 ? '9+' : '$activeFilterCount',
+                        style: GoogleFonts.poppins(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
       ],
@@ -884,8 +1034,18 @@ class _CategoryItem extends StatelessWidget {
                     ? [BoxShadow(color: color.withValues(alpha: 0.35), blurRadius: 12, offset: const Offset(0, 4))]
                     : null,
               ),
-              child: Icon(icon,
-                  color: isSelected ? color : color.withValues(alpha: 0.8), size: 26),
+              child: category.iconUrl != null && category.iconUrl!.isNotEmpty
+                  ? ClipOval(
+                      child: Image.network(
+                        category.iconUrl!,
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, e, st) =>
+                            Icon(icon, color: isSelected ? color : color.withValues(alpha: 0.8), size: 26),
+                      ),
+                    )
+                  : Icon(icon, color: isSelected ? color : color.withValues(alpha: 0.8), size: 26),
             ),
             const SizedBox(height: 7),
             Text(
@@ -973,6 +1133,7 @@ class _ActivityCardState extends State<_ActivityCard> {
       colorStart: widget.activity.colorStart,
       colorEnd: widget.activity.colorEnd,
       icon: widget.activity.icon,
+      imageUrl: widget.activity.imageUrl,
     );
 
     try {
@@ -1010,6 +1171,7 @@ class _ActivityCardState extends State<_ActivityCard> {
           colorStart: widget.activity.colorStart,
           colorEnd: widget.activity.colorEnd,
           heroIcon: widget.activity.icon,
+          imageUrl: widget.activity.imageUrl,
         ),
       )),
       child: Container(
@@ -1206,7 +1368,7 @@ class _OrgCard extends StatelessWidget {
                           child: Image.network(
                             org.logoUrl!,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Center(
+                            errorBuilder: (_, e, st) => Center(
                               child: Text(
                                 org.name.isNotEmpty ? org.name[0].toUpperCase() : '?',
                                 style: GoogleFonts.poppins(fontSize: 19, fontWeight: FontWeight.w700, color: Colors.white),

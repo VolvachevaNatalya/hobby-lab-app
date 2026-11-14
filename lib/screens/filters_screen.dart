@@ -7,6 +7,31 @@ import '../services/api_service.dart';
 
 const _dayKeys = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+class FilterResult {
+  final RangeValues ageRange;
+  final RangeValues priceRange;
+  final double maxDistanceKm;
+  final Set<String> categoryIds;
+  final Set<String> days;
+
+  const FilterResult({
+    this.ageRange = const RangeValues(3, 120),
+    this.priceRange = const RangeValues(0, 500),
+    this.maxDistanceKm = 10,
+    this.categoryIds = const {},
+    this.days = const {},
+  });
+
+  int get activeCount =>
+      (ageRange != const RangeValues(3, 120) ? 1 : 0) +
+      (priceRange != const RangeValues(0, 500) ? 1 : 0) +
+      (maxDistanceKm != 10 ? 1 : 0) +
+      categoryIds.length +
+      days.length;
+
+  bool get isDefault => activeCount == 0;
+}
+
 class FiltersScreen extends StatefulWidget {
   const FiltersScreen({super.key});
 
@@ -350,7 +375,13 @@ class _FiltersScreenState extends State<FiltersScreen> {
             Border(top: BorderSide(color: AppColors.divider, width: 1)),
       ),
       child: GestureDetector(
-        onTap: () => Navigator.of(context).pop(),
+        onTap: () => Navigator.of(context).pop(FilterResult(
+          ageRange: _age,
+          priceRange: _price,
+          maxDistanceKm: _distance,
+          categoryIds: Set.unmodifiable(_selectedCatIds),
+          days: Set.unmodifiable(_selectedDays),
+        )),
         child: Container(
           width: double.infinity,
           height: 54,

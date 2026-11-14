@@ -15,6 +15,9 @@ class AppClass {
   final String? address;
   final String? website;
   final double? distanceKm;
+  final double? price;
+  final String? priceType;
+  final String? imageUrl;
 
   const AppClass({
     required this.id,
@@ -31,6 +34,9 @@ class AppClass {
     this.address,
     this.website,
     this.distanceKm,
+    this.price,
+    this.priceType,
+    this.imageUrl,
   });
 
   factory AppClass.fromJson(Map<String, dynamic> json) {
@@ -73,6 +79,9 @@ class AppClass {
       address: json['address']?.toString(),
       website: json['website']?.toString(),
       distanceKm: (json['distance_km'] as num?)?.toDouble(),
+      price: (json['price'] as num?)?.toDouble(),
+      priceType: json['price_type']?.toString(),
+      imageUrl: json['image_url']?.toString(),
     );
   }
 }

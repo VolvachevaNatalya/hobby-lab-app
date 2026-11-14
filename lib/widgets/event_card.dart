@@ -94,7 +94,6 @@ class _EventCardState extends State<EventCard> {
     final colors = eventPalette(event.id);
     final l10n = AppLocalizations.of(context)!;
     final months = [
-      '',
       l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
       l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
       l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
@@ -130,7 +129,7 @@ class _EventCardState extends State<EventCard> {
                     width: 94,
                     height: 94,
                     child: _EventImage(
-                      imageUrl: null,
+                      imageUrl: event.imageUrl,
                       colorStart: colors.$1,
                       colorEnd: colors.$2,
                     ),
@@ -228,7 +227,7 @@ class _EventImage extends StatelessWidget {
       return Image.network(
         url,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => _placeholder(),
+        errorBuilder: (_, e, st) => _placeholder(),
       );
     }
     return _placeholder();

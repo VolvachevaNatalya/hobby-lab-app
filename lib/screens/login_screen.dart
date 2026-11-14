@@ -6,6 +6,8 @@ import '../services/api_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_text_field.dart';
 import '../widgets/gradient_button.dart';
+import '../utils/validators.dart';
+import 'forgot_password_screen.dart';
 import 'register_screen.dart';
 import 'main_shell.dart';
 import '../routing/transitions.dart';
@@ -51,7 +53,8 @@ class _LoginScreenState extends State<LoginScreen> {
       _errorMessage = null;
     });
 
-    if (_emailController.text.trim().isEmpty || _passwordController.text.isEmpty) {
+    final email = _emailController.text.trim();
+    if (email.isEmpty || !isValidEmail(email) || _passwordController.text.isEmpty) {
       setState(() { _submitted = true; _isLoading = false; });
       return;
     }
@@ -196,8 +199,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   prefixIcon: Icons.email_outlined,
                   keyboardType: TextInputType.emailAddress,
                   isRequired: true,
-                  errorText: _submitted && _emailController.text.trim().isEmpty
-                      ? l10n.fieldRequired
+                  errorText: _submitted
+                      ? (_emailController.text.trim().isEmpty
+                          ? l10n.fieldRequired
+                          : !isValidEmail(_emailController.text.trim())
+                              ? l10n.invalidEmail
+                              : null)
                       : null,
                 ),
                 const SizedBox(height: 16),
@@ -230,46 +237,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const Spacer(),
                     GestureDetector(
-                      onTap: () => showDialog(
-                        context: context,
-                        builder: (_) => AlertDialog(
-                          backgroundColor: AppColors.surfaceElevated,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16)),
-                          title: Text(
-                            l10n.forgotPasswordTitle,
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          content: Text(
-                            l10n.forgotPasswordContent,
-                            style: GoogleFonts.poppins(
-                              fontSize: 13,
-                              color: AppColors.textSecondary,
-                              height: 1.5,
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: ShaderMask(
-                                shaderCallback: (b) =>
-                                    AppColors.brandGradient.createShader(b),
-                                child: Text(
-                                  l10n.btnOk,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      onTap: () => Navigator.of(context).push(
+                        slideRoute(builder: (_) => const ForgotPasswordScreen()),
                       ),
                       child: ShaderMask(
                         shaderCallback: (b) =>

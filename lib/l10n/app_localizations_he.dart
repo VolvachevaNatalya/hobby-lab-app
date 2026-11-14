@@ -497,6 +497,9 @@ class AppLocalizationsHe extends AppLocalizations {
   String get profileSaveFailed => 'שמירה נכשלה. נסה שוב.';
 
   @override
+  String get deleteAccountFailed => 'מחיקת החשבון נכשלה. נסה שוב.';
+
+  @override
   String get noNotifications => 'אין התראות';
 
   @override
@@ -617,6 +620,12 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get fieldRequired => 'שדה חובה';
+
+  @override
+  String get invalidEmail => 'אנא הזן כתובת אימייל תקינה';
+
+  @override
+  String get passwordTooShort => 'הסיסמה חייבת להכיל לפחות 6 תווים';
 
   @override
   String get errorFillRequired => 'אנא מלא את כל השדות החובה';
@@ -2070,4 +2079,50 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get sessionExpiredMessage => 'פג תוקף ההתחברות. אנא היכנס שוב.';
+
+  @override
+  String get errorNetworkTimeout => 'החיבור נכשל. נסה שוב.';
+
+  @override
+  String get forgotPasswordEmailLabel =>
+      'הזן את האימייל שלך ונשלח לך קוד איפוס בן 6 ספרות';
+
+  @override
+  String get forgotPasswordSendBtn => 'שלח קוד איפוס';
+
+  @override
+  String get forgotPasswordSuccessTitle => 'בדוק את האימייל שלך';
+
+  @override
+  String get forgotPasswordSuccessMessage =>
+      'אם האימייל רשום, בדוק את תיבת הדואר שלך לאיתור קוד בן 6 ספרות. הקוד בתוקף 15 דקות.';
+
+  @override
+  String get resetPasswordTitle => 'איפוס סיסמה';
+
+  @override
+  String get resetPasswordOtpHint => 'קוד בן 6 ספרות';
+
+  @override
+  String get resetPasswordOtpLabel => 'הזן את הקוד מהאימייל שלך';
+
+  @override
+  String get resetPasswordSubmitBtn => 'הגדר סיסמה חדשה';
+
+  @override
+  String get resetPasswordSuccessMessage =>
+      'הסיסמה אופסה בהצלחה. אנא היכנס שוב.';
+
+  @override
+  String get errorInvalidResetCode =>
+      'קוד לא תקין או שפג תוקפו. נסה שוב.';
+
+  @override
+  String get errorCodeRequired => 'נדרש קוד';
+
+  @override
+  String get notifPrefLoadFailed => 'טעינת העדפות ההתראות נכשלה';
+
+  @override
+  String get notifPrefSaveFailed => 'שמירת העדפות ההתראות נכשלה';
 }

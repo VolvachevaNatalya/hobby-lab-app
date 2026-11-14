@@ -30,6 +30,7 @@ class AppEvent {
   final String? originalStartDatetime;
   final EventRecurrence? recurrence;
   final String? imageUrl;
+  final String? bannerUrl;
   final List<AppCategory> categories;
   final bool isPast;
 
@@ -62,6 +63,7 @@ class AppEvent {
     this.originalStartDatetime,
     this.recurrence,
     this.imageUrl,
+    this.bannerUrl,
     this.categories = const [],
     this.isPast = false,
   });
@@ -99,6 +101,7 @@ class AppEvent {
         ? EventRecurrence.fromJson(json['recurrence'] as Map<String, dynamic>)
         : null,
     imageUrl: json['image_url']?.toString(),
+    bannerUrl: json['banner_url']?.toString(),
     categories: _parseCategories(json),
     isPast: json['is_past'] as bool? ?? false,
   );

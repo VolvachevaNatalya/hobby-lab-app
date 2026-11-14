@@ -190,6 +190,7 @@
   "manageClassesEvents": "Управляйте занятиями, событиями и группами",
   "profileSavedSuccess": "Профиль успешно сохранён",
   "profileSaveFailed": "Не удалось сохранить. Попробуйте ещё раз.",
+  "deleteAccountFailed": "Не удалось удалить аккаунт. Попробуйте ещё раз.",
 
   "noNotifications": "Нет уведомлений",
   "allCaughtUp": "Вы всё прочли!",
@@ -241,6 +242,8 @@
   "showNationwideHint": "Если отмечено, мероприятие будет видно пользователям во всех городах",
 
   "fieldRequired": "Обязательно",
+  "invalidEmail": "Введите корректный адрес электронной почты",
+  "passwordTooShort": "Пароль должен содержать не менее 6 символов",
   "errorFillRequired": "Заполните все обязательные поля",
   "errorRatingRequired": "Пожалуйста, выберите оценку",
 
@@ -850,5 +853,21 @@
 
   "dateYesterday": "Вчера",
 
-  "sessionExpiredMessage": "Сессия истекла. Войдите снова."
+  "sessionExpiredMessage": "Сессия истекла. Войдите снова.",
+
+  "errorNetworkTimeout": "Соединение прервано. Попробуйте снова.",
+
+  "forgotPasswordEmailLabel": "Введите email и мы отправим вам 6-значный код сброса пароля",
+  "forgotPasswordSendBtn": "Отправить код",
+  "forgotPasswordSuccessTitle": "Проверьте почту",
+  "forgotPasswordSuccessMessage": "Если этот email зарегистрирован, проверьте входящие — там будет 6-значный код. Он действителен 15 минут.",
+  "resetPasswordTitle": "Сброс пароля",
+  "resetPasswordOtpHint": "6-значный код",
+  "resetPasswordOtpLabel": "Введите код из письма",
+  "resetPasswordSubmitBtn": "Установить новый пароль",
+  "resetPasswordSuccessMessage": "Пароль успешно сброшен. Войдите снова.",
+  "errorInvalidResetCode": "Неверный или просроченный код. Попробуйте снова.",
+  "errorCodeRequired": "Введите код",
+  "notifPrefLoadFailed": "Не удалось загрузить настройки уведомлений",
+  "notifPrefSaveFailed": "Не удалось сохранить настройки уведомлений"
 }

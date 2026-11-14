@@ -4,6 +4,7 @@ class AppCategory {
   final String? nameEn;
   final String? nameRu;
   final String? nameHe;
+  final String? iconUrl;
 
   const AppCategory({
     required this.id,
@@ -11,6 +12,7 @@ class AppCategory {
     this.nameEn,
     this.nameRu,
     this.nameHe,
+    this.iconUrl,
   });
 
   factory AppCategory.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class AppCategory {
       nameEn: json['name_en']?.toString(),
       nameRu: json['name_ru']?.toString(),
       nameHe: json['name_he']?.toString(),
+      iconUrl: json['icon_url']?.toString(),
     );
   }
 

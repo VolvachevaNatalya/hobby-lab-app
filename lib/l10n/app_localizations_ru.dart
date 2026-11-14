@@ -506,6 +506,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get profileSaveFailed => 'Не удалось сохранить. Попробуйте ещё раз.';
 
   @override
+  String get deleteAccountFailed =>
+      'Не удалось удалить аккаунт. Попробуйте ещё раз.';
+
+  @override
   String get noNotifications => 'Нет уведомлений';
 
   @override
@@ -628,6 +632,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get fieldRequired => 'Обязательно';
+
+  @override
+  String get invalidEmail => 'Введите корректный адрес электронной почты';
+
+  @override
+  String get passwordTooShort => 'Пароль должен содержать не менее 6 символов';
 
   @override
   String get errorFillRequired => 'Заполните все обязательные поля';
@@ -2111,4 +2121,52 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get sessionExpiredMessage => 'Сессия истекла. Войдите снова.';
+
+  @override
+  String get errorNetworkTimeout => 'Соединение прервано. Попробуйте снова.';
+
+  @override
+  String get forgotPasswordEmailLabel =>
+      'Введите email и мы отправим вам 6-значный код сброса пароля';
+
+  @override
+  String get forgotPasswordSendBtn => 'Отправить код';
+
+  @override
+  String get forgotPasswordSuccessTitle => 'Проверьте почту';
+
+  @override
+  String get forgotPasswordSuccessMessage =>
+      'Если этот email зарегистрирован, проверьте входящие — там будет 6-значный код. Он действителен 15 минут.';
+
+  @override
+  String get resetPasswordTitle => 'Сброс пароля';
+
+  @override
+  String get resetPasswordOtpHint => '6-значный код';
+
+  @override
+  String get resetPasswordOtpLabel => 'Введите код из письма';
+
+  @override
+  String get resetPasswordSubmitBtn => 'Установить новый пароль';
+
+  @override
+  String get resetPasswordSuccessMessage =>
+      'Пароль успешно сброшен. Войдите снова.';
+
+  @override
+  String get errorInvalidResetCode =>
+      'Неверный или просроченный код. Попробуйте снова.';
+
+  @override
+  String get errorCodeRequired => 'Введите код';
+
+  @override
+  String get notifPrefLoadFailed =>
+      'Не удалось загрузить настройки уведомлений';
+
+  @override
+  String get notifPrefSaveFailed =>
+      'Не удалось сохранить настройки уведомлений';
 }

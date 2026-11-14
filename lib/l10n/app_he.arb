@@ -190,6 +190,7 @@
   "manageClassesEvents": "נהל את השיעורים, האירועים והקבוצות שלך",
   "profileSavedSuccess": "הפרופיל נשמר בהצלחה",
   "profileSaveFailed": "שמירה נכשלה. נסה שוב.",
+  "deleteAccountFailed": "מחיקת החשבון נכשלה. נסה שוב.",
 
   "noNotifications": "אין התראות",
   "allCaughtUp": "אתה מעודכן בהכל!",
@@ -241,6 +242,8 @@
   "showNationwideHint": "אם מסומן, האירוע יוצג למשתמשים בכל הערים",
 
   "fieldRequired": "שדה חובה",
+  "invalidEmail": "אנא הזן כתובת אימייל תקינה",
+  "passwordTooShort": "הסיסמה חייבת להכיל לפחות 6 תווים",
   "errorFillRequired": "אנא מלא את כל השדות החובה",
   "errorRatingRequired": "אנא בחר דירוג",
 
@@ -850,5 +853,21 @@
 
   "dateYesterday": "אתמול",
 
-  "sessionExpiredMessage": "פג תוקף ההתחברות. אנא היכנס שוב."
+  "sessionExpiredMessage": "פג תוקף ההתחברות. אנא היכנס שוב.",
+
+  "errorNetworkTimeout": "החיבור נכשל. נסה שוב.",
+
+  "forgotPasswordEmailLabel": "הזן את האימייל שלך ונשלח לך קוד איפוס בן 6 ספרות",
+  "forgotPasswordSendBtn": "שלח קוד איפוס",
+  "forgotPasswordSuccessTitle": "בדוק את האימייל שלך",
+  "forgotPasswordSuccessMessage": "אם האימייל רשום, בדוק את תיבת הדואר שלך לאיתור קוד בן 6 ספרות. הקוד בתוקף 15 דקות.",
+  "resetPasswordTitle": "איפוס סיסמה",
+  "resetPasswordOtpHint": "קוד בן 6 ספרות",
+  "resetPasswordOtpLabel": "הזן את הקוד מהאימייל שלך",
+  "resetPasswordSubmitBtn": "הגדר סיסמה חדשה",
+  "resetPasswordSuccessMessage": "הסיסמה אופסה בהצלחה. אנא היכנס שוב.",
+  "errorInvalidResetCode": "קוד לא תקין או שפג תוקפו. נסה שוב.",
+  "errorCodeRequired": "נדרש קוד",
+  "notifPrefLoadFailed": "טעינת העדפות ההתראות נכשלה",
+  "notifPrefSaveFailed": "שמירת העדפות ההתראות נכשלה"
 }

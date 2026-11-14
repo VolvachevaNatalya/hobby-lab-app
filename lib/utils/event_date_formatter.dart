@@ -4,7 +4,7 @@ String _fmtT(DateTime dt) =>
     '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
 
 String _fmtD(DateTime dt, List<String> months) =>
-    '${dt.day} ${months[dt.month]} ${dt.year}';
+    '${dt.day} ${months[dt.month - 1]} ${dt.year}';
 
 bool _sameDay(DateTime a, DateTime b) =>
     a.year == b.year && a.month == b.month && a.day == b.day;
@@ -66,6 +66,23 @@ String fmtOrgEventDateTime(
 
   final endDateStr = _fmtD(endDateTime, months);
   return '$dateStr, $timeStr - $endDateStr, $endTime';
+}
+
+/// Formats a DateTime as "D MMM YYYY" for org admin date fields (e.g. "5 Aug 2026").
+/// months must be a 12-element list indexed 0 (Jan) … 11 (Dec).
+String fmtOrgDate(DateTime d, List<String> months) =>
+    '${d.day} ${months[d.month - 1]} ${d.year}';
+
+/// Formats an ISO date string as "D MMM YYYY" for review/comment display.
+/// months must be a 12-element list indexed 0 (Jan) … 11 (Dec).
+String fmtReviewDate(String? iso, List<String> months) {
+  if (iso == null || iso.isEmpty) return '';
+  try {
+    final dt = DateTime.parse(iso).toLocal();
+    return '${dt.day} ${months[dt.month - 1]} ${dt.year}';
+  } catch (_) {
+    return '';
+  }
 }
 
 /// Returns only the start time part, extended with end time when available.

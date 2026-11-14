@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_theme.dart';
 import '../l10n/app_localizations.dart';
 import '../locale_provider.dart';
+import '../services/api_service.dart';
+import 'change_password_screen.dart';
 import 'edit_profile_screen.dart';
 import 'language_selection_screen.dart';
 import 'support_request_screen.dart';
@@ -21,6 +24,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _classReminders = true;
   bool _promotions = false;
   bool _newActivities = true;
+
+  static const _kPush = 'notif_push_enabled';
+  static const _kReminders = 'notif_class_reminders';
+  static const _kPromotions = 'notif_promotions';
+  static const _kNewActivities = 'notif_new_activities';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPrefs();
+  }
+
+  Future<void> _loadPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        _pushEnabled = prefs.getBool(_kPush) ?? true;
+        _classReminders = prefs.getBool(_kReminders) ?? true;
+        _promotions = prefs.getBool(_kPromotions) ?? false;
+        _newActivities = prefs.getBool(_kNewActivities) ?? true;
+      });
+    }
+  }
+
+  Future<void> _savePref(String key, bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(key, value);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +82,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         icon: Icons.lock_outline_rounded,
                         iconColor: const Color(0xFF0EA5E9),
                         label: l10n.changePassword,
-                        onTap: () {},
+                        onTap: () => _push(context, const ChangePasswordScreen()),
                       ),
                     ]),
                     const SizedBox(height: 28),
@@ -63,28 +94,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         iconColor: AppColors.purple,
                         label: l10n.pushNotifications,
                         value: _pushEnabled,
-                        onChanged: (v) => setState(() => _pushEnabled = v),
+                        onChanged: (v) { setState(() => _pushEnabled = v); _savePref(_kPush, v); },
                       ),
                       _ToggleRow(
                         icon: Icons.calendar_today_rounded,
                         iconColor: const Color(0xFF0EA5E9),
                         label: l10n.classReminders,
                         value: _classReminders,
-                        onChanged: (v) => setState(() => _classReminders = v),
+                        onChanged: (v) { setState(() => _classReminders = v); _savePref(_kReminders, v); },
                       ),
                       _ToggleRow(
                         icon: Icons.local_offer_rounded,
                         iconColor: const Color(0xFFF59E0B),
                         label: l10n.promotionsOffers,
                         value: _promotions,
-                        onChanged: (v) => setState(() => _promotions = v),
+                        onChanged: (v) { setState(() => _promotions = v); _savePref(_kPromotions, v); },
                       ),
                       _ToggleRow(
                         icon: Icons.explore_rounded,
                         iconColor: const Color(0xFFEC4899),
                         label: l10n.newActivitiesNearby,
                         value: _newActivities,
-                        onChanged: (v) => setState(() => _newActivities = v),
+                        onChanged: (v) { setState(() => _newActivities = v); _savePref(_kNewActivities, v); },
                       ),
                     ]),
                     const SizedBox(height: 28),
@@ -97,7 +128,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         label: l10n.language,
                         trailing: ValueListenableBuilder<Locale>(
                           valueListenable: localeNotifier,
-                          builder: (_, locale, __) => Text(
+                          builder: (_, locale, child) => Text(
                             switch (locale.languageCode) {
                               'ru' => 'Русский',
                               'he' => 'עברית',
@@ -283,50 +314,93 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _showDeleteDialog(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    showDialog(
+    showDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surfaceElevated,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(
-          l10n.deleteAccount,
-          style: GoogleFonts.poppins(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        content: Text(
-          l10n.deleteAccountConfirm,
-          style: GoogleFonts.poppins(
-            fontSize: 13,
-            color: AppColors.textSecondary,
-            height: 1.6,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(
-              l10n.btnCancel,
+      barrierDismissible: false,
+      builder: (ctx) {
+        var deleting = false;
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) => AlertDialog(
+            backgroundColor: AppColors.surfaceElevated,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Text(
+              l10n.deleteAccount,
               style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w600,
-                color: AppColors.textMuted,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(
-              l10n.btnDelete,
-              style: GoogleFonts.poppins(
+                fontSize: 18,
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFFEF4444),
+                color: AppColors.textPrimary,
               ),
             ),
+            content: Text(
+              l10n.deleteAccountConfirm,
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                color: AppColors.textSecondary,
+                height: 1.6,
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: deleting ? null : () => Navigator.of(ctx).pop(),
+                child: Text(
+                  l10n.btnCancel,
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textMuted,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: deleting
+                    ? null
+                    : () async {
+                        setDialogState(() => deleting = true);
+                        try {
+                          await ApiService.deleteAccount();
+                          await ApiService.logout();
+                          ApiService.authNotifier.value = false;
+                        } catch (_) {
+                          if (!ctx.mounted) return;
+                          setDialogState(() => deleting = false);
+                          Navigator.of(ctx).pop();
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  l10n.deleteAccountFailed,
+                                  style: GoogleFonts.poppins(fontSize: 13),
+                                ),
+                                backgroundColor: const Color(0xFFEF4444),
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                margin: const EdgeInsets.all(16),
+                              ),
+                            );
+                          }
+                        }
+                      },
+                child: deleting
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Color(0xFFEF4444),
+                        ),
+                      )
+                    : Text(
+                        l10n.btnDelete,
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFFEF4444),
+                        ),
+                      ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

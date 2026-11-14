@@ -280,7 +280,7 @@ class _UserInfoCard extends StatelessWidget {
           width: 88,
           height: 88,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _initialsCircle(initials),
+          errorBuilder: (_, e, st) => _initialsCircle(initials),
         ),
       );
     }
@@ -513,7 +513,20 @@ class _GeneralSettingsSection extends StatelessWidget {
         icon: Icons.credit_card_rounded,
         iconColor: const Color(0xFF059669),
         label: l10n.paymentMethods,
-        onTap: () {},
+        onTap: () => ScaffoldMessenger.of(outerContext).showSnackBar(
+          SnackBar(
+            content: Text(
+              l10n.comingSoon,
+              style: GoogleFonts.poppins(fontSize: 13),
+            ),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: AppColors.surfaceElevated,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            margin: const EdgeInsets.all(16),
+          ),
+        ),
       ),
       _SettingItem(
         icon: Icons.language_rounded,

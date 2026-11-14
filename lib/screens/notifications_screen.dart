@@ -7,7 +7,6 @@ import '../models/app_notification.dart' as model;
 import 'main_shell.dart';
 import 'notification_details_screen.dart';
 import 'event_details_screen.dart';
-import 'chat_screen.dart';
 import '../routing/transitions.dart';
 import '../unread_state.dart';
 
@@ -130,7 +129,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       setState(() {
         _items = notifs
             .where((n) =>
-                !n.isRead &&
                 n.type.toLowerCase() != 'new_organization' &&
                 n.type.toLowerCase() != 'message')
             .map((n) => _toDisplay(n))
@@ -149,10 +147,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       case 'booking':
         icon = Icons.check_circle_rounded;
         color = const Color(0xFF059669);
-        break;
-      case 'message':
-        icon = Icons.chat_bubble_rounded;
-        color = const Color(0xFF7C3AED);
         break;
       case 'offer':
       case 'promotion':
@@ -195,8 +189,21 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Future<void> _markRead(int index) async {
     final item = _items[index];
-    if (item.id == null) return;
-    setState(() => _items.removeAt(index));
+    if (item.id == null || item.isRead) return;
+    setState(() {
+      _items[index] = _NotificationData(
+        id: item.id,
+        type: item.type,
+        icon: item.icon,
+        iconColor: item.iconColor,
+        title: item.title,
+        body: item.body,
+        rawTime: item.rawTime,
+        isRead: true,
+        conversationId: item.conversationId,
+        payload: item.payload,
+      );
+    });
     try {
       await ApiService.markNotificationRead(item.id!);
       UnreadCounts.refresh();
@@ -233,22 +240,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                               data: item,
                               onTap: () async {
                                 _markRead(i);
-                                if (item.type == 'message') {
-                                  final convId = item.conversationId;
-                                  if (convId != null && convId.isNotEmpty) {
-                                    final nav = Navigator.of(context);
-                                    MainShell.switchTab(1);
-                                    nav.pop();
-                                    nav.push(slideRoute(builder: (_) => ChatScreen(
-                                      conversationId: convId,
-                                      name: '',
-                                      initials: '?',
-                                      avatarColor: item.iconColor,
-                                      conversationUserId: '',
-                                      organizationId: '',
-                                    )));
-                                  }
-                                } else if (item.type == 'event_updated' ||
+                                if (item.type == 'event_updated' ||
                                            item.type == 'event_cancelled' ||
                                            item.type == 'new_event') {
                                   final eventId = item.payload['event_id']?.toString() ?? '';

@@ -233,6 +233,7 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
   }
   String get _initials => _orgInitials(_displayName);
   String? get _website => _orgData?['website'] as String?;
+  String? get _phone => _orgData?['phone'] as String?;
   String? get _address {
     final addr = _orgData?['address'] as String?;
     final legacyCity = _orgData?['city'] as String?;
@@ -554,16 +555,18 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
                   ),
                 ),
               ),
-              const SizedBox(width: 6),
-              Container(
-                width: 20,
-                height: 20,
-                decoration: const BoxDecoration(
-                  color: AppColors.purple,
-                  shape: BoxShape.circle,
+              if (_orgData?['is_verified'] == true) ...[
+                const SizedBox(width: 6),
+                Container(
+                  width: 20,
+                  height: 20,
+                  decoration: const BoxDecoration(
+                    color: AppColors.purple,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.check, size: 12, color: Colors.white),
                 ),
-                child: const Icon(Icons.check, size: 12, color: Colors.white),
-              ),
+              ],
             ],
           ),
         ),
@@ -640,6 +643,36 @@ class _OrgProfileScreenState extends State<OrgProfileScreen> {
               Expanded(
                 child: Text(
                   address,
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+        ],
+        if (_phone != null && _phone!.isNotEmpty) ...[
+          Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: AppColors.purple.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.phone_rounded,
+                  size: 16,
+                  color: AppColors.purple,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  _phone!,
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     color: AppColors.textSecondary,
@@ -1565,7 +1598,6 @@ class _EventTile extends StatelessWidget {
         .toString();
     final description = (event['description'] ?? '').toString();
     final months = [
-      '',
       l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
       l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
       l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,

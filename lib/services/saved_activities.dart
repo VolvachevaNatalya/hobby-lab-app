@@ -14,6 +14,7 @@ class SavedActivity {
   final Color colorStart;
   final Color colorEnd;
   final IconData icon;
+  final String? imageUrl;
 
   const SavedActivity({
     required this.classId,
@@ -26,6 +27,7 @@ class SavedActivity {
     required this.colorStart,
     required this.colorEnd,
     required this.icon,
+    this.imageUrl,
   });
 }
 

@@ -190,6 +190,7 @@
   "manageClassesEvents": "Manage your classes, events and groups",
   "profileSavedSuccess": "Profile saved successfully",
   "profileSaveFailed": "Failed to save. Please try again.",
+  "deleteAccountFailed": "Failed to delete account. Please try again.",
 
   "noNotifications": "No Notifications",
   "allCaughtUp": "You're all caught up!",
@@ -241,6 +242,8 @@
   "showNationwideHint": "If checked, this event will be visible to users in all cities",
 
   "fieldRequired": "Required",
+  "invalidEmail": "Please enter a valid email address",
+  "passwordTooShort": "Password must be at least 6 characters",
   "errorFillRequired": "Please fill in all required fields",
   "errorRatingRequired": "Please select a star rating",
 
@@ -850,5 +853,21 @@
 
   "dateYesterday": "Yesterday",
 
-  "sessionExpiredMessage": "Your session has expired. Please sign in again."
+  "sessionExpiredMessage": "Your session has expired. Please sign in again.",
+
+  "errorNetworkTimeout": "Connection timed out. Please try again.",
+
+  "forgotPasswordEmailLabel": "Enter your email and we'll send you a 6-digit reset code",
+  "forgotPasswordSendBtn": "Send Reset Code",
+  "forgotPasswordSuccessTitle": "Check Your Email",
+  "forgotPasswordSuccessMessage": "If that email is registered, check your inbox for a 6-digit reset code. It expires in 15 minutes.",
+  "resetPasswordTitle": "Reset Password",
+  "resetPasswordOtpHint": "6-digit code",
+  "resetPasswordOtpLabel": "Enter the code from your email",
+  "resetPasswordSubmitBtn": "Set New Password",
+  "resetPasswordSuccessMessage": "Password reset successfully. Please sign in.",
+  "errorInvalidResetCode": "Invalid or expired code. Please try again.",
+  "errorCodeRequired": "Code is required",
+  "notifPrefLoadFailed": "Failed to load notification preferences",
+  "notifPrefSaveFailed": "Failed to save notification preferences"
 }

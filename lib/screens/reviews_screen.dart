@@ -5,6 +5,7 @@ import '../theme/app_theme.dart';
 import '../services/api_service.dart';
 import 'write_review_screen.dart';
 import '../routing/transitions.dart';
+import '../utils/event_date_formatter.dart';
 
 class ReviewsScreen extends StatefulWidget {
   final String activityName;
@@ -293,9 +294,13 @@ class _ReviewCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final reviewerName = (review['reviewer_name'] ?? review['user_name'] ?? l10n.anonymousReviewer).toString();
     final createdAt = review['created_at']?.toString() ?? '';
-    final dateStr = createdAt.isNotEmpty
-        ? _fmtDate(createdAt)
-        : '';
+    final months = [
+      l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+      l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+      l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+      l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
+    ];
+    final dateStr = fmtReviewDate(createdAt, months);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
@@ -371,14 +376,6 @@ class _ReviewCard extends StatelessWidget {
     );
   }
 
-  String _fmtDate(String iso) {
-    try {
-      final dt = DateTime.parse(iso);
-      return '${dt.day}/${dt.month}/${dt.year}';
-    } catch (_) {
-      return '';
-    }
-  }
 }
 
 Widget _stars(double rating, {double size = 16}) {

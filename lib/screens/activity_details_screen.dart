@@ -11,6 +11,7 @@ import 'chat_screen.dart';
 import 'org_profile_screen.dart';
 import 'reviews_screen.dart';
 import '../routing/transitions.dart';
+import '../utils/event_date_formatter.dart';
 
 
 
@@ -51,6 +52,7 @@ class ActivityDetailsScreen extends StatefulWidget {
   final Color colorStart;
   final Color colorEnd;
   final IconData heroIcon;
+  final String? imageUrl;
 
   const ActivityDetailsScreen({
     super.key,
@@ -63,6 +65,7 @@ class ActivityDetailsScreen extends StatefulWidget {
     this.colorStart = const Color(0xFF7C3AED),
     this.colorEnd = const Color(0xFFEC4899),
     this.heroIcon = Icons.category_rounded,
+    this.imageUrl,
   });
 
   @override
@@ -187,6 +190,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
       colorStart: widget.colorStart,
       colorEnd: widget.colorEnd,
       icon: widget.heroIcon,
+      imageUrl: _details?.imageUrl ?? widget.imageUrl,
     );
 
     if (_isFavorite) {
@@ -241,6 +245,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                   colorStart: widget.colorStart,
                   colorEnd: widget.colorEnd,
                   heroIcon: widget.heroIcon,
+                  imageUrl: _details?.imageUrl ?? widget.imageUrl,
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
@@ -363,15 +368,33 @@ class _HeroSection extends StatelessWidget {
   final Color colorStart;
   final Color colorEnd;
   final IconData heroIcon;
+  final String? imageUrl;
 
   const _HeroSection({
     required this.colorStart,
     required this.colorEnd,
     required this.heroIcon,
+    this.imageUrl,
   });
 
   @override
   Widget build(BuildContext context) {
+    final effectiveUrl = imageUrl?.isNotEmpty == true ? imageUrl : null;
+    if (effectiveUrl != null) {
+      return SizedBox(
+        height: 250,
+        width: double.infinity,
+        child: Image.network(
+          effectiveUrl,
+          fit: BoxFit.cover,
+          errorBuilder: (_, e, st) => _buildGradient(),
+        ),
+      );
+    }
+    return _buildGradient();
+  }
+
+  Widget _buildGradient() {
     return SizedBox(
       height: 250,
       width: double.infinity,
@@ -788,19 +811,14 @@ class _ActionButtonsRow extends StatelessWidget {
             child: _ActionBtn(
               icon: Icons.language_rounded,
               label: AppLocalizations.of(context)!.actionWebsite,
-              onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: AppColors.surfaceElevated,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  content: Text(
-                    orgWebsite!,
-                    style: GoogleFonts.poppins(
-                        fontSize: 13, color: AppColors.textPrimary),
-                  ),
-                ),
-              ),
+              onTap: () async {
+                final raw = orgWebsite!;
+                final normalized = raw.startsWith('http') ? raw : 'https://$raw';
+                final uri = Uri.tryParse(normalized);
+                if (uri != null) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              },
             ),
           ),
         ],
@@ -1443,7 +1461,13 @@ class _ReviewPreviewCard extends StatelessWidget {
             l10n.anonymousReviewer)
         .toString();
     final createdAt = review['created_at']?.toString() ?? '';
-    final dateStr = _fmtDate(createdAt);
+    final months = [
+      l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
+      l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
+      l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,
+      l10n.monthOctAbbrev, l10n.monthNovAbbrev, l10n.monthDecAbbrev,
+    ];
+    final dateStr = fmtReviewDate(createdAt, months);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -1519,14 +1543,6 @@ class _ReviewPreviewCard extends StatelessWidget {
     );
   }
 
-  String _fmtDate(String iso) {
-    try {
-      final dt = DateTime.parse(iso);
-      return '${dt.day}/${dt.month}/${dt.year}';
-    } catch (_) {
-      return '';
-    }
-  }
 }
 
 // ─── Contact bar ─────────────────────────────────────────────────────────────

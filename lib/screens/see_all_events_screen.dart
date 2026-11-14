@@ -61,7 +61,6 @@ class _SeeAllEventsScreenState extends State<SeeAllEventsScreen> {
   }
 
   List<String> _buildMonths(AppLocalizations l10n) => [
-    '',
     l10n.monthJanAbbrev, l10n.monthFebAbbrev, l10n.monthMarAbbrev,
     l10n.monthAprAbbrev, l10n.monthMayAbbrev, l10n.monthJunAbbrev,
     l10n.monthJulAbbrev, l10n.monthAugAbbrev, l10n.monthSepAbbrev,

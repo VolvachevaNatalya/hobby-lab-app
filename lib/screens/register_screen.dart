@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,7 +8,10 @@ import '../theme/app_theme.dart';
 import '../widgets/app_text_field.dart';
 import '../widgets/gradient_button.dart';
 import '../services/api_service.dart';
+import '../utils/validators.dart';
+import '../routing/transitions.dart';
 import 'main_shell.dart';
+import 'terms_privacy_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -19,6 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   bool _isLoading = false;
   String? _errorMessage;
   bool _submitted = false;
@@ -29,6 +35,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _nameController.addListener(_onFieldChanged);
     _emailController.addListener(_onFieldChanged);
     _passwordController.addListener(_onFieldChanged);
+    _confirmPasswordController.addListener(_onFieldChanged);
   }
 
   void _onFieldChanged() {
@@ -40,9 +47,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _nameController.removeListener(_onFieldChanged);
     _emailController.removeListener(_onFieldChanged);
     _passwordController.removeListener(_onFieldChanged);
+    _confirmPasswordController.removeListener(_onFieldChanged);
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -50,7 +59,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text;
-    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+    final confirmPassword = _confirmPasswordController.text;
+    if (name.isEmpty || email.isEmpty || !isValidEmail(email) ||
+        password.isEmpty || password.length < 6 ||
+        confirmPassword.isEmpty || password != confirmPassword) {
       setState(() { _submitted = true; _errorMessage = null; });
       return;
     }
@@ -72,7 +84,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
     } catch (e) {
       if (mounted) {
-        setState(() => _errorMessage = e.toString().replaceFirst('Exception: ', ''));
+        final msg = e is TimeoutException
+            ? AppLocalizations.of(context)!.errorNetworkTimeout
+            : e.toString().replaceFirst('Exception: ', '');
+        setState(() => _errorMessage = msg);
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -153,6 +168,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text;
+    final confirmPassword = _confirmPasswordController.text;
     return Scaffold(
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
@@ -235,8 +251,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   prefixIcon: Icons.email_outlined,
                   keyboardType: TextInputType.emailAddress,
                   isRequired: true,
-                  errorText: _submitted && email.isEmpty
-                      ? l10n.fieldRequired
+                  errorText: _submitted
+                      ? (email.isEmpty
+                          ? l10n.fieldRequired
+                          : !isValidEmail(email)
+                              ? l10n.invalidEmail
+                              : null)
                       : null,
                 ),
                 const SizedBox(height: 16),
@@ -245,10 +265,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   hint: l10n.passwordHint,
                   prefixIcon: Icons.lock_outline_rounded,
                   isPassword: true,
+                  textInputAction: TextInputAction.next,
+                  isRequired: true,
+                  errorText: _submitted
+                      ? (password.isEmpty
+                          ? l10n.fieldRequired
+                          : password.length < 6
+                              ? l10n.passwordTooShort
+                              : null)
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                AppTextField(
+                  controller: _confirmPasswordController,
+                  hint: l10n.confirmPasswordHint,
+                  prefixIcon: Icons.lock_outline_rounded,
+                  isPassword: true,
                   textInputAction: TextInputAction.done,
                   isRequired: true,
-                  errorText: _submitted && password.isEmpty
-                      ? l10n.fieldRequired
+                  errorText: _submitted
+                      ? (confirmPassword.isEmpty
+                          ? l10n.fieldRequired
+                          : confirmPassword != password
+                              ? l10n.errorPasswordsDoNotMatch
+                              : null)
                       : null,
                 ),
                 if (_errorMessage != null) ...[
@@ -396,7 +436,9 @@ class _TermsText extends StatelessWidget {
             TextSpan(text: l10n.byAgreeingTerms),
             WidgetSpan(
               child: GestureDetector(
-                onTap: () {},
+                onTap: () => Navigator.of(context).push(
+                  slideRoute(builder: (_) => const TermsPrivacyScreen()),
+                ),
                 child: Text(
                   l10n.termsOfService,
                   style: GoogleFonts.poppins(
@@ -410,7 +452,9 @@ class _TermsText extends StatelessWidget {
             TextSpan(text: l10n.andConjunction),
             WidgetSpan(
               child: GestureDetector(
-                onTap: () {},
+                onTap: () => Navigator.of(context).push(
+                  slideRoute(builder: (_) => const TermsPrivacyScreen()),
+                ),
                 child: Text(
                   l10n.privacyPolicy,
                   style: GoogleFonts.poppins(

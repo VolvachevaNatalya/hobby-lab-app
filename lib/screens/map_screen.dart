@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
@@ -64,25 +63,48 @@ class _MapScreenState extends State<MapScreen> {
       backgroundColor: AppColors.background,
       body: Stack(
         children: [
-          // ── Full-screen map placeholder ──
+          // ── Map placeholder (real map integration pending) ──
           Positioned.fill(
-            child: CustomPaint(painter: _MapPainter()),
-          ),
-          // ── User location dot ──
-          Positioned.fill(
-            child: LayoutBuilder(builder: (context, constraints) {
-              final w = constraints.maxWidth;
-              final h = constraints.maxHeight;
-              return Stack(
-                children: [
-                  Positioned(
-                    left: 0.5 * w - 10,
-                    top: 0.52 * h - 10,
-                    child: _UserDot(),
-                  ),
-                ],
-              );
-            }),
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0xFF1A1F2E), Color(0xFF141820)],
+                ),
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 72,
+                      height: 72,
+                      decoration: BoxDecoration(
+                        color: AppColors.purple.withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.purple.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.map_outlined,
+                        color: AppColors.purple,
+                        size: 34,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      AppLocalizations.of(context)!.comingSoon,
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
           // ── Top overlay: header + category chips ──
           Positioned(
@@ -409,100 +431,3 @@ class _MapScreenState extends State<MapScreen> {
   }
 }
 
-// ─── Map painter ──────────────────────────────────────────────────────────────
-
-class _MapPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final bg = Paint()..color = const Color(0xFF1A1F2E);
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), bg);
-
-    final blockPaint = Paint()..color = const Color(0xFF252B3B);
-    final roadPaint = Paint()
-      ..color = const Color(0xFF2D3347)
-      ..strokeWidth = 14
-      ..strokeCap = StrokeCap.round;
-    final mainRoadPaint = Paint()
-      ..color = const Color(0xFF343D52)
-      ..strokeWidth = 22
-      ..strokeCap = StrokeCap.round;
-    final parkPaint = Paint()..color = const Color(0xFF1A2E20);
-
-    final rng = math.Random(42);
-    for (int row = 0; row < 8; row++) {
-      for (int col = 0; col < 5; col++) {
-        final bw = 60.0 + rng.nextDouble() * 40;
-        final bh = 50.0 + rng.nextDouble() * 30;
-        canvas.drawRRect(
-          RRect.fromRectAndRadius(
-            Rect.fromLTWH(
-              col * 80.0 + rng.nextDouble() * 10,
-              row * 70.0 + rng.nextDouble() * 10,
-              bw,
-              bh,
-            ),
-            const Radius.circular(4),
-          ),
-          blockPaint,
-        );
-      }
-    }
-
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(size.width * 0.1, size.height * 0.55, 120, 80),
-        const Radius.circular(8),
-      ),
-      parkPaint,
-    );
-
-    final roads = [
-      [Offset(0, size.height * 0.33), Offset(size.width, size.height * 0.33)],
-      [Offset(0, size.height * 0.60), Offset(size.width, size.height * 0.60)],
-      [Offset(size.width * 0.30, 0), Offset(size.width * 0.30, size.height)],
-      [Offset(size.width * 0.65, 0), Offset(size.width * 0.65, size.height)],
-    ];
-    for (final r in roads) {
-      canvas.drawLine(r[0], r[1], mainRoadPaint);
-    }
-
-    final secondary = [
-      [Offset(0, size.height * 0.18), Offset(size.width, size.height * 0.18)],
-      [Offset(0, size.height * 0.48), Offset(size.width, size.height * 0.48)],
-      [Offset(0, size.height * 0.75), Offset(size.width, size.height * 0.75)],
-      [Offset(size.width * 0.15, 0), Offset(size.width * 0.15, size.height)],
-      [Offset(size.width * 0.48, 0), Offset(size.width * 0.48, size.height)],
-      [Offset(size.width * 0.82, 0), Offset(size.width * 0.82, size.height)],
-    ];
-    for (final r in secondary) {
-      canvas.drawLine(r[0], r[1], roadPaint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-// ─── User location dot ────────────────────────────────────────────────────────
-
-class _UserDot extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 20,
-      height: 20,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: const Color(0xFF3B82F6),
-        border: Border.all(color: Colors.white, width: 3),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF3B82F6).withValues(alpha: 0.5),
-            blurRadius: 12,
-            spreadRadius: 2,
-          ),
-        ],
-      ),
-    );
-  }
-}

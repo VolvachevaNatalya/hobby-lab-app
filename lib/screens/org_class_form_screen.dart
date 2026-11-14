@@ -47,6 +47,7 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
       _nameCtrl.text = c.name;
       _descCtrl.text = c.description;
       _groups = List.from(c.groups);
+      _imageUrl = c.imageUrl;
     }
     _loadCategories();
   }
@@ -379,6 +380,7 @@ class _OrgClassFormScreenState extends State<OrgClassFormScreen> {
           categoryList: _selectedCategories,
           description: _descCtrl.text.trim(),
           groups: _groups,
+          imageUrl: _imageUrl,
         ));
       } catch (_) {
         if (!mounted) return;

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../models/app_city.dart';
@@ -22,10 +23,19 @@ import '../models/org_invite.dart';
 import '../models/org_member.dart';
 import '../models/event_recurrence.dart';
 
-const _baseUrl = 'https://hobbylab-api-production-84bd.up.railway.app';
+const _baseUrl = String.fromEnvironment(
+  'API_BASE_URL',
+  defaultValue: 'https://hobbylab-api-production-84bd.up.railway.app',
+);
 const _tokenKey = 'auth_token';
 const _refreshTokenKey = 'refresh_token';
 const _userIdKey = 'current_user_id';
+
+// Secure storage for auth tokens (uses Android Keystore / iOS Keychain).
+// AndroidOptions encryptedSharedPreferences requires API 23+ (the Flutter default).
+const _secureStorage = FlutterSecureStorage(
+  aOptions: AndroidOptions(encryptedSharedPreferences: true),
+);
 
 class ApiService {
   static String? _sessionToken;
@@ -37,11 +47,11 @@ class ApiService {
   static final authNotifier = ValueNotifier<bool>(true);
 
   // Authenticated client — used by all API endpoints (intercepts 401 for refresh).
-  static http.Client _client = _AuthenticatedClient(http.Client());
+  static http.Client _client = _AuthenticatedClient(_TimeoutClient(http.Client()));
 
   // Raw client — used by auth-flow endpoints (login, register, refresh) that
   // must never go through the refresh interceptor.
-  static http.Client _rawClient = http.Client();
+  static http.Client _rawClient = _TimeoutClient(http.Client());
 
   @visibleForTesting
   static void setInnerClientForTesting(http.Client innerClient) {
@@ -61,16 +71,30 @@ class ApiService {
     _refreshCompleter = null;
     sessionExpiredOnce = false;
     authNotifier.value = true;
-    _client = _AuthenticatedClient(http.Client());
-    _rawClient = http.Client();
+    _client = _AuthenticatedClient(_TimeoutClient(http.Client()));
+    _rawClient = _TimeoutClient(http.Client());
   }
 
   // ── Token ──────────────────────────────────────────────────────────────────
 
   static Future<String?> getSavedToken() async {
     if (_sessionToken != null) return _sessionToken;
+    // Read from secure storage.
+    _sessionToken = await _secureStorage.read(key: _tokenKey);
+    if (_sessionToken != null) return _sessionToken;
+    // One-time migration from SharedPreferences (users upgrading from older builds).
     final prefs = await SharedPreferences.getInstance();
-    _sessionToken = prefs.getString(_tokenKey);
+    final legacy = prefs.getString(_tokenKey);
+    if (legacy != null) {
+      await _secureStorage.write(key: _tokenKey, value: legacy);
+      await prefs.remove(_tokenKey);
+      final legacyRefresh = prefs.getString(_refreshTokenKey);
+      if (legacyRefresh != null) {
+        await _secureStorage.write(key: _refreshTokenKey, value: legacyRefresh);
+        await prefs.remove(_refreshTokenKey);
+      }
+      _sessionToken = legacy;
+    }
     return _sessionToken;
   }
 
@@ -100,15 +124,21 @@ class ApiService {
       _sessionToken = token;
       _handlingUnauthorized = false;
       sessionExpiredOnce = false;
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_tokenKey, token);
-      final refreshToken = data['refresh_token'] as String?;
-      if (refreshToken != null) await prefs.setString(_refreshTokenKey, refreshToken);
+      if (rememberMe) {
+        await _secureStorage.write(key: _tokenKey, value: token);
+        final refreshToken = data['refresh_token'] as String?;
+        if (refreshToken != null) {
+          await _secureStorage.write(key: _refreshTokenKey, value: refreshToken);
+        }
+      }
       // Eagerly cache user ID so chat doesn't need an extra /me call
       try {
         final profile = await getMe();
         _cachedUserId = profile.id;
-        await prefs.setString(_userIdKey, profile.id);
+        if (rememberMe) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString(_userIdKey, profile.id);
+        }
         debugPrint('[Auth] Cached user_id: "${profile.id}"');
       } catch (e) {
         debugPrint('[Auth] Could not cache user_id after login: $e');
@@ -118,9 +148,6 @@ class ApiService {
     throw Exception('Invalid email or password');
   }
 
-  // TODO: Backend must implement POST /auth/google-login
-  // Request body:  {"id_token": "<Google ID token>"}
-  // Response body: {"access_token": "<app JWT>"}
   static Future<void> loginWithGoogle() async {
     final googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
     final account = await googleSignIn.signIn();
@@ -142,10 +169,9 @@ class ApiService {
       _sessionToken = token;
       _handlingUnauthorized = false;
       sessionExpiredOnce = false;
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_tokenKey, token);
+      await _secureStorage.write(key: _tokenKey, value: token);
       final refreshToken = data['refresh_token'] as String?;
-      if (refreshToken != null) await prefs.setString(_refreshTokenKey, refreshToken);
+      if (refreshToken != null) await _secureStorage.write(key: _refreshTokenKey, value: refreshToken);
       // User ID is fetched lazily on first demand via getCurrentUserId().
       return;
     }
@@ -155,9 +181,6 @@ class ApiService {
     );
   }
 
-  // TODO: Backend must implement POST /auth/facebook-login
-  // Request body:  {"access_token": "<Facebook User Access Token>"}
-  // Response body: {"access_token": "<app JWT>"}
   static Future<void> loginWithFacebook() async {
     final result = await FacebookAuth.instance.login(
       permissions: ['email', 'public_profile'],
@@ -184,10 +207,9 @@ class ApiService {
       _sessionToken = token;
       _handlingUnauthorized = false;
       sessionExpiredOnce = false;
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_tokenKey, token);
+      await _secureStorage.write(key: _tokenKey, value: token);
       final refreshToken = data['refresh_token'] as String?;
-      if (refreshToken != null) await prefs.setString(_refreshTokenKey, refreshToken);
+      if (refreshToken != null) await _secureStorage.write(key: _refreshTokenKey, value: refreshToken);
       return;
     }
     final detail = _extractDetail(response.body);
@@ -232,10 +254,9 @@ class ApiService {
       _sessionToken = token;
       _handlingUnauthorized = false;
       sessionExpiredOnce = false;
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_tokenKey, token);
+      await _secureStorage.write(key: _tokenKey, value: token);
       final refreshToken = data['refresh_token'] as String?;
-      if (refreshToken != null) await prefs.setString(_refreshTokenKey, refreshToken);
+      if (refreshToken != null) await _secureStorage.write(key: _refreshTokenKey, value: refreshToken);
       return;
     }
     final detail = _extractDetail(response.body);
@@ -247,10 +268,23 @@ class ApiService {
   static Future<void> logout() async {
     _sessionToken = null;
     _cachedUserId = null;
+    await _secureStorage.delete(key: _tokenKey);
+    await _secureStorage.delete(key: _refreshTokenKey);
     final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_userIdKey);
+    // Also clear any legacy plaintext tokens (defensive cleanup).
     await prefs.remove(_tokenKey);
     await prefs.remove(_refreshTokenKey);
-    await prefs.remove(_userIdKey);
+    // Clear notification preference cache so the next user does not briefly
+    // see the previous user's settings before the API responds.
+    for (final key in const [
+      'notif_appointments',
+      'notif_chat',
+      'notif_activity',
+      'notif_offers',
+    ]) {
+      await prefs.remove(key);
+    }
   }
 
   static Future<void> _onUnauthorized() async {
@@ -270,8 +304,7 @@ class ApiService {
     final completer = Completer<bool>();
     _refreshCompleter = completer;
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final refreshToken = prefs.getString(_refreshTokenKey);
+      final refreshToken = await _secureStorage.read(key: _refreshTokenKey);
       if (refreshToken == null || refreshToken.isEmpty) {
         completer.complete(false);
         return false;
@@ -290,9 +323,9 @@ class ApiService {
           return false;
         }
         _sessionToken = newAccess;
-        await prefs.setString(_tokenKey, newAccess);
+        await _secureStorage.write(key: _tokenKey, value: newAccess);
         if (newRefresh != null && newRefresh.isNotEmpty) {
-          await prefs.setString(_refreshTokenKey, newRefresh);
+          await _secureStorage.write(key: _refreshTokenKey, value: newRefresh);
         }
         debugPrint('[Auth] Token refreshed successfully');
         completer.complete(true);
@@ -415,10 +448,30 @@ class ApiService {
   static Future<List<AppClass>> searchClasses(
     String query, {
     int? categoryId,
+    int? cityId,
+    double? lat,
+    double? lng,
+    int? distanceKm,
+    double? minPrice,
+    double? maxPrice,
+    int? dayOfWeek,
+    int? minAge,
+    int? maxAge,
+    int limit = 100,
   }) async {
     final params = <String, String>{};
     if (query.isNotEmpty) params['search'] = query;
     if (categoryId != null) params['category_id'] = categoryId.toString();
+    if (cityId != null) params['city_id'] = cityId.toString();
+    if (lat != null) params['lat'] = lat.toString();
+    if (lng != null) params['lng'] = lng.toString();
+    if (distanceKm != null) params['distance_km'] = distanceKm.toString();
+    if (minPrice != null) params['min_price'] = minPrice.toString();
+    if (maxPrice != null) params['max_price'] = maxPrice.toString();
+    if (dayOfWeek != null) params['day_of_week'] = dayOfWeek.toString();
+    if (minAge != null) params['min_age'] = minAge.toString();
+    if (maxAge != null) params['max_age'] = maxAge.toString();
+    params['limit'] = limit.toString();
     final uri = Uri.parse(
       '$_baseUrl/classes/search',
     ).replace(queryParameters: params);
@@ -558,13 +611,15 @@ class ApiService {
   }
 
   static Future<Favorite> addFavorite(String classId) async {
+    final entityId = int.tryParse(classId);
+    if (entityId == null) throw ArgumentError.value(classId, 'classId', 'must be a numeric ID');
     final headers = await _authHeaders();
     final response = await _client.post(
       Uri.parse('$_baseUrl/favorites/'),
       headers: headers,
       body: jsonEncode({
         'entity_type': 'class',
-        'entity_id': int.parse(classId),
+        'entity_id': entityId,
       }),
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -576,13 +631,15 @@ class ApiService {
   }
 
   static Future<Favorite> addOrgFavorite(String orgId) async {
+    final entityId = int.tryParse(orgId);
+    if (entityId == null) throw ArgumentError.value(orgId, 'orgId', 'must be a numeric ID');
     final headers = await _authHeaders();
     final response = await _client.post(
       Uri.parse('$_baseUrl/favorites/'),
       headers: headers,
       body: jsonEncode({
         'entity_type': 'organization',
-        'entity_id': int.parse(orgId),
+        'entity_id': entityId,
       }),
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -594,13 +651,15 @@ class ApiService {
   }
 
   static Future<Favorite> addEventFavorite(String eventId) async {
+    final entityId = int.tryParse(eventId);
+    if (entityId == null) throw ArgumentError.value(eventId, 'eventId', 'must be a numeric ID');
     final headers = await _authHeaders();
     final response = await _client.post(
       Uri.parse('$_baseUrl/favorites/'),
       headers: headers,
       body: jsonEncode({
         'entity_type': 'event',
-        'entity_id': int.parse(eventId),
+        'entity_id': entityId,
       }),
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -627,17 +686,13 @@ class ApiService {
     int organizationId,
   ) async {
     final headers = await _authHeaders();
-    print(
-      '[API] createConversation → POST /conversations/ body: {organization_id: $organizationId}',
-    );
+    debugPrint('[API] createConversation → POST /conversations/ body: {organization_id: $organizationId}');
     final response = await _client.post(
       Uri.parse('$_baseUrl/conversations/'),
       headers: headers,
       body: jsonEncode({'organization_id': organizationId}),
     );
-    print(
-      '[API] createConversation ← status: ${response.statusCode} body: ${response.body}',
-    );
+    debugPrint('[API] createConversation ← status: ${response.statusCode}');
     if (response.statusCode == 200 || response.statusCode == 201) {
       return jsonDecode(response.body) as Map<String, dynamic>;
     }
@@ -692,15 +747,13 @@ class ApiService {
       'conversation_id': int.parse(conversationId),
       'message_text': content,
     };
-    print('[API] sendMessage → POST /messages/ body: $payload');
+    debugPrint('[API] sendMessage → POST /messages/ body: $payload');
     final response = await _client.post(
       Uri.parse('$_baseUrl/messages/'),
       headers: headers,
       body: jsonEncode(payload),
     );
-    print(
-      '[API] sendMessage ← status: ${response.statusCode} body: ${response.body}',
-    );
+    debugPrint('[API] sendMessage ← status: ${response.statusCode}');
     if (response.statusCode == 200 || response.statusCode == 201) {
       return ChatMessage.fromJson(
         jsonDecode(response.body) as Map<String, dynamic>,
@@ -814,6 +867,17 @@ class ApiService {
       );
     }
     throw Exception('Failed to update profile');
+  }
+
+  static Future<void> deleteAccount() async {
+    final response = await _client.delete(
+      Uri.parse('$_baseUrl/me'),
+      headers: await _authHeaders(),
+    );
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      _handleError(response);
+      throw Exception('Failed to delete account');
+    }
   }
 
   static Future<void> register({
@@ -1413,6 +1477,78 @@ class ApiService {
     }
   }
 
+  // ── Password reset (unauthenticated flow) ─────────────────────────────────
+
+  static Future<void> forgotPassword(String email) async {
+    final response = await _rawClient.post(
+      Uri.parse('$_baseUrl/auth/forgot-password'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email.trim().toLowerCase()}),
+    );
+    if (response.statusCode == 429) {
+      throw Exception('Too many reset attempts. Try again later.');
+    }
+    if (response.statusCode != 200) {
+      throw Exception('Failed to send reset code. Please try again.');
+    }
+  }
+
+  static Future<void> resetPassword({
+    required String email,
+    required String otp,
+    required String newPassword,
+  }) async {
+    final response = await _rawClient.post(
+      Uri.parse('$_baseUrl/auth/reset-password'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': email.trim().toLowerCase(),
+        'otp': otp.trim(),
+        'new_password': newPassword,
+      }),
+    );
+    if (response.statusCode == 400) {
+      final detail = (jsonDecode(response.body) as Map<String, dynamic>)['detail'];
+      throw Exception(detail?.toString() ?? 'Invalid or expired code');
+    }
+    if (response.statusCode == 429) {
+      throw Exception('Too many reset attempts. Try again later.');
+    }
+    if (response.statusCode != 200) {
+      throw Exception('Failed to reset password. Please try again.');
+    }
+  }
+
+  // ── Notification preferences ───────────────────────────────────────────────
+
+  static Future<Map<String, bool>> getNotificationPreferences() async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/me/notification-preferences'),
+      headers: await _authHeaders(),
+    );
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      return {
+        'notif_appointments': (data['notif_appointments'] as bool?) ?? true,
+        'notif_chat': (data['notif_chat'] as bool?) ?? true,
+        'notif_activity': (data['notif_activity'] as bool?) ?? false,
+        'notif_offers': (data['notif_offers'] as bool?) ?? true,
+      };
+    }
+    throw Exception('Failed to load notification preferences');
+  }
+
+  static Future<void> updateNotificationPreferences(Map<String, bool> prefs) async {
+    final response = await _client.put(
+      Uri.parse('$_baseUrl/me/notification-preferences'),
+      headers: await _authHeaders(),
+      body: jsonEncode(prefs),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to save notification preferences');
+    }
+  }
+
   // ── Organization photos ────────────────────────────────────────────────────
 
   static Future<List<OrgPhoto>> getOrgPhotos(String orgId) async {
@@ -1653,6 +1789,18 @@ class ApiService {
     }
     throw Exception('Failed to create event');
   }
+}
+
+class _TimeoutClient extends http.BaseClient {
+  final http.Client _inner;
+  _TimeoutClient(this._inner);
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) =>
+      _inner.send(request).timeout(const Duration(seconds: 30));
+
+  @override
+  void close() => _inner.close();
 }
 
 class _AuthenticatedClient extends http.BaseClient {

@@ -504,6 +504,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileSaveFailed => 'Failed to save. Please try again.';
 
   @override
+  String get deleteAccountFailed =>
+      'Failed to delete account. Please try again.';
+
+  @override
   String get noNotifications => 'No Notifications';
 
   @override
@@ -626,6 +630,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fieldRequired => 'Required';
+
+  @override
+  String get invalidEmail => 'Please enter a valid email address';
+
+  @override
+  String get passwordTooShort => 'Password must be at least 6 characters';
 
   @override
   String get errorFillRequired => 'Please fill in all required fields';
@@ -2080,5 +2090,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dateYesterday => 'Yesterday';
 
   @override
-  String get sessionExpiredMessage => 'Your session has expired. Please sign in again.';
+  String get sessionExpiredMessage =>
+      'Your session has expired. Please sign in again.';
+
+  @override
+  String get errorNetworkTimeout => 'Connection timed out. Please try again.';
+
+  @override
+  String get forgotPasswordEmailLabel =>
+      'Enter your email and we\'ll send you a 6-digit reset code';
+
+  @override
+  String get forgotPasswordSendBtn => 'Send Reset Code';
+
+  @override
+  String get forgotPasswordSuccessTitle => 'Check Your Email';
+
+  @override
+  String get forgotPasswordSuccessMessage =>
+      'If that email is registered, check your inbox for a 6-digit reset code. It expires in 15 minutes.';
+
+  @override
+  String get resetPasswordTitle => 'Reset Password';
+
+  @override
+  String get resetPasswordOtpHint => '6-digit code';
+
+  @override
+  String get resetPasswordOtpLabel => 'Enter the code from your email';
+
+  @override
+  String get resetPasswordSubmitBtn => 'Set New Password';
+
+  @override
+  String get resetPasswordSuccessMessage =>
+      'Password reset successfully. Please sign in.';
+
+  @override
+  String get errorInvalidResetCode =>
+      'Invalid or expired code. Please try again.';
+
+  @override
+  String get errorCodeRequired => 'Code is required';
+
+  @override
+  String get notifPrefLoadFailed => 'Failed to load notification preferences';
+
+  @override
+  String get notifPrefSaveFailed => 'Failed to save notification preferences';
 }

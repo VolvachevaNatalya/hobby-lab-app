@@ -42,6 +42,7 @@ class OrgClass {
   List<AppCategory> categoryList;
   String description;
   List<OrgGroup> groups;
+  String? imageUrl;
 
   OrgClass({
     required this.id,
@@ -51,6 +52,7 @@ class OrgClass {
     this.categoryList = const [],
     this.description = '',
     this.groups = const [],
+    this.imageUrl,
   });
 }
 
@@ -146,24 +148,6 @@ IconData catIcon(String cat) => switch (cat) {
 
 String fmtTime(TimeOfDay t) =>
     '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
-
-String fmtDate(DateTime d) {
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-  return '${d.day} ${months[d.month - 1]} ${d.year}';
-}
 
 String genId() => DateTime.now().millisecondsSinceEpoch.toString();
 
