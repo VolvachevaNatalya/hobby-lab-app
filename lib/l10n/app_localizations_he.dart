@@ -30,9 +30,6 @@ class AppLocalizationsHe extends AppLocalizations {
   String get btnLogIn => 'התחבר';
 
   @override
-  String get btnSignUp => 'הרשמה';
-
-  @override
   String get btnContinue => 'המשך';
 
   @override
@@ -125,40 +122,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get emailHint => 'כתובת אימייל';
 
   @override
-  String get passwordHint => 'סיסמה';
-
-  @override
-  String get rememberMe => 'זכור אותי';
-
-  @override
-  String get forgotPassword => 'שכחת סיסמה?';
-
-  @override
-  String get orContinueWith => 'או המשך עם';
-
-  @override
-  String get dontHaveAccount => 'אין לך חשבון?';
-
-  @override
-  String get createAccount => 'צור חשבון';
-
-  @override
-  String get registerSubtitle => 'הצטרף ל-Hobby Lab וגלה פעילויות מדהימות';
-
-  @override
   String get fullNameHint => 'שם מלא';
-
-  @override
-  String get confirmPasswordHint => 'אשר סיסמה';
-
-  @override
-  String get alreadyHaveAccount => 'כבר יש לך חשבון?';
-
-  @override
-  String get agreeToTerms => 'אני מסכים ל';
-
-  @override
-  String get termsOfService => 'תנאי השירות';
 
   @override
   String get yourLocation => 'המיקום שלך';
@@ -287,13 +251,6 @@ class AppLocalizationsHe extends AppLocalizations {
   String get age => 'גיל';
 
   @override
-  String get forgotPasswordTitle => 'שכחת סיסמה';
-
-  @override
-  String get forgotPasswordContent =>
-      'אנא צור קשר עם התמיכה בכתובת support@hobbylab.com לאיפוס הסיסמה.';
-
-  @override
   String get btnOk => 'אישור';
 
   @override
@@ -306,31 +263,62 @@ class AppLocalizationsHe extends AppLocalizations {
   String get continueWithFacebook => 'המשך עם Facebook';
 
   @override
-  String get continueWithGmail => 'המשך עם Gmail';
-
-  @override
-  String get orDivider => 'או';
-
-  @override
-  String get registerHeading => 'צור\nחשבון';
-
-  @override
-  String get registerFamiliesSubtitle => 'הצטרף לאלפי משפחות המגלות פעילויות.';
-
-  @override
-  String get byAgreeingTerms => 'בהמשך, אתה מסכים ל';
-
-  @override
-  String get andConjunction => ' ו';
+  String get termsOfService => 'תנאי השימוש';
 
   @override
   String get privacyPolicy => 'מדיניות הפרטיות';
 
   @override
-  String get errorFillAllFields => 'אנא מלא את כל השדות';
+  String get andConjunction => 'ו';
 
   @override
-  String get errorInvalidCredentials => 'אימייל או סיסמה שגויים';
+  String get byUsingAppYouAgree => 'בהמשך, אתה מסכים ל';
+
+  @override
+  String get signInMethods => 'שיטות כניסה';
+
+  @override
+  String get linkedProviders => 'חשבונות מקושרים';
+
+  @override
+  String get linkProvider => 'הוסף';
+
+  @override
+  String get unlinkProvider => 'הסר';
+
+  @override
+  String get unlinkProviderConfirmTitle => 'הסר שיטת כניסה?';
+
+  @override
+  String unlinkProviderConfirmBody(String provider) {
+    return 'להסיר את $provider משיטות הכניסה?';
+  }
+
+  @override
+  String get cannotRemoveLastProvider => 'לא ניתן להסיר את שיטת הכניסה האחרונה';
+
+  @override
+  String get providerAlreadyLinked => 'הספק כבר מקושר';
+
+  @override
+  String providerLinkedSuccess(String provider) {
+    return '$provider קושר בהצלחה';
+  }
+
+  @override
+  String providerUnlinkedSuccess(String provider) {
+    return '$provider הוסר';
+  }
+
+  @override
+  String get signInMethodRemovedPleaseSignInAgain =>
+      'שיטת הכניסה הוסרה. אנא היכנס שוב.';
+
+  @override
+  String get noLinkedProviders => 'אין חשבונות מקושרים';
+
+  @override
+  String get errorFillAllFields => 'אנא מלא את כל השדות';
 
   @override
   String get changeLocation => 'שנה מיקום';
@@ -398,9 +386,6 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get sectionAccount => 'חשבון';
-
-  @override
-  String get changePassword => 'שנה סיסמה';
 
   @override
   String get sectionNotifications => 'התראות';
@@ -625,9 +610,6 @@ class AppLocalizationsHe extends AppLocalizations {
   String get invalidEmail => 'אנא הזן כתובת אימייל תקינה';
 
   @override
-  String get passwordTooShort => 'הסיסמה חייבת להכיל לפחות 6 תווים';
-
-  @override
   String get errorFillRequired => 'אנא מלא את כל השדות החובה';
 
   @override
@@ -662,27 +644,6 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get savedEvents => 'אירועים שמורים';
-
-  @override
-  String get currentPasswordHint => 'סיסמה נוכחית';
-
-  @override
-  String get newPasswordHint => 'סיסמה חדשה';
-
-  @override
-  String get confirmNewPasswordHint => 'אשר סיסמה חדשה';
-
-  @override
-  String get errorPasswordTooShort => 'הסיסמה חייבת להכיל לפחות 6 תווים';
-
-  @override
-  String get errorPasswordsDoNotMatch => 'הסיסמאות אינן תואמות';
-
-  @override
-  String get errorCurrentPasswordWrong => 'הסיסמה הנוכחית שגויה';
-
-  @override
-  String get passwordChangedSuccess => 'הסיסמה שונתה בהצלחה';
 
   @override
   String get trialLesson => 'שיעור ניסיון';
@@ -2036,9 +1997,6 @@ class AppLocalizationsHe extends AppLocalizations {
   String get unnamedEvent => 'אירוע ללא שם';
 
   @override
-  String get accountSecuritySection => 'אבטחת חשבון';
-
-  @override
   String get timeNow => 'עכשיו';
 
   @override
@@ -2082,43 +2040,6 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get errorNetworkTimeout => 'החיבור נכשל. נסה שוב.';
-
-  @override
-  String get forgotPasswordEmailLabel =>
-      'הזן את האימייל שלך ונשלח לך קוד איפוס בן 6 ספרות';
-
-  @override
-  String get forgotPasswordSendBtn => 'שלח קוד איפוס';
-
-  @override
-  String get forgotPasswordSuccessTitle => 'בדוק את האימייל שלך';
-
-  @override
-  String get forgotPasswordSuccessMessage =>
-      'אם האימייל רשום, בדוק את תיבת הדואר שלך לאיתור קוד בן 6 ספרות. הקוד בתוקף 15 דקות.';
-
-  @override
-  String get resetPasswordTitle => 'איפוס סיסמה';
-
-  @override
-  String get resetPasswordOtpHint => 'קוד בן 6 ספרות';
-
-  @override
-  String get resetPasswordOtpLabel => 'הזן את הקוד מהאימייל שלך';
-
-  @override
-  String get resetPasswordSubmitBtn => 'הגדר סיסמה חדשה';
-
-  @override
-  String get resetPasswordSuccessMessage =>
-      'הסיסמה אופסה בהצלחה. אנא היכנס שוב.';
-
-  @override
-  String get errorInvalidResetCode =>
-      'קוד לא תקין או שפג תוקפו. נסה שוב.';
-
-  @override
-  String get errorCodeRequired => 'נדרש קוד';
 
   @override
   String get notifPrefLoadFailed => 'טעינת העדפות ההתראות נכשלה';

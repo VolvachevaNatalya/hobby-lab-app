@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -22,6 +24,18 @@ import '../models/org_photo.dart';
 import '../models/org_invite.dart';
 import '../models/org_member.dart';
 import '../models/event_recurrence.dart';
+
+String _generateNonce([int length = 32]) {
+  const charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+  final random = Random.secure();
+  return List.generate(length, (_) => charset[random.nextInt(charset.length)]).join();
+}
+
+String _sha256ofString(String input) {
+  final bytes = utf8.encode(input);
+  final digest = sha256.convert(bytes);
+  return digest.toString();
+}
 
 const _baseUrl = String.fromEnvironment(
   'API_BASE_URL',
@@ -49,7 +63,7 @@ class ApiService {
   // Authenticated client — used by all API endpoints (intercepts 401 for refresh).
   static http.Client _client = _AuthenticatedClient(_TimeoutClient(http.Client()));
 
-  // Raw client — used by auth-flow endpoints (login, register, refresh) that
+  // Raw client — used by auth-flow endpoints (login, refresh) that
   // must never go through the refresh interceptor.
   static http.Client _rawClient = _TimeoutClient(http.Client());
 
@@ -107,46 +121,6 @@ class ApiService {
   }
 
   // ── Auth ───────────────────────────────────────────────────────────────────
-
-  static Future<String> login(
-    String email,
-    String password, {
-    bool rememberMe = true,
-  }) async {
-    final response = await _rawClient.post(
-      Uri.parse('$_baseUrl/auth/login'),
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: {'username': email, 'password': password},
-    );
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final data = jsonDecode(response.body) as Map<String, dynamic>;
-      final token = data['access_token'] as String;
-      _sessionToken = token;
-      _handlingUnauthorized = false;
-      sessionExpiredOnce = false;
-      if (rememberMe) {
-        await _secureStorage.write(key: _tokenKey, value: token);
-        final refreshToken = data['refresh_token'] as String?;
-        if (refreshToken != null) {
-          await _secureStorage.write(key: _refreshTokenKey, value: refreshToken);
-        }
-      }
-      // Eagerly cache user ID so chat doesn't need an extra /me call
-      try {
-        final profile = await getMe();
-        _cachedUserId = profile.id;
-        if (rememberMe) {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString(_userIdKey, profile.id);
-        }
-        debugPrint('[Auth] Cached user_id: "${profile.id}"');
-      } catch (e) {
-        debugPrint('[Auth] Could not cache user_id after login: $e');
-      }
-      return token;
-    }
-    throw Exception('Invalid email or password');
-  }
 
   static Future<void> loginWithGoogle() async {
     final googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
@@ -219,9 +193,12 @@ class ApiService {
   }
 
   static Future<void> loginWithApple() async {
-    if (!Platform.isIOS && !Platform.isMacOS) {
-      throw Exception('Sign in with Apple is only supported on iOS/macOS');
+    if (!Platform.isIOS) {
+      throw Exception('Sign in with Apple is only supported on iOS');
     }
+
+    final rawNonce = _generateNonce();
+    final nonce = _sha256ofString(rawNonce);
 
     final AuthorizationCredentialAppleID credential;
     try {
@@ -230,6 +207,7 @@ class ApiService {
           AppleIDAuthorizationScopes.email,
           AppleIDAuthorizationScopes.fullName,
         ],
+        nonce: nonce,
       );
     } on SignInWithAppleAuthorizationException catch (e) {
       if (e.code == AuthorizationErrorCode.canceled) {
@@ -245,7 +223,7 @@ class ApiService {
     final response = await _rawClient.post(
       Uri.parse('$_baseUrl/auth/apple-login'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'id_token': identityToken}),
+      body: jsonEncode({'id_token': identityToken, 'nonce': rawNonce}),
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -880,27 +858,6 @@ class ApiService {
     }
   }
 
-  static Future<void> register({
-    required String email,
-    required String name,
-    required String password,
-  }) async {
-    final response = await _rawClient.post(
-      Uri.parse('$_baseUrl/auth/register'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'email': email,
-        'name': name,
-        'password': password,
-        'provider': 'email',
-      }),
-    );
-    if (response.statusCode != 200 && response.statusCode != 201) {
-      final body = jsonDecode(response.body) as Map<String, dynamic>;
-      throw Exception((body['detail'] ?? 'Registration failed').toString());
-    }
-  }
-
   // ── Organizations ──────────────────────────────────────────────────────────
 
   static Future<Map<String, dynamic>> getOrganization(String id) async {
@@ -1454,71 +1411,6 @@ class ApiService {
     throw Exception('Failed to update organization');
   }
 
-  static Future<void> changePassword({
-    required String currentPassword,
-    required String newPassword,
-  }) async {
-    final headers = await _authHeaders();
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/auth/change-password'),
-      headers: headers,
-      body: jsonEncode({
-        'current_password': currentPassword,
-        'new_password': newPassword,
-      }),
-    );
-    if (response.statusCode == 400) {
-      final detail =
-          (jsonDecode(response.body) as Map<String, dynamic>)['detail'];
-      throw Exception(detail?.toString() ?? 'Failed to change password');
-    }
-    if (response.statusCode != 200 && response.statusCode != 204) {
-      throw Exception('Failed to change password');
-    }
-  }
-
-  // ── Password reset (unauthenticated flow) ─────────────────────────────────
-
-  static Future<void> forgotPassword(String email) async {
-    final response = await _rawClient.post(
-      Uri.parse('$_baseUrl/auth/forgot-password'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email.trim().toLowerCase()}),
-    );
-    if (response.statusCode == 429) {
-      throw Exception('Too many reset attempts. Try again later.');
-    }
-    if (response.statusCode != 200) {
-      throw Exception('Failed to send reset code. Please try again.');
-    }
-  }
-
-  static Future<void> resetPassword({
-    required String email,
-    required String otp,
-    required String newPassword,
-  }) async {
-    final response = await _rawClient.post(
-      Uri.parse('$_baseUrl/auth/reset-password'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'email': email.trim().toLowerCase(),
-        'otp': otp.trim(),
-        'new_password': newPassword,
-      }),
-    );
-    if (response.statusCode == 400) {
-      final detail = (jsonDecode(response.body) as Map<String, dynamic>)['detail'];
-      throw Exception(detail?.toString() ?? 'Invalid or expired code');
-    }
-    if (response.statusCode == 429) {
-      throw Exception('Too many reset attempts. Try again later.');
-    }
-    if (response.statusCode != 200) {
-      throw Exception('Failed to reset password. Please try again.');
-    }
-  }
-
   // ── Notification preferences ───────────────────────────────────────────────
 
   static Future<Map<String, bool>> getNotificationPreferences() async {
@@ -1731,6 +1623,120 @@ class ApiService {
       _handleError(response);
       throw Exception('Failed to reject join request');
     }
+  }
+
+  // ── Auth providers ──────────────────────────────────────────────────────────
+
+  static Future<List<Map<String, dynamic>>> getAuthProviders() async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/me/auth-providers/'),
+      headers: await _authHeaders(),
+    );
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List<dynamic>)
+          .map((e) => e as Map<String, dynamic>)
+          .toList();
+    }
+    _handleError(response);
+    throw Exception('Failed to load auth providers');
+  }
+
+  static Future<void> linkGoogleProvider() async {
+    final googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
+    final account = await googleSignIn.signIn();
+    if (account == null) throw Exception('Google sign-in cancelled');
+
+    final auth = await account.authentication;
+    final idToken = auth.idToken;
+    if (idToken == null) throw Exception('Failed to get Google ID token');
+
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/me/auth-providers/google'),
+      headers: await _authHeaders(),
+      body: jsonEncode({'id_token': idToken}),
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) return;
+    final detail = _extractDetail(response.body);
+    throw Exception(
+      'Failed to link Google (${response.statusCode})${detail != null ? ": $detail" : ""}',
+    );
+  }
+
+  static Future<void> linkFacebookProvider() async {
+    final result = await FacebookAuth.instance.login(
+      permissions: ['email', 'public_profile'],
+    );
+
+    if (result.status == LoginStatus.cancelled) {
+      throw Exception('Facebook sign-in cancelled');
+    }
+    if (result.status != LoginStatus.success || result.accessToken == null) {
+      throw Exception('Facebook sign-in failed: ${result.message}');
+    }
+
+    final fbToken = result.accessToken!.tokenString;
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/me/auth-providers/facebook'),
+      headers: await _authHeaders(),
+      body: jsonEncode({'access_token': fbToken}),
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) return;
+    final detail = _extractDetail(response.body);
+    throw Exception(
+      'Failed to link Facebook (${response.statusCode})${detail != null ? ": $detail" : ""}',
+    );
+  }
+
+  static Future<void> linkAppleProvider() async {
+    if (!Platform.isIOS) {
+      throw Exception('Sign in with Apple is only supported on iOS');
+    }
+
+    final rawNonce = _generateNonce();
+    final nonce = _sha256ofString(rawNonce);
+
+    final AuthorizationCredentialAppleID credential;
+    try {
+      credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: nonce,
+      );
+    } on SignInWithAppleAuthorizationException catch (e) {
+      if (e.code == AuthorizationErrorCode.canceled) {
+        throw Exception('Apple sign-in cancelled');
+      }
+      rethrow;
+    }
+
+    final identityToken = credential.identityToken;
+    if (identityToken == null) throw Exception('Failed to get Apple identity token');
+
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/me/auth-providers/apple'),
+      headers: await _authHeaders(),
+      body: jsonEncode({'id_token': identityToken, 'nonce': rawNonce}),
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) return;
+    final detail = _extractDetail(response.body);
+    throw Exception(
+      'Failed to link Apple (${response.statusCode})${detail != null ? ": $detail" : ""}',
+    );
+  }
+
+  static Future<void> unlinkAuthProvider(int providerId) async {
+    final response = await _client.delete(
+      Uri.parse('$_baseUrl/me/auth-providers/$providerId'),
+      headers: await _authHeaders(),
+    );
+    if (response.statusCode == 200 || response.statusCode == 204) return;
+    _handleError(response);
+    final detail = _extractDetail(response.body);
+    throw Exception(
+      detail ?? 'Failed to unlink provider (${response.statusCode})',
+    );
   }
 
   static Future<Map<String, dynamic>> createEvent({

@@ -10,7 +10,6 @@
   "navProfile": "Профиль",
 
   "btnLogIn": "Войти",
-  "btnSignUp": "Зарегистрироваться",
   "btnContinue": "Продолжить",
   "btnGetStarted": "Начать",
   "btnBookNow": "Записаться",
@@ -50,19 +49,7 @@
   "welcomeBack": "Добро пожаловать",
   "loginSubtitle": "Войдите, чтобы продолжить",
   "emailHint": "Электронная почта",
-  "passwordHint": "Пароль",
-  "rememberMe": "Запомнить меня",
-  "forgotPassword": "Забыли пароль?",
-  "orContinueWith": "Или войти через",
-  "dontHaveAccount": "Нет аккаунта?",
-
-  "createAccount": "Создать аккаунт",
-  "registerSubtitle": "Присоединитесь к Hobby Lab и откройте для себя удивительные занятия",
   "fullNameHint": "Полное имя",
-  "confirmPasswordHint": "Подтвердите пароль",
-  "alreadyHaveAccount": "Уже есть аккаунт?",
-  "agreeToTerms": "Я соглашаюсь с ",
-  "termsOfService": "Условиями использования",
 
   "yourLocation": "Ваше местоположение",
   "popularNearYou": "Популярное рядом",
@@ -108,21 +95,42 @@
   "gender": "Пол",
   "age": "Возраст",
 
-  "forgotPasswordTitle": "Забыли пароль",
-  "forgotPasswordContent": "Для сброса пароля обратитесь в поддержку: support@hobbylab.com",
   "btnOk": "ОК",
   "continueWithGoogle": "Войти через Google",
   "continueWithApple": "Войти через Apple",
   "continueWithFacebook": "Войти через Facebook",
-  "continueWithGmail": "Войти через Gmail",
-  "orDivider": "или",
-  "registerHeading": "Создайте\nаккаунт",
-  "registerFamiliesSubtitle": "Присоединитесь к тысячам семей, открывающих новые занятия.",
-  "byAgreeingTerms": "Продолжая, вы соглашаетесь с нашими ",
-  "andConjunction": " и ",
-  "privacyPolicy": "Политикой конфиденциальности",
+  "termsOfService": "Условия использования",
+  "privacyPolicy": "Политика конфиденциальности",
+  "andConjunction": "и",
+  "byUsingAppYouAgree": "Продолжая, вы соглашаетесь с нашими",
+  "signInMethods": "Способы входа",
+  "linkedProviders": "Привязанные аккаунты",
+  "linkProvider": "Добавить",
+  "unlinkProvider": "Удалить",
+  "unlinkProviderConfirmTitle": "Удалить способ входа?",
+  "unlinkProviderConfirmBody": "Удалить {provider} из способов входа?",
+  "@unlinkProviderConfirmBody": {
+    "placeholders": {
+      "provider": { "type": "String" }
+    }
+  },
+  "cannotRemoveLastProvider": "Нельзя удалить последний способ входа",
+  "providerAlreadyLinked": "Этот провайдер уже привязан",
+  "providerLinkedSuccess": "{provider} успешно привязан",
+  "@providerLinkedSuccess": {
+    "placeholders": {
+      "provider": { "type": "String" }
+    }
+  },
+  "providerUnlinkedSuccess": "{provider} удалён",
+  "@providerUnlinkedSuccess": {
+    "placeholders": {
+      "provider": { "type": "String" }
+    }
+  },
+  "signInMethodRemovedPleaseSignInAgain": "Метод входа удалён. Пожалуйста, войдите снова.",
+  "noLinkedProviders": "Нет привязанных аккаунтов",
   "errorFillAllFields": "Заполните все поля",
-  "errorInvalidCredentials": "Неверный email или пароль",
 
   "changeLocation": "Изменить город",
   "enterCityName": "Введите название города",
@@ -157,7 +165,6 @@
 
   "settingsTitle": "Настройки",
   "sectionAccount": "АККАУНТ",
-  "changePassword": "Изменить пароль",
   "sectionNotifications": "УВЕДОМЛЕНИЯ",
   "pushNotifications": "Push-уведомления",
   "classReminders": "Напоминания о занятиях",
@@ -243,7 +250,6 @@
 
   "fieldRequired": "Обязательно",
   "invalidEmail": "Введите корректный адрес электронной почты",
-  "passwordTooShort": "Пароль должен содержать не менее 6 символов",
   "errorFillRequired": "Заполните все обязательные поля",
   "errorRatingRequired": "Пожалуйста, выберите оценку",
 
@@ -260,13 +266,6 @@
   "savedClasses": "Сохранённые занятия",
   "savedEvents": "Сохранённые события",
 
-  "currentPasswordHint": "Текущий пароль",
-  "newPasswordHint": "Новый пароль",
-  "confirmNewPasswordHint": "Подтвердите новый пароль",
-  "errorPasswordTooShort": "Пароль должен содержать не менее 6 символов",
-  "errorPasswordsDoNotMatch": "Пароли не совпадают",
-  "errorCurrentPasswordWrong": "Текущий пароль неверен",
-  "passwordChangedSuccess": "Пароль успешно изменён",
   "trialLesson": "Пробный урок",
   "trialLessonPrice": "Цена пробного урока",
   "trialLessonComment": "Комментарий",
@@ -822,7 +821,6 @@
   "submitApplication": "Отправить заявку",
   "statusClosed": "Закрыто",
   "unnamedEvent": "Без названия",
-  "accountSecuritySection": "БЕЗОПАСНОСТЬ АККАУНТА",
   "timeNow": "Сейчас",
   "changesSavedSuccess": "Изменения сохранены",
   "failedToSaveChanges": "Не удалось сохранить изменения",
@@ -857,17 +855,6 @@
 
   "errorNetworkTimeout": "Соединение прервано. Попробуйте снова.",
 
-  "forgotPasswordEmailLabel": "Введите email и мы отправим вам 6-значный код сброса пароля",
-  "forgotPasswordSendBtn": "Отправить код",
-  "forgotPasswordSuccessTitle": "Проверьте почту",
-  "forgotPasswordSuccessMessage": "Если этот email зарегистрирован, проверьте входящие — там будет 6-значный код. Он действителен 15 минут.",
-  "resetPasswordTitle": "Сброс пароля",
-  "resetPasswordOtpHint": "6-значный код",
-  "resetPasswordOtpLabel": "Введите код из письма",
-  "resetPasswordSubmitBtn": "Установить новый пароль",
-  "resetPasswordSuccessMessage": "Пароль успешно сброшен. Войдите снова.",
-  "errorInvalidResetCode": "Неверный или просроченный код. Попробуйте снова.",
-  "errorCodeRequired": "Введите код",
   "notifPrefLoadFailed": "Не удалось загрузить настройки уведомлений",
   "notifPrefSaveFailed": "Не удалось сохранить настройки уведомлений"
 }

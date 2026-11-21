@@ -5,9 +5,9 @@ import '../theme/app_theme.dart';
 import '../l10n/app_localizations.dart';
 import '../locale_provider.dart';
 import '../services/api_service.dart';
-import 'change_password_screen.dart';
 import 'edit_profile_screen.dart';
 import 'language_selection_screen.dart';
+import 'linked_providers_screen.dart';
 import 'support_request_screen.dart';
 import 'terms_privacy_screen.dart';
 import '../routing/transitions.dart';
@@ -80,11 +80,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       _NavRow(
                         icon: Icons.lock_outline_rounded,
-                        iconColor: const Color(0xFF0EA5E9),
-                        label: l10n.changePassword,
-                        onTap: () => _push(context, const ChangePasswordScreen()),
+                        iconColor: AppColors.purple,
+                        label: l10n.signInMethods,
+                        onTap: () => _push(context, const LinkedProvidersScreen()),
                       ),
-                    ]),
+                      ]),
                     const SizedBox(height: 28),
                     _sectionLabel(l10n.sectionNotifications),
                     const SizedBox(height: 10),

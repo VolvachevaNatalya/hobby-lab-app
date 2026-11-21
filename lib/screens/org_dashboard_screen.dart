@@ -13,7 +13,6 @@ import 'org_event_form_screen.dart';
 import 'event_schedule_screen.dart';
 import 'edit_organization_screen.dart';
 import 'notifications_settings_screen.dart';
-import 'change_password_screen.dart';
 import 'org_invites_screen.dart';
 import 'org_members_screen.dart';
 import '../routing/transitions.dart';
@@ -2109,12 +2108,6 @@ class _ProfileTabState extends State<_ProfileTab> {
     widget.onEditComplete?.call();
   }
 
-  void _navigateChangePassword() {
-    Navigator.of(
-      context,
-    ).push(slideRoute(builder: (_) => const ChangePasswordScreen()));
-  }
-
   void _navigateInvites() {
     if (!widget.isAdmin || widget.orgId.isEmpty) return;
     Navigator.of(context).push(
@@ -2260,11 +2253,6 @@ class _ProfileTabState extends State<_ProfileTab> {
                           l10n.editProfile,
                           onTap: _navigateEditProfile,
                         ),
-                      _SettingItem(
-                        Icons.lock_outline_rounded,
-                        l10n.changePassword,
-                        onTap: _navigateChangePassword,
-                      ),
                     ],
                   ),
                   const SizedBox(height: 16),

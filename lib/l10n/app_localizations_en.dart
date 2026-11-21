@@ -30,9 +30,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btnLogIn => 'Log In';
 
   @override
-  String get btnSignUp => 'Sign Up';
-
-  @override
   String get btnContinue => 'Continue';
 
   @override
@@ -125,41 +122,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emailHint => 'Email address';
 
   @override
-  String get passwordHint => 'Password';
-
-  @override
-  String get rememberMe => 'Remember me';
-
-  @override
-  String get forgotPassword => 'Forgot Password?';
-
-  @override
-  String get orContinueWith => 'Or continue with';
-
-  @override
-  String get dontHaveAccount => 'Don\'t have an account?';
-
-  @override
-  String get createAccount => 'Create Account';
-
-  @override
-  String get registerSubtitle =>
-      'Join Hobby Lab and discover amazing activities';
-
-  @override
   String get fullNameHint => 'Full name';
-
-  @override
-  String get confirmPasswordHint => 'Confirm password';
-
-  @override
-  String get alreadyHaveAccount => 'Already have an account?';
-
-  @override
-  String get agreeToTerms => 'I agree to the ';
-
-  @override
-  String get termsOfService => 'Terms of Service';
 
   @override
   String get yourLocation => 'Your location';
@@ -289,13 +252,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get age => 'Age';
 
   @override
-  String get forgotPasswordTitle => 'Forgot Password';
-
-  @override
-  String get forgotPasswordContent =>
-      'Please contact support at support@hobbylab.com to reset your password.';
-
-  @override
   String get btnOk => 'OK';
 
   @override
@@ -308,32 +264,63 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continueWithFacebook => 'Continue with Facebook';
 
   @override
-  String get continueWithGmail => 'Continue with Gmail';
-
-  @override
-  String get orDivider => 'or';
-
-  @override
-  String get registerHeading => 'Create your\naccount';
-
-  @override
-  String get registerFamiliesSubtitle =>
-      'Join thousands of families discovering activities.';
-
-  @override
-  String get byAgreeingTerms => 'By continuing, you agree to our ';
-
-  @override
-  String get andConjunction => ' and ';
+  String get termsOfService => 'Terms of Service';
 
   @override
   String get privacyPolicy => 'Privacy Policy';
 
   @override
-  String get errorFillAllFields => 'Please fill in all fields';
+  String get andConjunction => 'and';
 
   @override
-  String get errorInvalidCredentials => 'Invalid email or password';
+  String get byUsingAppYouAgree => 'By continuing, you agree to our';
+
+  @override
+  String get signInMethods => 'Sign-in Methods';
+
+  @override
+  String get linkedProviders => 'Linked Providers';
+
+  @override
+  String get linkProvider => 'Add';
+
+  @override
+  String get unlinkProvider => 'Remove';
+
+  @override
+  String get unlinkProviderConfirmTitle => 'Remove Sign-in Method?';
+
+  @override
+  String unlinkProviderConfirmBody(String provider) {
+    return 'Remove $provider from your sign-in methods?';
+  }
+
+  @override
+  String get cannotRemoveLastProvider =>
+      'Cannot remove your last sign-in method';
+
+  @override
+  String get providerAlreadyLinked => 'This provider is already linked';
+
+  @override
+  String providerLinkedSuccess(String provider) {
+    return '$provider linked successfully';
+  }
+
+  @override
+  String providerUnlinkedSuccess(String provider) {
+    return '$provider removed';
+  }
+
+  @override
+  String get signInMethodRemovedPleaseSignInAgain =>
+      'Sign-in method removed. Please sign in again.';
+
+  @override
+  String get noLinkedProviders => 'No linked providers';
+
+  @override
+  String get errorFillAllFields => 'Please fill in all fields';
 
   @override
   String get changeLocation => 'Change Location';
@@ -403,9 +390,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sectionAccount => 'ACCOUNT';
-
-  @override
-  String get changePassword => 'Change Password';
 
   @override
   String get sectionNotifications => 'NOTIFICATIONS';
@@ -635,9 +619,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invalidEmail => 'Please enter a valid email address';
 
   @override
-  String get passwordTooShort => 'Password must be at least 6 characters';
-
-  @override
   String get errorFillRequired => 'Please fill in all required fields';
 
   @override
@@ -672,27 +653,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get savedEvents => 'Saved Events';
-
-  @override
-  String get currentPasswordHint => 'Current Password';
-
-  @override
-  String get newPasswordHint => 'New Password';
-
-  @override
-  String get confirmNewPasswordHint => 'Confirm New Password';
-
-  @override
-  String get errorPasswordTooShort => 'Password must be at least 6 characters';
-
-  @override
-  String get errorPasswordsDoNotMatch => 'Passwords do not match';
-
-  @override
-  String get errorCurrentPasswordWrong => 'Current password is incorrect';
-
-  @override
-  String get passwordChangedSuccess => 'Password changed successfully';
 
   @override
   String get trialLesson => 'Trial Lesson';
@@ -2048,9 +2008,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unnamedEvent => 'Unnamed Event';
 
   @override
-  String get accountSecuritySection => 'ACCOUNT SECURITY';
-
-  @override
   String get timeNow => 'Now';
 
   @override
@@ -2095,43 +2052,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorNetworkTimeout => 'Connection timed out. Please try again.';
-
-  @override
-  String get forgotPasswordEmailLabel =>
-      'Enter your email and we\'ll send you a 6-digit reset code';
-
-  @override
-  String get forgotPasswordSendBtn => 'Send Reset Code';
-
-  @override
-  String get forgotPasswordSuccessTitle => 'Check Your Email';
-
-  @override
-  String get forgotPasswordSuccessMessage =>
-      'If that email is registered, check your inbox for a 6-digit reset code. It expires in 15 minutes.';
-
-  @override
-  String get resetPasswordTitle => 'Reset Password';
-
-  @override
-  String get resetPasswordOtpHint => '6-digit code';
-
-  @override
-  String get resetPasswordOtpLabel => 'Enter the code from your email';
-
-  @override
-  String get resetPasswordSubmitBtn => 'Set New Password';
-
-  @override
-  String get resetPasswordSuccessMessage =>
-      'Password reset successfully. Please sign in.';
-
-  @override
-  String get errorInvalidResetCode =>
-      'Invalid or expired code. Please try again.';
-
-  @override
-  String get errorCodeRequired => 'Code is required';
 
   @override
   String get notifPrefLoadFailed => 'Failed to load notification preferences';

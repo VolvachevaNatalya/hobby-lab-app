@@ -25,59 +25,9 @@ void main() {
     SharedPreferences.setMockInitialValues({});
   });
 
-  // ── login ──────────────────────────────────────────────────────────────────
-
-  group('login', () {
-    test('stores access token and refresh token in secure storage on success', () async {
-      ApiService.setRawClientForTesting(
-        MockClient((_) async => _json(200, {
-              'access_token': 'access-abc',
-              'refresh_token': 'refresh-xyz',
-            })),
-      );
-      // getMe() fires internally; stub it so it doesn't hit the real server.
-      ApiService.setInnerClientForTesting(
-        MockClient((_) async => _json(200, {
-              'id': 'u1',
-              'full_name': 'Alice',
-              'email': 'alice@example.com',
-            })),
-      );
-
-      await ApiService.login('alice@example.com', 'secret');
-
-      const storage = FlutterSecureStorage();
-      expect(await storage.read(key: 'auth_token'), 'access-abc');
-      expect(await storage.read(key: 'refresh_token'), 'refresh-xyz');
-    });
-
-    test('clears sessionExpiredOnce on successful login', () async {
-      ApiService.sessionExpiredOnce = true;
-      ApiService.setRawClientForTesting(
-        MockClient((_) async => _json(200, {
-              'access_token': 'tok',
-              'refresh_token': 'rtok',
-            })),
-      );
-      ApiService.setInnerClientForTesting(
-        MockClient((_) async => _json(200, {
-              'id': 'u1',
-              'full_name': 'Alice',
-              'email': 'alice@example.com',
-            })),
-      );
-
-      await ApiService.login('a@b.com', 'pw');
-      expect(ApiService.sessionExpiredOnce, false);
-    });
-
-    test('throws on invalid credentials', () async {
-      ApiService.setRawClientForTesting(
-        MockClient((_) async => http.Response('Unauthorized', 401)),
-      );
-      expect(ApiService.login('bad@user.com', 'wrong'), throwsException);
-    });
-  });
+  // ── email/password login removed (social-only auth) ──────────────────────
+  // ApiService.login() was removed when email/password auth was dropped.
+  // Social login is tested in the 'loginWithApple — platform guard' group below.
 
   // ── logout ─────────────────────────────────────────────────────────────────
 
@@ -538,115 +488,9 @@ void main() {
     });
   });
 
-  // ── forgotPassword ────────────────────────────────────────────────────────
-
-  group('forgotPassword', () {
-    test('succeeds on 200', () async {
-      ApiService.setRawClientForTesting(
-        MockClient((_) async => _json(200, {'message': 'ok'})),
-      );
-      await expectLater(ApiService.forgotPassword('user@test.com'), completes);
-    });
-
-    test('throws on 429 rate limit', () async {
-      ApiService.setRawClientForTesting(
-        MockClient((_) async => http.Response('Too Many Requests', 429)),
-      );
-      expect(
-        ApiService.forgotPassword('user@test.com'),
-        throwsA(isA<Exception>().having(
-          (e) => e.toString(), 'message', contains('Too many'),
-        )),
-      );
-    });
-
-    test('throws on non-200 non-429', () async {
-      ApiService.setRawClientForTesting(
-        MockClient((_) async => http.Response('Server Error', 500)),
-      );
-      expect(ApiService.forgotPassword('user@test.com'), throwsException);
-    });
-
-    test('normalizes email to lowercase before sending', () async {
-      late Uri capturedUri;
-      late String capturedBody;
-      ApiService.setRawClientForTesting(
-        MockClient((req) async {
-          capturedUri = req.url;
-          capturedBody = req.body;
-          return _json(200, {'message': 'ok'});
-        }),
-      );
-      await ApiService.forgotPassword('USER@TEST.COM');
-      expect(capturedUri.path, contains('forgot-password'));
-      expect(capturedBody, contains('user@test.com'));
-    });
-  });
-
-  // ── resetPassword ─────────────────────────────────────────────────────────
-
-  group('resetPassword', () {
-    test('succeeds on 200', () async {
-      ApiService.setRawClientForTesting(
-        MockClient((_) async => _json(200, {'message': 'Password reset successfully'})),
-      );
-      await expectLater(
-        ApiService.resetPassword(
-          email: 'user@test.com',
-          otp: '123456',
-          newPassword: 'newpass123',
-        ),
-        completes,
-      );
-    });
-
-    test('throws on 400 invalid code and includes detail from server', () async {
-      ApiService.setRawClientForTesting(
-        MockClient((_) async =>
-            _json(400, {'detail': 'Invalid or expired code'})),
-      );
-      expect(
-        ApiService.resetPassword(
-          email: 'user@test.com',
-          otp: '000000',
-          newPassword: 'newpass',
-        ),
-        throwsA(isA<Exception>().having(
-          (e) => e.toString(), 'message', contains('Invalid or expired code'),
-        )),
-      );
-    });
-
-    test('throws on 429 rate limit', () async {
-      ApiService.setRawClientForTesting(
-        MockClient((_) async => http.Response('Too Many Requests', 429)),
-      );
-      expect(
-        ApiService.resetPassword(
-          email: 'user@test.com',
-          otp: '123456',
-          newPassword: 'newpass',
-        ),
-        throwsA(isA<Exception>().having(
-          (e) => e.toString(), 'message', contains('Too many'),
-        )),
-      );
-    });
-
-    test('throws on 500', () async {
-      ApiService.setRawClientForTesting(
-        MockClient((_) async => http.Response('Server Error', 500)),
-      );
-      expect(
-        ApiService.resetPassword(
-          email: 'user@test.com',
-          otp: '123456',
-          newPassword: 'newpass',
-        ),
-        throwsException,
-      );
-    });
-  });
+  // ── forgotPassword / resetPassword removed (social-only auth) ───────────
+  // ApiService.forgotPassword() and ApiService.resetPassword() were removed
+  // when email/password auth was dropped.
 
   // ── getNotificationPreferences ────────────────────────────────────────────
 
@@ -756,6 +600,102 @@ void main() {
         'notif_offers': true,
       });
       expect(capturedBody, contains('"notif_chat":false'));
+    });
+  });
+
+  // ── getAuthProviders ───────────────────────────────────────────────────────
+
+  group('getAuthProviders', () {
+    setUp(() {
+      FlutterSecureStorage.setMockInitialValues({'auth_token': 'valid-token'});
+    });
+
+    test('returns parsed provider list on 200', () async {
+      ApiService.setInnerClientForTesting(
+        MockClient((_) async => http.Response(
+          jsonEncode([
+            {'id': 1, 'provider': 'google', 'provider_email': 'alice@gmail.com'},
+            {'id': 2, 'provider': 'facebook', 'provider_email': null},
+          ]),
+          200,
+          headers: {'content-type': 'application/json'},
+        )),
+      );
+
+      final providers = await ApiService.getAuthProviders();
+
+      expect(providers, hasLength(2));
+      expect(providers[0]['provider'], 'google');
+      expect(providers[1]['provider'], 'facebook');
+    });
+
+    test('returns empty list on empty response', () async {
+      ApiService.setInnerClientForTesting(
+        MockClient((_) async => http.Response('[]', 200,
+            headers: {'content-type': 'application/json'})),
+      );
+
+      final providers = await ApiService.getAuthProviders();
+      expect(providers, isEmpty);
+    });
+
+    test('throws on non-200', () async {
+      ApiService.setInnerClientForTesting(
+        MockClient((_) async => http.Response('Unauthorized', 401)),
+      );
+      expect(ApiService.getAuthProviders(), throwsException);
+    });
+  });
+
+  // ── unlinkAuthProvider ─────────────────────────────────────────────────────
+
+  group('unlinkAuthProvider', () {
+    setUp(() {
+      FlutterSecureStorage.setMockInitialValues({'auth_token': 'valid-token'});
+    });
+
+    test('calls DELETE /me/auth-providers/{id} on success', () async {
+      late Uri capturedUri;
+      late String capturedMethod;
+      ApiService.setInnerClientForTesting(
+        MockClient((req) async {
+          capturedUri = req.url;
+          capturedMethod = req.method;
+          return http.Response('{"status":"unlinked"}', 200,
+              headers: {'content-type': 'application/json'});
+        }),
+      );
+
+      await ApiService.unlinkAuthProvider(42);
+
+      expect(capturedMethod, 'DELETE');
+      expect(capturedUri.path, endsWith('/me/auth-providers/42'));
+    });
+
+    test('throws on 400 with server detail', () async {
+      ApiService.setInnerClientForTesting(
+        MockClient((_) async => _json(400, {'detail': 'Cannot remove the last sign-in method'})),
+      );
+
+      await expectLater(
+        ApiService.unlinkAuthProvider(1),
+        throwsA(isA<Exception>().having(
+          (e) => e.toString(),
+          'message',
+          contains('Cannot remove the last sign-in method'),
+        )),
+      );
+    });
+
+    test('linkAppleProvider platform guard throws on non-iOS/macOS', () async {
+      await expectLater(
+        ApiService.linkAppleProvider(),
+        throwsA(isA<Exception>().having(
+          (e) => e.toString(),
+          'message',
+          contains('iOS'),
+        )),
+      );
     });
   });
 }

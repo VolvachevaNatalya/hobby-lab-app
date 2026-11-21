@@ -10,7 +10,6 @@
   "navProfile": "פרופיל",
 
   "btnLogIn": "התחבר",
-  "btnSignUp": "הרשמה",
   "btnContinue": "המשך",
   "btnGetStarted": "בואו נתחיל",
   "btnBookNow": "הזמן עכשיו",
@@ -50,19 +49,7 @@
   "welcomeBack": "ברוך שובך",
   "loginSubtitle": "התחבר להמשיך את המסע שלך",
   "emailHint": "כתובת אימייל",
-  "passwordHint": "סיסמה",
-  "rememberMe": "זכור אותי",
-  "forgotPassword": "שכחת סיסמה?",
-  "orContinueWith": "או המשך עם",
-  "dontHaveAccount": "אין לך חשבון?",
-
-  "createAccount": "צור חשבון",
-  "registerSubtitle": "הצטרף ל-Hobby Lab וגלה פעילויות מדהימות",
   "fullNameHint": "שם מלא",
-  "confirmPasswordHint": "אשר סיסמה",
-  "alreadyHaveAccount": "כבר יש לך חשבון?",
-  "agreeToTerms": "אני מסכים ל",
-  "termsOfService": "תנאי השירות",
 
   "yourLocation": "המיקום שלך",
   "popularNearYou": "פופולרי ליד",
@@ -108,21 +95,42 @@
   "gender": "מין",
   "age": "גיל",
 
-  "forgotPasswordTitle": "שכחת סיסמה",
-  "forgotPasswordContent": "אנא צור קשר עם התמיכה בכתובת support@hobbylab.com לאיפוס הסיסמה.",
   "btnOk": "אישור",
   "continueWithGoogle": "המשך עם Google",
   "continueWithApple": "המשך עם Apple",
   "continueWithFacebook": "המשך עם Facebook",
-  "continueWithGmail": "המשך עם Gmail",
-  "orDivider": "או",
-  "registerHeading": "צור\nחשבון",
-  "registerFamiliesSubtitle": "הצטרף לאלפי משפחות המגלות פעילויות.",
-  "byAgreeingTerms": "בהמשך, אתה מסכים ל",
-  "andConjunction": " ו",
+  "termsOfService": "תנאי השימוש",
   "privacyPolicy": "מדיניות הפרטיות",
+  "andConjunction": "ו",
+  "byUsingAppYouAgree": "בהמשך, אתה מסכים ל",
+  "signInMethods": "שיטות כניסה",
+  "linkedProviders": "חשבונות מקושרים",
+  "linkProvider": "הוסף",
+  "unlinkProvider": "הסר",
+  "unlinkProviderConfirmTitle": "הסר שיטת כניסה?",
+  "unlinkProviderConfirmBody": "להסיר את {provider} משיטות הכניסה?",
+  "@unlinkProviderConfirmBody": {
+    "placeholders": {
+      "provider": { "type": "String" }
+    }
+  },
+  "cannotRemoveLastProvider": "לא ניתן להסיר את שיטת הכניסה האחרונה",
+  "providerAlreadyLinked": "הספק כבר מקושר",
+  "providerLinkedSuccess": "{provider} קושר בהצלחה",
+  "@providerLinkedSuccess": {
+    "placeholders": {
+      "provider": { "type": "String" }
+    }
+  },
+  "providerUnlinkedSuccess": "{provider} הוסר",
+  "@providerUnlinkedSuccess": {
+    "placeholders": {
+      "provider": { "type": "String" }
+    }
+  },
+  "signInMethodRemovedPleaseSignInAgain": "שיטת הכניסה הוסרה. אנא היכנס שוב.",
+  "noLinkedProviders": "אין חשבונות מקושרים",
   "errorFillAllFields": "אנא מלא את כל השדות",
-  "errorInvalidCredentials": "אימייל או סיסמה שגויים",
 
   "changeLocation": "שנה מיקום",
   "enterCityName": "הזן שם עיר",
@@ -157,7 +165,6 @@
 
   "settingsTitle": "הגדרות",
   "sectionAccount": "חשבון",
-  "changePassword": "שנה סיסמה",
   "sectionNotifications": "התראות",
   "pushNotifications": "התראות דחיפה",
   "classReminders": "תזכורות לשיעורים",
@@ -243,7 +250,6 @@
 
   "fieldRequired": "שדה חובה",
   "invalidEmail": "אנא הזן כתובת אימייל תקינה",
-  "passwordTooShort": "הסיסמה חייבת להכיל לפחות 6 תווים",
   "errorFillRequired": "אנא מלא את כל השדות החובה",
   "errorRatingRequired": "אנא בחר דירוג",
 
@@ -260,13 +266,6 @@
   "savedClasses": "שיעורים שמורים",
   "savedEvents": "אירועים שמורים",
 
-  "currentPasswordHint": "סיסמה נוכחית",
-  "newPasswordHint": "סיסמה חדשה",
-  "confirmNewPasswordHint": "אשר סיסמה חדשה",
-  "errorPasswordTooShort": "הסיסמה חייבת להכיל לפחות 6 תווים",
-  "errorPasswordsDoNotMatch": "הסיסמאות אינן תואמות",
-  "errorCurrentPasswordWrong": "הסיסמה הנוכחית שגויה",
-  "passwordChangedSuccess": "הסיסמה שונתה בהצלחה",
   "trialLesson": "שיעור ניסיון",
   "trialLessonPrice": "מחיר שיעור ניסיון",
   "trialLessonComment": "הערה",
@@ -822,7 +821,6 @@
   "submitApplication": "שלח בקשה",
   "statusClosed": "סגור",
   "unnamedEvent": "אירוע ללא שם",
-  "accountSecuritySection": "אבטחת חשבון",
   "timeNow": "עכשיו",
   "changesSavedSuccess": "השינויים נשמרו בהצלחה",
   "failedToSaveChanges": "שמירת השינויים נכשלה",
@@ -857,17 +855,6 @@
 
   "errorNetworkTimeout": "החיבור נכשל. נסה שוב.",
 
-  "forgotPasswordEmailLabel": "הזן את האימייל שלך ונשלח לך קוד איפוס בן 6 ספרות",
-  "forgotPasswordSendBtn": "שלח קוד איפוס",
-  "forgotPasswordSuccessTitle": "בדוק את האימייל שלך",
-  "forgotPasswordSuccessMessage": "אם האימייל רשום, בדוק את תיבת הדואר שלך לאיתור קוד בן 6 ספרות. הקוד בתוקף 15 דקות.",
-  "resetPasswordTitle": "איפוס סיסמה",
-  "resetPasswordOtpHint": "קוד בן 6 ספרות",
-  "resetPasswordOtpLabel": "הזן את הקוד מהאימייל שלך",
-  "resetPasswordSubmitBtn": "הגדר סיסמה חדשה",
-  "resetPasswordSuccessMessage": "הסיסמה אופסה בהצלחה. אנא היכנס שוב.",
-  "errorInvalidResetCode": "קוד לא תקין או שפג תוקפו. נסה שוב.",
-  "errorCodeRequired": "נדרש קוד",
   "notifPrefLoadFailed": "טעינת העדפות ההתראות נכשלה",
   "notifPrefSaveFailed": "שמירת העדפות ההתראות נכשלה"
 }

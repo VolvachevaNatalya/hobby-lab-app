@@ -142,12 +142,6 @@ abstract class AppLocalizations {
   /// **'Log In'**
   String get btnLogIn;
 
-  /// No description provided for @btnSignUp.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign Up'**
-  String get btnSignUp;
-
   /// No description provided for @btnContinue.
   ///
   /// In en, this message translates to:
@@ -322,77 +316,11 @@ abstract class AppLocalizations {
   /// **'Email address'**
   String get emailHint;
 
-  /// No description provided for @passwordHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Password'**
-  String get passwordHint;
-
-  /// No description provided for @rememberMe.
-  ///
-  /// In en, this message translates to:
-  /// **'Remember me'**
-  String get rememberMe;
-
-  /// No description provided for @forgotPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot Password?'**
-  String get forgotPassword;
-
-  /// No description provided for @orContinueWith.
-  ///
-  /// In en, this message translates to:
-  /// **'Or continue with'**
-  String get orContinueWith;
-
-  /// No description provided for @dontHaveAccount.
-  ///
-  /// In en, this message translates to:
-  /// **'Don\'t have an account?'**
-  String get dontHaveAccount;
-
-  /// No description provided for @createAccount.
-  ///
-  /// In en, this message translates to:
-  /// **'Create Account'**
-  String get createAccount;
-
-  /// No description provided for @registerSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Join Hobby Lab and discover amazing activities'**
-  String get registerSubtitle;
-
   /// No description provided for @fullNameHint.
   ///
   /// In en, this message translates to:
   /// **'Full name'**
   String get fullNameHint;
-
-  /// No description provided for @confirmPasswordHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm password'**
-  String get confirmPasswordHint;
-
-  /// No description provided for @alreadyHaveAccount.
-  ///
-  /// In en, this message translates to:
-  /// **'Already have an account?'**
-  String get alreadyHaveAccount;
-
-  /// No description provided for @agreeToTerms.
-  ///
-  /// In en, this message translates to:
-  /// **'I agree to the '**
-  String get agreeToTerms;
-
-  /// No description provided for @termsOfService.
-  ///
-  /// In en, this message translates to:
-  /// **'Terms of Service'**
-  String get termsOfService;
 
   /// No description provided for @yourLocation.
   ///
@@ -628,18 +556,6 @@ abstract class AppLocalizations {
   /// **'Age'**
   String get age;
 
-  /// No description provided for @forgotPasswordTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot Password'**
-  String get forgotPasswordTitle;
-
-  /// No description provided for @forgotPasswordContent.
-  ///
-  /// In en, this message translates to:
-  /// **'Please contact support at support@hobbylab.com to reset your password.'**
-  String get forgotPasswordContent;
-
   /// No description provided for @btnOk.
   ///
   /// In en, this message translates to:
@@ -664,41 +580,11 @@ abstract class AppLocalizations {
   /// **'Continue with Facebook'**
   String get continueWithFacebook;
 
-  /// No description provided for @continueWithGmail.
+  /// No description provided for @termsOfService.
   ///
   /// In en, this message translates to:
-  /// **'Continue with Gmail'**
-  String get continueWithGmail;
-
-  /// No description provided for @orDivider.
-  ///
-  /// In en, this message translates to:
-  /// **'or'**
-  String get orDivider;
-
-  /// No description provided for @registerHeading.
-  ///
-  /// In en, this message translates to:
-  /// **'Create your\naccount'**
-  String get registerHeading;
-
-  /// No description provided for @registerFamiliesSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Join thousands of families discovering activities.'**
-  String get registerFamiliesSubtitle;
-
-  /// No description provided for @byAgreeingTerms.
-  ///
-  /// In en, this message translates to:
-  /// **'By continuing, you agree to our '**
-  String get byAgreeingTerms;
-
-  /// No description provided for @andConjunction.
-  ///
-  /// In en, this message translates to:
-  /// **' and '**
-  String get andConjunction;
+  /// **'Terms of Service'**
+  String get termsOfService;
 
   /// No description provided for @privacyPolicy.
   ///
@@ -706,17 +592,95 @@ abstract class AppLocalizations {
   /// **'Privacy Policy'**
   String get privacyPolicy;
 
+  /// No description provided for @andConjunction.
+  ///
+  /// In en, this message translates to:
+  /// **'and'**
+  String get andConjunction;
+
+  /// No description provided for @byUsingAppYouAgree.
+  ///
+  /// In en, this message translates to:
+  /// **'By continuing, you agree to our'**
+  String get byUsingAppYouAgree;
+
+  /// No description provided for @signInMethods.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-in Methods'**
+  String get signInMethods;
+
+  /// No description provided for @linkedProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked Providers'**
+  String get linkedProviders;
+
+  /// No description provided for @linkProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get linkProvider;
+
+  /// No description provided for @unlinkProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get unlinkProvider;
+
+  /// No description provided for @unlinkProviderConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Sign-in Method?'**
+  String get unlinkProviderConfirmTitle;
+
+  /// No description provided for @unlinkProviderConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {provider} from your sign-in methods?'**
+  String unlinkProviderConfirmBody(String provider);
+
+  /// No description provided for @cannotRemoveLastProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot remove your last sign-in method'**
+  String get cannotRemoveLastProvider;
+
+  /// No description provided for @providerAlreadyLinked.
+  ///
+  /// In en, this message translates to:
+  /// **'This provider is already linked'**
+  String get providerAlreadyLinked;
+
+  /// No description provided for @providerLinkedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'{provider} linked successfully'**
+  String providerLinkedSuccess(String provider);
+
+  /// No description provided for @providerUnlinkedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'{provider} removed'**
+  String providerUnlinkedSuccess(String provider);
+
+  /// No description provided for @signInMethodRemovedPleaseSignInAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-in method removed. Please sign in again.'**
+  String get signInMethodRemovedPleaseSignInAgain;
+
+  /// No description provided for @noLinkedProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'No linked providers'**
+  String get noLinkedProviders;
+
   /// No description provided for @errorFillAllFields.
   ///
   /// In en, this message translates to:
   /// **'Please fill in all fields'**
   String get errorFillAllFields;
-
-  /// No description provided for @errorInvalidCredentials.
-  ///
-  /// In en, this message translates to:
-  /// **'Invalid email or password'**
-  String get errorInvalidCredentials;
 
   /// No description provided for @changeLocation.
   ///
@@ -843,12 +807,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'ACCOUNT'**
   String get sectionAccount;
-
-  /// No description provided for @changePassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Change Password'**
-  String get changePassword;
 
   /// No description provided for @sectionNotifications.
   ///
@@ -1288,12 +1246,6 @@ abstract class AppLocalizations {
   /// **'Please enter a valid email address'**
   String get invalidEmail;
 
-  /// No description provided for @passwordTooShort.
-  ///
-  /// In en, this message translates to:
-  /// **'Password must be at least 6 characters'**
-  String get passwordTooShort;
-
   /// No description provided for @errorFillRequired.
   ///
   /// In en, this message translates to:
@@ -1365,48 +1317,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Saved Events'**
   String get savedEvents;
-
-  /// No description provided for @currentPasswordHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Current Password'**
-  String get currentPasswordHint;
-
-  /// No description provided for @newPasswordHint.
-  ///
-  /// In en, this message translates to:
-  /// **'New Password'**
-  String get newPasswordHint;
-
-  /// No description provided for @confirmNewPasswordHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm New Password'**
-  String get confirmNewPasswordHint;
-
-  /// No description provided for @errorPasswordTooShort.
-  ///
-  /// In en, this message translates to:
-  /// **'Password must be at least 6 characters'**
-  String get errorPasswordTooShort;
-
-  /// No description provided for @errorPasswordsDoNotMatch.
-  ///
-  /// In en, this message translates to:
-  /// **'Passwords do not match'**
-  String get errorPasswordsDoNotMatch;
-
-  /// No description provided for @errorCurrentPasswordWrong.
-  ///
-  /// In en, this message translates to:
-  /// **'Current password is incorrect'**
-  String get errorCurrentPasswordWrong;
-
-  /// No description provided for @passwordChangedSuccess.
-  ///
-  /// In en, this message translates to:
-  /// **'Password changed successfully'**
-  String get passwordChangedSuccess;
 
   /// No description provided for @trialLesson.
   ///
@@ -3892,12 +3802,6 @@ abstract class AppLocalizations {
   /// **'Unnamed Event'**
   String get unnamedEvent;
 
-  /// No description provided for @accountSecuritySection.
-  ///
-  /// In en, this message translates to:
-  /// **'ACCOUNT SECURITY'**
-  String get accountSecuritySection;
-
   /// No description provided for @timeNow.
   ///
   /// In en, this message translates to:
@@ -3975,72 +3879,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Connection timed out. Please try again.'**
   String get errorNetworkTimeout;
-
-  /// No description provided for @forgotPasswordEmailLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your email and we\'ll send you a 6-digit reset code'**
-  String get forgotPasswordEmailLabel;
-
-  /// No description provided for @forgotPasswordSendBtn.
-  ///
-  /// In en, this message translates to:
-  /// **'Send Reset Code'**
-  String get forgotPasswordSendBtn;
-
-  /// No description provided for @forgotPasswordSuccessTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Check Your Email'**
-  String get forgotPasswordSuccessTitle;
-
-  /// No description provided for @forgotPasswordSuccessMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'If that email is registered, a 6-digit reset code has been sent to it. It expires in 15 minutes.'**
-  String get forgotPasswordSuccessMessage;
-
-  /// No description provided for @resetPasswordTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Reset Password'**
-  String get resetPasswordTitle;
-
-  /// No description provided for @resetPasswordOtpHint.
-  ///
-  /// In en, this message translates to:
-  /// **'6-digit code'**
-  String get resetPasswordOtpHint;
-
-  /// No description provided for @resetPasswordOtpLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter the code from your email'**
-  String get resetPasswordOtpLabel;
-
-  /// No description provided for @resetPasswordSubmitBtn.
-  ///
-  /// In en, this message translates to:
-  /// **'Set New Password'**
-  String get resetPasswordSubmitBtn;
-
-  /// No description provided for @resetPasswordSuccessMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Password reset successfully. Please sign in.'**
-  String get resetPasswordSuccessMessage;
-
-  /// No description provided for @errorInvalidResetCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Invalid or expired code. Please try again.'**
-  String get errorInvalidResetCode;
-
-  /// No description provided for @errorCodeRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'Code is required'**
-  String get errorCodeRequired;
 
   /// No description provided for @notifPrefLoadFailed.
   ///

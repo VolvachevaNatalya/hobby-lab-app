@@ -6,7 +6,6 @@ import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_text_field.dart';
 import '../services/api_service.dart';
-import 'change_password_screen.dart';
 import '../routing/transitions.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -168,8 +167,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     const SizedBox(height: 32),
                     _buildSaveButton(context),
-                    const SizedBox(height: 12),
-                    _buildChangePasswordButton(context),
                     const SizedBox(height: 32),
                   ],
                 ),
@@ -394,42 +391,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     } finally {
       if (mounted) setState(() => _saving = false);
     }
-  }
-
-  Widget _buildChangePasswordButton(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return GestureDetector(
-      onTap: () => Navigator.of(context).push(
-        slideRoute(builder: (_) => const ChangePasswordScreen()),
-      ),
-      child: Container(
-        width: double.infinity,
-        height: 54,
-        decoration: BoxDecoration(
-          color: AppColors.surfaceElevated,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-              color: AppColors.purple.withValues(alpha: 0.4)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.lock_outline_rounded,
-                size: 18, color: AppColors.purpleLight),
-            const SizedBox(width: 8),
-            Text(
-              l10n.changePassword,
-              style: GoogleFonts.poppins(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: AppColors.purpleLight,
-                letterSpacing: 0.3,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _buildSaveButton(BuildContext context) {

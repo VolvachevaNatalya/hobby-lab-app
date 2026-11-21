@@ -30,9 +30,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get btnLogIn => 'Войти';
 
   @override
-  String get btnSignUp => 'Зарегистрироваться';
-
-  @override
   String get btnContinue => 'Продолжить';
 
   @override
@@ -125,41 +122,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get emailHint => 'Электронная почта';
 
   @override
-  String get passwordHint => 'Пароль';
-
-  @override
-  String get rememberMe => 'Запомнить меня';
-
-  @override
-  String get forgotPassword => 'Забыли пароль?';
-
-  @override
-  String get orContinueWith => 'Или войти через';
-
-  @override
-  String get dontHaveAccount => 'Нет аккаунта?';
-
-  @override
-  String get createAccount => 'Создать аккаунт';
-
-  @override
-  String get registerSubtitle =>
-      'Присоединитесь к Hobby Lab и откройте для себя удивительные занятия';
-
-  @override
   String get fullNameHint => 'Полное имя';
-
-  @override
-  String get confirmPasswordHint => 'Подтвердите пароль';
-
-  @override
-  String get alreadyHaveAccount => 'Уже есть аккаунт?';
-
-  @override
-  String get agreeToTerms => 'Я соглашаюсь с ';
-
-  @override
-  String get termsOfService => 'Условиями использования';
 
   @override
   String get yourLocation => 'Ваше местоположение';
@@ -288,13 +251,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get age => 'Возраст';
 
   @override
-  String get forgotPasswordTitle => 'Забыли пароль';
-
-  @override
-  String get forgotPasswordContent =>
-      'Для сброса пароля обратитесь в поддержку: support@hobbylab.com';
-
-  @override
   String get btnOk => 'ОК';
 
   @override
@@ -307,32 +263,63 @@ class AppLocalizationsRu extends AppLocalizations {
   String get continueWithFacebook => 'Войти через Facebook';
 
   @override
-  String get continueWithGmail => 'Войти через Gmail';
+  String get termsOfService => 'Условия использования';
 
   @override
-  String get orDivider => 'или';
+  String get privacyPolicy => 'Политика конфиденциальности';
 
   @override
-  String get registerHeading => 'Создайте\nаккаунт';
+  String get andConjunction => 'и';
 
   @override
-  String get registerFamiliesSubtitle =>
-      'Присоединитесь к тысячам семей, открывающих новые занятия.';
+  String get byUsingAppYouAgree => 'Продолжая, вы соглашаетесь с нашими';
 
   @override
-  String get byAgreeingTerms => 'Продолжая, вы соглашаетесь с нашими ';
+  String get signInMethods => 'Способы входа';
 
   @override
-  String get andConjunction => ' и ';
+  String get linkedProviders => 'Привязанные аккаунты';
 
   @override
-  String get privacyPolicy => 'Политикой конфиденциальности';
+  String get linkProvider => 'Добавить';
+
+  @override
+  String get unlinkProvider => 'Удалить';
+
+  @override
+  String get unlinkProviderConfirmTitle => 'Удалить способ входа?';
+
+  @override
+  String unlinkProviderConfirmBody(String provider) {
+    return 'Удалить $provider из способов входа?';
+  }
+
+  @override
+  String get cannotRemoveLastProvider =>
+      'Нельзя удалить последний способ входа';
+
+  @override
+  String get providerAlreadyLinked => 'Этот провайдер уже привязан';
+
+  @override
+  String providerLinkedSuccess(String provider) {
+    return '$provider успешно привязан';
+  }
+
+  @override
+  String providerUnlinkedSuccess(String provider) {
+    return '$provider удалён';
+  }
+
+  @override
+  String get signInMethodRemovedPleaseSignInAgain =>
+      'Метод входа удалён. Пожалуйста, войдите снова.';
+
+  @override
+  String get noLinkedProviders => 'Нет привязанных аккаунтов';
 
   @override
   String get errorFillAllFields => 'Заполните все поля';
-
-  @override
-  String get errorInvalidCredentials => 'Неверный email или пароль';
 
   @override
   String get changeLocation => 'Изменить город';
@@ -404,9 +391,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get sectionAccount => 'АККАУНТ';
-
-  @override
-  String get changePassword => 'Изменить пароль';
 
   @override
   String get sectionNotifications => 'УВЕДОМЛЕНИЯ';
@@ -637,9 +621,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get invalidEmail => 'Введите корректный адрес электронной почты';
 
   @override
-  String get passwordTooShort => 'Пароль должен содержать не менее 6 символов';
-
-  @override
   String get errorFillRequired => 'Заполните все обязательные поля';
 
   @override
@@ -674,28 +655,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get savedEvents => 'Сохранённые события';
-
-  @override
-  String get currentPasswordHint => 'Текущий пароль';
-
-  @override
-  String get newPasswordHint => 'Новый пароль';
-
-  @override
-  String get confirmNewPasswordHint => 'Подтвердите новый пароль';
-
-  @override
-  String get errorPasswordTooShort =>
-      'Пароль должен содержать не менее 6 символов';
-
-  @override
-  String get errorPasswordsDoNotMatch => 'Пароли не совпадают';
-
-  @override
-  String get errorCurrentPasswordWrong => 'Текущий пароль неверен';
-
-  @override
-  String get passwordChangedSuccess => 'Пароль успешно изменён';
 
   @override
   String get trialLesson => 'Пробный урок';
@@ -2078,9 +2037,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get unnamedEvent => 'Без названия';
 
   @override
-  String get accountSecuritySection => 'БЕЗОПАСНОСТЬ АККАУНТА';
-
-  @override
   String get timeNow => 'Сейчас';
 
   @override
@@ -2124,43 +2080,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get errorNetworkTimeout => 'Соединение прервано. Попробуйте снова.';
-
-  @override
-  String get forgotPasswordEmailLabel =>
-      'Введите email и мы отправим вам 6-значный код сброса пароля';
-
-  @override
-  String get forgotPasswordSendBtn => 'Отправить код';
-
-  @override
-  String get forgotPasswordSuccessTitle => 'Проверьте почту';
-
-  @override
-  String get forgotPasswordSuccessMessage =>
-      'Если этот email зарегистрирован, проверьте входящие — там будет 6-значный код. Он действителен 15 минут.';
-
-  @override
-  String get resetPasswordTitle => 'Сброс пароля';
-
-  @override
-  String get resetPasswordOtpHint => '6-значный код';
-
-  @override
-  String get resetPasswordOtpLabel => 'Введите код из письма';
-
-  @override
-  String get resetPasswordSubmitBtn => 'Установить новый пароль';
-
-  @override
-  String get resetPasswordSuccessMessage =>
-      'Пароль успешно сброшен. Войдите снова.';
-
-  @override
-  String get errorInvalidResetCode =>
-      'Неверный или просроченный код. Попробуйте снова.';
-
-  @override
-  String get errorCodeRequired => 'Введите код';
 
   @override
   String get notifPrefLoadFailed =>

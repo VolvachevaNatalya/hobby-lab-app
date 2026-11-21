@@ -10,7 +10,6 @@
   "navProfile": "Profile",
 
   "btnLogIn": "Log In",
-  "btnSignUp": "Sign Up",
   "btnContinue": "Continue",
   "btnGetStarted": "Get Started",
   "btnBookNow": "Book Now",
@@ -50,19 +49,7 @@
   "welcomeBack": "Welcome Back",
   "loginSubtitle": "Sign in to continue your journey",
   "emailHint": "Email address",
-  "passwordHint": "Password",
-  "rememberMe": "Remember me",
-  "forgotPassword": "Forgot Password?",
-  "orContinueWith": "Or continue with",
-  "dontHaveAccount": "Don't have an account?",
-
-  "createAccount": "Create Account",
-  "registerSubtitle": "Join Hobby Lab and discover amazing activities",
   "fullNameHint": "Full name",
-  "confirmPasswordHint": "Confirm password",
-  "alreadyHaveAccount": "Already have an account?",
-  "agreeToTerms": "I agree to the ",
-  "termsOfService": "Terms of Service",
 
   "yourLocation": "Your location",
   "popularNearYou": "Popular Near You",
@@ -108,21 +95,42 @@
   "gender": "Gender",
   "age": "Age",
 
-  "forgotPasswordTitle": "Forgot Password",
-  "forgotPasswordContent": "Please contact support at support@hobbylab.com to reset your password.",
   "btnOk": "OK",
   "continueWithGoogle": "Continue with Google",
   "continueWithApple": "Continue with Apple",
   "continueWithFacebook": "Continue with Facebook",
-  "continueWithGmail": "Continue with Gmail",
-  "orDivider": "or",
-  "registerHeading": "Create your\naccount",
-  "registerFamiliesSubtitle": "Join thousands of families discovering activities.",
-  "byAgreeingTerms": "By continuing, you agree to our ",
-  "andConjunction": " and ",
+  "termsOfService": "Terms of Service",
   "privacyPolicy": "Privacy Policy",
+  "andConjunction": "and",
+  "byUsingAppYouAgree": "By continuing, you agree to our",
+  "signInMethods": "Sign-in Methods",
+  "linkedProviders": "Linked Providers",
+  "linkProvider": "Add",
+  "unlinkProvider": "Remove",
+  "unlinkProviderConfirmTitle": "Remove Sign-in Method?",
+  "unlinkProviderConfirmBody": "Remove {provider} from your sign-in methods?",
+  "@unlinkProviderConfirmBody": {
+    "placeholders": {
+      "provider": { "type": "String" }
+    }
+  },
+  "cannotRemoveLastProvider": "Cannot remove your last sign-in method",
+  "providerAlreadyLinked": "This provider is already linked",
+  "providerLinkedSuccess": "{provider} linked successfully",
+  "@providerLinkedSuccess": {
+    "placeholders": {
+      "provider": { "type": "String" }
+    }
+  },
+  "providerUnlinkedSuccess": "{provider} removed",
+  "@providerUnlinkedSuccess": {
+    "placeholders": {
+      "provider": { "type": "String" }
+    }
+  },
+  "signInMethodRemovedPleaseSignInAgain": "Sign-in method removed. Please sign in again.",
+  "noLinkedProviders": "No linked providers",
   "errorFillAllFields": "Please fill in all fields",
-  "errorInvalidCredentials": "Invalid email or password",
 
   "changeLocation": "Change Location",
   "enterCityName": "Enter city name",
@@ -157,7 +165,6 @@
 
   "settingsTitle": "Settings",
   "sectionAccount": "ACCOUNT",
-  "changePassword": "Change Password",
   "sectionNotifications": "NOTIFICATIONS",
   "pushNotifications": "Push Notifications",
   "classReminders": "Class Reminders",
@@ -243,7 +250,6 @@
 
   "fieldRequired": "Required",
   "invalidEmail": "Please enter a valid email address",
-  "passwordTooShort": "Password must be at least 6 characters",
   "errorFillRequired": "Please fill in all required fields",
   "errorRatingRequired": "Please select a star rating",
 
@@ -260,13 +266,6 @@
   "savedClasses": "Saved Classes",
   "savedEvents": "Saved Events",
 
-  "currentPasswordHint": "Current Password",
-  "newPasswordHint": "New Password",
-  "confirmNewPasswordHint": "Confirm New Password",
-  "errorPasswordTooShort": "Password must be at least 6 characters",
-  "errorPasswordsDoNotMatch": "Passwords do not match",
-  "errorCurrentPasswordWrong": "Current password is incorrect",
-  "passwordChangedSuccess": "Password changed successfully",
   "trialLesson": "Trial Lesson",
   "trialLessonPrice": "Trial Lesson Price",
   "trialLessonComment": "Comment",
@@ -822,7 +821,6 @@
   "submitApplication": "Submit Application",
   "statusClosed": "Closed",
   "unnamedEvent": "Unnamed Event",
-  "accountSecuritySection": "ACCOUNT SECURITY",
   "timeNow": "Now",
   "changesSavedSuccess": "Changes saved successfully",
   "failedToSaveChanges": "Failed to save changes",
@@ -857,17 +855,6 @@
 
   "errorNetworkTimeout": "Connection timed out. Please try again.",
 
-  "forgotPasswordEmailLabel": "Enter your email and we'll send you a 6-digit reset code",
-  "forgotPasswordSendBtn": "Send Reset Code",
-  "forgotPasswordSuccessTitle": "Check Your Email",
-  "forgotPasswordSuccessMessage": "If that email is registered, check your inbox for a 6-digit reset code. It expires in 15 minutes.",
-  "resetPasswordTitle": "Reset Password",
-  "resetPasswordOtpHint": "6-digit code",
-  "resetPasswordOtpLabel": "Enter the code from your email",
-  "resetPasswordSubmitBtn": "Set New Password",
-  "resetPasswordSuccessMessage": "Password reset successfully. Please sign in.",
-  "errorInvalidResetCode": "Invalid or expired code. Please try again.",
-  "errorCodeRequired": "Code is required",
   "notifPrefLoadFailed": "Failed to load notification preferences",
   "notifPrefSaveFailed": "Failed to save notification preferences"
 }
