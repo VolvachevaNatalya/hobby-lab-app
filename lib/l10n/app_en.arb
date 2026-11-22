@@ -198,6 +198,7 @@
   "profileSavedSuccess": "Profile saved successfully",
   "profileSaveFailed": "Failed to save. Please try again.",
   "deleteAccountFailed": "Failed to delete account. Please try again.",
+  "deleteAccountSoleOwner": "You are the sole owner of an organization. Transfer ownership or delete the organization before deleting your account.",
 
   "noNotifications": "No Notifications",
   "allCaughtUp": "You're all caught up!",

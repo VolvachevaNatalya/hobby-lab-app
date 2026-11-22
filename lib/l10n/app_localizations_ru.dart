@@ -494,6 +494,10 @@ class AppLocalizationsRu extends AppLocalizations {
       'Не удалось удалить аккаунт. Попробуйте ещё раз.';
 
   @override
+  String get deleteAccountSoleOwner =>
+      'Вы единственный владелец организации. Передайте права или удалите организацию перед удалением аккаунта.';
+
+  @override
   String get noNotifications => 'Нет уведомлений';
 
   @override

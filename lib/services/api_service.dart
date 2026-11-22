@@ -25,6 +25,12 @@ import '../models/org_invite.dart';
 import '../models/org_member.dart';
 import '../models/event_recurrence.dart';
 
+/// Thrown by [ApiService.deleteAccount] when the user is the sole owner of an
+/// organisation and must transfer or delete it before the account can be removed.
+class SoleOrganizationOwnerException implements Exception {
+  const SoleOrganizationOwnerException();
+}
+
 String _generateNonce([int length = 32]) {
   const charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
   final random = Random.secure();
@@ -852,10 +858,10 @@ class ApiService {
       Uri.parse('$_baseUrl/me'),
       headers: await _authHeaders(),
     );
-    if (response.statusCode != 200 && response.statusCode != 204) {
-      _handleError(response);
-      throw Exception('Failed to delete account');
-    }
+    if (response.statusCode == 200 || response.statusCode == 204) return;
+    if (response.statusCode == 409) throw const SoleOrganizationOwnerException();
+    _handleError(response);
+    throw Exception('Failed to delete account');
   }
 
   // ── Organizations ──────────────────────────────────────────────────────────

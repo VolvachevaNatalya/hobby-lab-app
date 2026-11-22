@@ -485,6 +485,10 @@ class AppLocalizationsHe extends AppLocalizations {
   String get deleteAccountFailed => 'מחיקת החשבון נכשלה. נסה שוב.';
 
   @override
+  String get deleteAccountSoleOwner =>
+      'אתה הבעלים היחיד של ארגון. העבר בעלות או מחק את הארגון לפני מחיקת החשבון.';
+
+  @override
   String get noNotifications => 'אין התראות';
 
   @override

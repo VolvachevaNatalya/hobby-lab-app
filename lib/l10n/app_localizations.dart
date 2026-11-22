@@ -1000,6 +1000,12 @@ abstract class AppLocalizations {
   /// **'Failed to delete account. Please try again.'**
   String get deleteAccountFailed;
 
+  /// No description provided for @deleteAccountSoleOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'You are the sole owner of an organization. Transfer ownership or delete the organization before deleting your account.'**
+  String get deleteAccountSoleOwner;
+
   /// No description provided for @noNotifications.
   ///
   /// In en, this message translates to:

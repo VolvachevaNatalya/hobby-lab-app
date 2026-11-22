@@ -698,4 +698,50 @@ void main() {
       );
     });
   });
+
+  // ── deleteAccount ──────────────────────────────────────────────────────────
+
+  group('deleteAccount', () {
+    test('succeeds on 204', () async {
+      ApiService.setInnerClientForTesting(MockClient((_) async =>
+          http.Response('', 204)));
+      FlutterSecureStorage.setMockInitialValues({'auth_token': 'tok'});
+      await expectLater(ApiService.deleteAccount(), completes);
+    });
+
+    test('succeeds on 200 (legacy status)', () async {
+      ApiService.setInnerClientForTesting(MockClient((_) async =>
+          http.Response('', 200)));
+      FlutterSecureStorage.setMockInitialValues({'auth_token': 'tok'});
+      await expectLater(ApiService.deleteAccount(), completes);
+    });
+
+    test('throws SoleOrganizationOwnerException on 409', () async {
+      ApiService.setInnerClientForTesting(MockClient((_) async =>
+          http.Response(
+            jsonEncode({'detail': 'You are the sole owner of Org. Transfer first.'}),
+            409,
+            headers: {'content-type': 'application/json'},
+          )));
+      FlutterSecureStorage.setMockInitialValues({'auth_token': 'tok'});
+      await expectLater(
+        ApiService.deleteAccount(),
+        throwsA(isA<SoleOrganizationOwnerException>()),
+      );
+    });
+
+    test('throws Exception on 500', () async {
+      ApiService.setInnerClientForTesting(MockClient((_) async =>
+          http.Response(
+            jsonEncode({'detail': 'Internal server error'}),
+            500,
+            headers: {'content-type': 'application/json'},
+          )));
+      FlutterSecureStorage.setMockInitialValues({'auth_token': 'tok'});
+      await expectLater(
+        ApiService.deleteAccount(),
+        throwsA(isA<Exception>()),
+      );
+    });
+  });
 }

@@ -359,6 +359,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           await ApiService.deleteAccount();
                           await ApiService.logout();
                           ApiService.authNotifier.value = false;
+                        } on SoleOrganizationOwnerException {
+                          if (!ctx.mounted) return;
+                          setDialogState(() => deleting = false);
+                          Navigator.of(ctx).pop();
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  l10n.deleteAccountSoleOwner,
+                                  style: GoogleFonts.poppins(fontSize: 13),
+                                ),
+                                backgroundColor: const Color(0xFFF59E0B),
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                margin: const EdgeInsets.all(16),
+                              ),
+                            );
+                          }
                         } catch (_) {
                           if (!ctx.mounted) return;
                           setDialogState(() => deleting = false);

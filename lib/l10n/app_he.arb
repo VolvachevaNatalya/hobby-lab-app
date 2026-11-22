@@ -198,6 +198,7 @@
   "profileSavedSuccess": "הפרופיל נשמר בהצלחה",
   "profileSaveFailed": "שמירה נכשלה. נסה שוב.",
   "deleteAccountFailed": "מחיקת החשבון נכשלה. נסה שוב.",
+  "deleteAccountSoleOwner": "אתה הבעלים היחיד של ארגון. העבר בעלות או מחק את הארגון לפני מחיקת החשבון.",
 
   "noNotifications": "אין התראות",
   "allCaughtUp": "אתה מעודכן בהכל!",

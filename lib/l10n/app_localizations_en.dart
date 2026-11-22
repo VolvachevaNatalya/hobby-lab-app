@@ -492,6 +492,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Failed to delete account. Please try again.';
 
   @override
+  String get deleteAccountSoleOwner =>
+      'You are the sole owner of an organization. Transfer ownership or delete the organization before deleting your account.';
+
+  @override
   String get noNotifications => 'No Notifications';
 
   @override
