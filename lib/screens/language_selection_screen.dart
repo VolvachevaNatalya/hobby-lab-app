@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../locale_provider.dart';
+import '../services/api_service.dart';
 import 'login_screen.dart';
 
 class _Language {
@@ -45,7 +46,10 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   }
 
   void _continue() {
-    saveLocale(_languages[_selected].localeCode);
+    final code = _languages[_selected].localeCode;
+    saveLocale(code);
+    // Best-effort: sync locale to backend for localized push notifications.
+    ApiService.updateLocale(code).catchError((_) {});
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
     } else {

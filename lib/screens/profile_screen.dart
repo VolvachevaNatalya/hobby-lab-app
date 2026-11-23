@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../l10n/app_localizations.dart';
 import '../services/api_service.dart';
+import '../services/fcm_service.dart';
 import '../models/user_profile.dart';
 import 'language_selection_screen.dart';
 import 'edit_profile_screen.dart';
@@ -658,6 +659,7 @@ class _LogoutButton extends StatelessWidget {
   const _LogoutButton();
 
   Future<void> _logout(BuildContext context) async {
+    await FcmService.cleanup();
     await ApiService.logout();
     if (!context.mounted) return;
     Navigator.of(context).pushAndRemoveUntil(

@@ -1,16 +1,26 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hobby_lab/l10n/app_localizations.dart';
+import 'firebase_options.dart';
 import 'theme/app_theme.dart';
 import 'locale_provider.dart';
 import 'navigation_key.dart';
 import 'screens/main_shell.dart';
 import 'screens/splash_screen.dart';
 import 'services/api_service.dart';
+import 'services/fcm_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // FCM is Android-only in Phase 1 — iOS is not yet configured.
+  // Guard every Firebase call so the existing iOS app starts normally.
+  if (defaultTargetPlatform == TargetPlatform.android) {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await FcmService.initBackground();
+  }
   await loadSavedLocale();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -21,6 +31,9 @@ void main() async {
     ),
   );
   final token = await ApiService.getSavedToken();
+  if (token != null && defaultTargetPlatform == TargetPlatform.android) {
+    FcmService.initForAuthenticatedUser();
+  }
   runApp(HobbyLabApp(isLoggedIn: token != null));
 }
 

@@ -5,6 +5,7 @@ import '../theme/app_theme.dart';
 import '../l10n/app_localizations.dart';
 import '../locale_provider.dart';
 import '../services/api_service.dart';
+import '../services/fcm_service.dart';
 import 'edit_profile_screen.dart';
 import 'language_selection_screen.dart';
 import 'linked_providers_screen.dart';
@@ -357,6 +358,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         setDialogState(() => deleting = true);
                         try {
                           await ApiService.deleteAccount();
+                          await FcmService.cleanup();
                           await ApiService.logout();
                           ApiService.authNotifier.value = false;
                         } on SoleOrganizationOwnerException {

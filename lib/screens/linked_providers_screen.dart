@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
 import '../services/api_service.dart';
+import '../services/fcm_service.dart';
 import '../theme/app_theme.dart';
 
 class LinkedProvidersScreen extends StatefulWidget {
@@ -79,6 +80,7 @@ class _LinkedProvidersScreenState extends State<LinkedProvidersScreen> {
             behavior: SnackBarBehavior.floating,
           ),
         );
+        await FcmService.cleanup();
         await ApiService.logout();
         if (mounted) ApiService.authNotifier.value = false;
       }

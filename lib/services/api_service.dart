@@ -249,6 +249,33 @@ class ApiService {
     );
   }
 
+  static Future<void> registerDeviceToken(String token, String platform) async {
+    final headers = await _authHeaders();
+    await _client.post(
+      Uri.parse('$_baseUrl/me/device-token'),
+      headers: {...headers, 'Content-Type': 'application/json'},
+      body: jsonEncode({'token': token, 'platform': platform}),
+    );
+  }
+
+  static Future<void> removeDeviceToken(String token) async {
+    final headers = await _authHeaders();
+    await _client.delete(
+      Uri.parse('$_baseUrl/me/device-token'),
+      headers: {...headers, 'Content-Type': 'application/json'},
+      body: jsonEncode({'token': token}),
+    );
+  }
+
+  static Future<void> updateLocale(String languageCode) async {
+    final headers = await _authHeaders();
+    await _client.put(
+      Uri.parse('$_baseUrl/me/locale'),
+      headers: {...headers, 'Content-Type': 'application/json'},
+      body: jsonEncode({'locale': languageCode}),
+    );
+  }
+
   static Future<void> logout() async {
     _sessionToken = null;
     _cachedUserId = null;
